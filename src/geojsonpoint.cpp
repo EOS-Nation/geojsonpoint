@@ -17,7 +17,7 @@ void geojsonpoint::create(
     uint8_t version = 1;
 
     // Add geometry to `points` table
-    _points.emplace( _self, [&]( auto & row ) {
+    _points.emplace( user, [&]( auto & row ) {
         row.id          = id;
         row.uid         = uid;
         row.user        = user;
