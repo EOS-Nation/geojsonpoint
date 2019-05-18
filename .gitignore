@@ -1,3 +1,8 @@
+eosc-vault.json
+.vscode
+*.abi
+*.wasm
+
 # Prerequisites
 *.d
 
