@@ -63,12 +63,13 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
             uint64_t        id;
             string          uid;
             name            user;
-            name            owner;
+            vector<name>    owner;
             float           lat;
             float           lon;
             vector<name>    keys;
             vector<string>  values;
-            time_point_sec  timestamp;
+            time_point_sec  created_at;
+            time_point_sec  modified_at;
             uint8_t         version;
             bool            is_public;
 
