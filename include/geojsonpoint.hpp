@@ -13,6 +13,8 @@ using eosio::time_point_sec;
 using eosio::name;
 using eosio::print;
 using eosio::contract;
+using eosio::const_mem_fun;
+
 using std::vector;
 using std::string;
 using std::optional;
@@ -27,9 +29,8 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          * @param {datastream} ds - The datastream used
          */
         geojsonpoint( name receiver, name code, datastream<const char*> ds )
-            : contract(receiver, code, ds),
-                _properties(_self, _self.value),
-                _points(_self, _self.value)
+            : contract( receiver, code, ds ),
+                _points( _self, _self.value )
         {}
 
         /**
@@ -41,10 +42,12 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          * @param {string} properties - Metadata properties of Point
          */
         [[eosio::action]] void create(
-            const name  user,
-            const float lat,
-            const float lon,
-            const string properties
+            const name            user,
+            const float           lat,
+            const float           lon,
+            const vector<name>    keys,
+            const vector<string>  values,
+            const name            uid
         );
 
         /**
@@ -53,42 +56,31 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         [[eosio::action]] void clean();
 
     private:
-
         /**
          * Points table
          */
         struct [[eosio::table]] point_row {
             uint64_t        id;
+            name            uid;
             name            user;
+            name            owner;
             float           lat;
             float           lon;
+            vector<name>    keys;
+            vector<string>  values;
             time_point_sec  timestamp;
             uint8_t         version;
+            bool            is_public;
 
             uint64_t primary_key() const { return id; }
+            uint64_t by_uid() const { return uid.value; }
         };
-
-        /**
-         * Properties table
-         */
-        struct [[eosio::table]] properties_row {
-            uint64_t        id;
-            string          properties;
-            time_point_sec  timestamp;
-            uint8_t         version;
-
-            uint64_t primary_key() const { return id; }
-        };
-
-        /**
-         * Multi Indexes
-         */
-        typedef eosio::multi_index< "points"_n, point_row > points_table;
-        typedef eosio::multi_index< "properties"_n, properties_row > properties_table;
+        typedef eosio::multi_index< "points"_n, point_row,
+            indexed_by<"byuid"_n, const_mem_fun<point_row, uint64_t, & point_row::by_uid> >
+        > points_table;
 
         /**
          * Table aliases
          */
         points_table _points;
-        properties_table _properties;
 };
