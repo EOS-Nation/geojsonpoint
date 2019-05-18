@@ -6,7 +6,7 @@ void geojsonpoint::create(
     const float          lon,
     const vector<name>   keys,
     const vector<string> values,
-    const string&        uid
+    name&                uid
 ) {
     // Validate user input
     require_auth( user );
@@ -18,15 +18,18 @@ void geojsonpoint::create(
     bool is_public = true;
 
     // Set initial user as owner (point can have multiple or no owners)
-    vector<name> owner;
-    owner.push_back(user);
+    vector<name> owners;
+    owners.push_back(user);
+
+    // Set Unique Identifier as blank if `uid` does not exists
+    if (uid.length() == 0) uid = name("");
 
     // Add geometry to `points` table
     _points.emplace( user, [&]( auto & row ) {
         row.id          = id;
         row.uid         = uid;
         row.user        = user;
-        row.owner       = owner;
+        row.owners      = owners;
         row.lat         = lat;
         row.lon         = lon;
         row.keys        = keys;
