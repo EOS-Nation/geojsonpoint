@@ -6,7 +6,7 @@ void geojsonpoint::create(
     const float          lon,
     const vector<name>   keys,
     const vector<string> values,
-    const name           uid
+    const string&        uid
 ) {
     // Validate user input
     require_auth( user );
@@ -25,6 +25,7 @@ void geojsonpoint::create(
         row.lat         = lat;
         row.lon         = lon;
         row.keys        = keys;
+        row.values      = values;
         row.timestamp   = timestamp;
         row.version     = version;
         row.is_public   = true;

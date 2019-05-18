@@ -47,7 +47,7 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
             const float           lon,
             const vector<name>    keys,
             const vector<string>  values,
-            const name            uid
+            const string&         uid
         );
 
         /**
@@ -61,7 +61,7 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          */
         struct [[eosio::table]] point_row {
             uint64_t        id;
-            name            uid;
+            string          uid;
             name            user;
             name            owner;
             float           lat;
@@ -73,11 +73,13 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
             bool            is_public;
 
             uint64_t primary_key() const { return id; }
-            uint64_t by_uid() const { return uid.value; }
+            // uint64_t by_uid() const { return uid.value; }
         };
-        typedef eosio::multi_index< "points"_n, point_row,
-            indexed_by<"byuid"_n, const_mem_fun<point_row, uint64_t, & point_row::by_uid> >
-        > points_table;
+        // typedef eosio::multi_index< "points"_n, point_row,
+        //     indexed_by<"byuid"_n, const_mem_fun<point_row, uint64_t, & point_row::by_uid> >
+        // > points_table;
+
+        typedef eosio::multi_index< "points"_n, point_row> points_table;
 
         /**
          * Table aliases
