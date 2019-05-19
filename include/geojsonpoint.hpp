@@ -34,20 +34,37 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         {}
 
         /**
-         * Creates - Geographical point
+         * Create point (longitude & latitude) with properties
          *
-         * @param {name} user - Creator of the Point
-         * @param {float} lat - Latitude (degrees)
+         * @param {name} owner - Creator of the Point
+         * @param {name} point_name - Unique Name Identifier
          * @param {float} lon - Longitude (degrees)
-         * @param {string} properties - Metadata properties of Point
+         * @param {float} lat - Latitude (degrees)
+         * @param {vector<name>} keys - List of Keys
+         * @param {vector<string>} values - List of Values
          */
         [[eosio::action]] void create(
-            const name            user,
-            const float           lat,
+            const name            owner,
+            const name            point_name,
             const float           lon,
+            const float           lat,
             const vector<name>    keys,
-            const vector<string>  values,
-            name&                 uid
+            const vector<string>  values
+        );
+
+        /**
+         * Move point to new coordinates
+         *
+         * @param {name} user - User to modify the point
+         * @param {name} point_name - Unique Name Identifier
+         * @param {float} lon - Longitude (degrees)
+         * @param {float} lat - Latitude (degrees)
+         */
+        [[eosio::action]] void move(
+            const name   user,
+            const name   point_name,
+            const float  lon,
+            const float  lat
         );
 
         /**
@@ -60,12 +77,11 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          * Points table
          */
         struct [[eosio::table]] point_row {
-            uint64_t        id;
-            name            uid;
-            name            user;
+            name            point_name;
             vector<name>    owners;
-            float           lat;
+            name            last_modified;
             float           lon;
+            float           lat;
             vector<name>    keys;
             vector<string>  values;
             time_point_sec  created_at;
@@ -73,16 +89,11 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
             uint8_t         version;
             bool            is_public;
 
-            uint64_t primary_key() const { return id; }
-            uint64_t by_user() const { return user.value; }
-            uint64_t by_uid() const { return uid.value; }
+            uint64_t primary_key() const { return point_name.value; }
         };
 
         // Multi-Index table
-        typedef eosio::multi_index< "points"_n, point_row,
-            indexed_by<"byuser"_n, const_mem_fun<point_row, uint64_t, & point_row::by_user> >,
-            indexed_by<"byuid"_n, const_mem_fun<point_row, uint64_t, & point_row::by_uid> >
-        > points_table;
+        typedef eosio::multi_index< "points"_n, point_row> points_table;
 
         // Table aliases
         points_table _points;
