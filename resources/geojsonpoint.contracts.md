@@ -2,13 +2,19 @@
 
 ## Description
 
-Create point (longitude & latitude) with properties
+Create point (longitude & latitude) with properties.
 
 <h1 class="contract">move</h1>
 
 ## Description
 
-Move point to new coordinates
+Move point to new coordinates.
+
+<h1 class="contract">update</h1>
+
+## Description
+
+Update point properties.
 
 <h1 class="contract">clean</h1>
 
