@@ -28,7 +28,8 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         geojsonpoint( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
                 _points( _self, _self.value ),
-                _global( _self, _self.value )
+                _geometries( _self, _self.value ),
+                _properties( _self, _self.value )
         {}
 
         /**
@@ -36,16 +37,16 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          *
          * @param {name} owner - Creator of the Point
          * @param {name} point_name - Unique Name Identifier
-         * @param {float} lon - Longitude (degrees)
-         * @param {float} lat - Latitude (degrees)
+         * @param {float} x - Longitude (degrees)
+         * @param {float} y - Latitude (degrees)
          * @param {vector<name>} keys - List of Keys
          * @param {vector<string>} values - List of Values
          */
         [[eosio::action]] void create(
             const name            owner,
             const name            point_name,
-            const float           lon,
-            const float           lat,
+            const float           x,
+            const float           y,
             const vector<name>    keys,
             const vector<string>  values
         );
@@ -55,14 +56,14 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          *
          * @param {name} user - User to modify the point
          * @param {name} point_name - Unique Name Identifier
-         * @param {float} lon - Longitude (degrees)
-         * @param {float} lat - Latitude (degrees)
+         * @param {float} x - Longitude (degrees)
+         * @param {float} y - Latitude (degrees)
          */
         [[eosio::action]] void move(
             const name   user,
             const name   point_name,
-            const float  lon,
-            const float  lat
+            const float  x,
+            const float  y
         );
 
         /**
@@ -89,42 +90,50 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         /**
          * Points table
          */
-        struct [[eosio::table]] point_row {
-            uint64_t        uid;
+        struct [[eosio::table]] points_row {
             name            point_name;
             vector<name>    owners;
-            name            last_modified;
-            float           lon;
-            float           lat;
-            vector<name>    keys;
-            vector<string>  values;
             time_point_sec  created_at;
-            time_point_sec  modified_at;
-            uint32_t        version;
             bool            is_public;
 
             uint64_t primary_key() const { return point_name.value; }
-            uint64_t by_uid() const { return uid; }
         };
 
+        /**
+         * Geometries table
+         */
+        struct [[eosio::table]] geometries_row {
+            name            point_name;
+            float           x;
+            float           y;
+            name            user;
+            uint32_t        version;
+            time_point_sec  timestamp;
+
+            uint64_t primary_key() const { return point_name.value; }
+        };
 
         /**
-         * Global table
+         * Properties table
          */
-        struct [[eosio::table]] global_state {
-            uint64_t        last_uid;
-            time_point_sec  last_created_at;
-            time_point_sec  last_modified_at;
+        struct [[eosio::table]] properties_row {
+            name            point_name;
+            vector<name>    keys;
+            vector<string>  values;
+            name            user;
+            uint32_t        version;
+            time_point_sec  timestamp;
+
+            uint64_t primary_key() const { return point_name.value; }
         };
 
         // Multi-Index table
-        typedef eosio::multi_index< "points"_n, point_row,
-            eosio::indexed_by<"byuid"_n, eosio::const_mem_fun<point_row, uint64_t, & point_row::by_uid> >
-        > points_table;
-
-        typedef eosio::singleton< "global"_n, global_state > global_state_singleton;
+        typedef eosio::multi_index< "points"_n, points_row> points_table;
+        typedef eosio::multi_index< "geometries"_n, geometries_row> geometries_table;
+        typedef eosio::multi_index< "properties"_n, properties_row> properties_table;
 
         // Table aliases
-        points_table            _points;
-        global_state_singleton  _global;
+        points_table        _points;
+        geometries_table    _geometries;
+        properties_table    _properties;
 };
