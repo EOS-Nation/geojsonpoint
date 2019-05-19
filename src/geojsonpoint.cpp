@@ -11,27 +11,35 @@ void geojsonpoint::create(
     // Validate user input
     require_auth( owner );
     check( point_name.length() > 0, "point_name is empty");
+
+    // ** Premium Feature
     check( point_name.length() == 12, "point_name must be 12 characters in length");
 
     // Check if unique `point_name` already exists
-    auto point_itr = _points.find( point_name.value );
-    check( point_itr == _points.end(), "point_name already exists" );
+    auto point_itr = _owners.find( point_name.value );
+    check( point_itr == _owners.end(), "point_name already exists" );
 
     // Point attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
+
+    // Point Public settings, if true any {user} can edit, if false only {owner} can edit
+    // ** Premium Feature
     bool is_public = true;
 
     // Set initial user as owner (point can have multiple or no owners)
     vector<name> owners;
     owners.push_back(owner);
 
-    // Add `points` table
-    _points.emplace( _self, [&]( auto & row ) {
+    // Add `owners` table
+    _owners.emplace( _self, [&]( auto & row ) {
         row.point_name     = point_name;
         row.owners         = owners;
         row.created_at     = timestamp;
         row.is_public      = is_public;
+        row.user           = owner;
+        row.version        = version;
+        row.timestamp      = timestamp;
     });
 
     // Add `geometry` table
@@ -111,10 +119,10 @@ void geojsonpoint::clean()
     // Only `geojsonpoint` can call `clean` action
     require_auth(_self);
 
-    // Remove all rows from `points` table
-    auto points_itr = _points.begin();
-    while (points_itr != _points.end()){
-        points_itr = _points.erase(points_itr);
+    // Remove all rows from `owners` table
+    auto owners_itr = _owners.begin();
+    while (owners_itr != _owners.end()){
+        owners_itr = _owners.erase(owners_itr);
     }
 
     // Remove all rows from `geometries` table

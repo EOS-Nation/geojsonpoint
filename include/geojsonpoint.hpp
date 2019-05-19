@@ -27,7 +27,7 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          */
         geojsonpoint( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
-                _points( _self, _self.value ),
+                _owners( _self, _self.value ),
                 _geometries( _self, _self.value ),
                 _properties( _self, _self.value )
         {}
@@ -88,13 +88,16 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
 
     private:
         /**
-         * Points table
+         * Owners table
          */
-        struct [[eosio::table]] points_row {
+        struct [[eosio::table]] owners_row {
             name            point_name;
             vector<name>    owners;
             time_point_sec  created_at;
             bool            is_public;
+            name            user;
+            uint32_t        version;
+            time_point_sec  timestamp;
 
             uint64_t primary_key() const { return point_name.value; }
         };
@@ -128,12 +131,12 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         };
 
         // Multi-Index table
-        typedef eosio::multi_index< "points"_n, points_row> points_table;
+        typedef eosio::multi_index< "owners"_n, owners_row> owners_table;
         typedef eosio::multi_index< "geometries"_n, geometries_row> geometries_table;
         typedef eosio::multi_index< "properties"_n, properties_row> properties_table;
 
         // Table aliases
-        points_table        _points;
+        owners_table        _owners;
         geometries_table    _geometries;
         properties_table    _properties;
 };
