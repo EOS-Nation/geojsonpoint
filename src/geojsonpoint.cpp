@@ -75,7 +75,7 @@ void geojsonpoint::move(
     check( itr != _geometries.end(), "No results found matching point_name" );
 
     // Update `points` table with new coordinates
-    _geometries.modify( itr, user, [&](auto & row){
+    _geometries.modify( itr, _self, [&](auto & row){
         row.x = x;
         row.y = y;
         row.user = user;
@@ -102,7 +102,7 @@ void geojsonpoint::update(
     check( itr != _properties.end(), "No results found matching point_name" );
 
     // Update `properties` table
-    _properties.modify( itr, user, [&](auto & row){
+    _properties.modify( itr, _self, [&](auto & row){
         row.keys = keys;
         row.values = values;
         row.user = user;
