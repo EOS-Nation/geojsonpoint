@@ -16,8 +16,8 @@ void geojsonpoint::create(
     check( point_name.length() == 12, "point_name must be 12 characters in length");
 
     // Check if unique `point_name` already exists
-    auto point_itr = _points.find( point_name.value );
-    check( point_itr == _points.end(), "point_name already exists" );
+    auto itr = _points.find( point_name.value );
+    check( itr == _points.end(), "point_name already exists" );
 
     // Point attributes
     time_point_sec timestamp = current_time_point();
@@ -71,11 +71,11 @@ void geojsonpoint::move(
     check( point_name.length() > 0, "point_name is empty");
 
     // Find Point Unique Point Name
-    auto geometries_itr = _geometries.find( point_name.value );
-    check( geometries_itr != _geometries.end(), "No results found matching point_name" );
+    auto itr = _geometries.find( point_name.value );
+    check( itr != _geometries.end(), "No results found matching point_name" );
 
     // Update `points` table with new coordinates
-    _geometries.modify( geometries_itr, user, [&](auto & row){
+    _geometries.modify( itr, user, [&](auto & row){
         row.x = x;
         row.y = y;
         row.user = user;
@@ -94,15 +94,15 @@ void geojsonpoint::update(
     require_auth( user );
     check( point_name.length() > 0, "point_name is empty");
 
-    // Find Point Unique Point Name
-    auto properties_itr = _properties.find( point_name.value );
-    check( properties_itr != _properties.end(), "No results found matching point_name" );
-
     // Last modified timestamp
     time_point_sec timestamp = current_time_point();
 
+    // Find Point Unique Point Name
+    auto itr = _properties.find( point_name.value );
+    check( itr != _properties.end(), "No results found matching point_name" );
+
     // Update `properties` table
-    _properties.modify( properties_itr, user, [&](auto & row){
+    _properties.modify( itr, user, [&](auto & row){
         row.keys = keys;
         row.values = values;
         row.user = user;
