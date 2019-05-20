@@ -10,14 +10,15 @@ void geojsonpoint::create(
 ) {
     // Validate user input
     require_auth( owner );
-    check( point_name.length() > 0, "point_name is empty");
+    check( point_name.length() > 0, "[point_name] is empty");
+    check( point_name.length() < 13, "[point_name] must be less than 12 characters");
 
     // ** Premium Feature
-    check( point_name.length() == 12, "point_name must be 12 characters in length");
+    check( point_name.length() == 12, "[point_name] must be 12 characters in length");
 
     // Check if unique `point_name` already exists
     auto itr = _points.find( point_name.value );
-    check( itr == _points.end(), "point_name already exists" );
+    check( itr == _points.end(), "[point_name] already exists" );
 
     // Point attributes
     time_point_sec timestamp = current_time_point();
@@ -68,11 +69,11 @@ void geojsonpoint::move(
 ) {
     // Validate user input
     require_auth( user );
-    check( point_name.length() > 0, "point_name is empty");
+    check( point_name.length() > 0, "[point_name] is empty");
 
     // Find Point Unique Point Name
     auto itr = _geometries.find( point_name.value );
-    check( itr != _geometries.end(), "No results found matching point_name" );
+    check( itr != _geometries.end(), "[point_name] no matching results" );
 
     // Update `points` table with new coordinates
     _geometries.modify( itr, _self, [&](auto & row){
@@ -92,14 +93,11 @@ void geojsonpoint::update(
 ) {
     // Validate user input
     require_auth( user );
-    check( point_name.length() > 0, "point_name is empty");
-
-    // Last modified timestamp
-    time_point_sec timestamp = current_time_point();
+    check( point_name.length() > 0, "[point_name] is empty");
 
     // Find Point Unique Point Name
     auto itr = _properties.find( point_name.value );
-    check( itr != _properties.end(), "No results found matching point_name" );
+    check( itr != _properties.end(), "[point_name] no matching results" );
 
     // Update `properties` table
     _properties.modify( itr, _self, [&](auto & row){
