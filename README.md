@@ -13,6 +13,11 @@
 - Multi-Dimensions Geometry (Latitude, Longitude & Elevation)
 - Mutable or Immutable Metadata
 
+## To-Do
+
+- Prevent adding two keys of the same value
+- Set Key value action
+
 ## Quickstart
 
 **Create a point**
