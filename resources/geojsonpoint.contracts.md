@@ -14,7 +14,7 @@ Move point to new coordinates.
 
 ## Description
 
-Update point properties.
+Update all properties.
 
 <h1 class="contract">clean</h1>
 
