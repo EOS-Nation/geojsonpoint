@@ -1,7 +1,11 @@
+node_modules
 eosc-vault.json
 .vscode
 *.abi
 *.wasm
+./build
+
+coverage
 
 # Prerequisites
 *.d
