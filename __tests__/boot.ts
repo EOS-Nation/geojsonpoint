@@ -1,19 +1,20 @@
-import path from "path";
 import fs from "fs";
-import { nodeos, delay, exec, eosiocpp } from "./utils";
+import { nodeos, cleos, delay, exec, eosiocpp } from "./utils";
 import { unlock, getPassword, importKey } from "./wallet"
+import {
+    PRIVATE_KEY,
+    PUBLIC_KEY,
+    ACCOUNT,
+    INPUT_PATH,
+    OUTPUT_PATH,
+    INCLUDE_PATH,
+    RESOURCES_PATH,
+    BUILD_PATH,
+} from "./config";
 
-export const CONTRACT_ACTIVE_PRIVATE_KEY = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3" // EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-export const TEST_ACTIVE_PRIVATE_KEY = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3" // EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-export const TEST_OWNER_PRIVATE_KEY = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3" // EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-export const EOSIO_PVT = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3" // EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-
-export async function wallet() {
+export async function configureWallet() {
     await unlock(getPassword());
-    await importKey(CONTRACT_ACTIVE_PRIVATE_KEY);
-    await importKey(TEST_ACTIVE_PRIVATE_KEY);
-    await importKey(TEST_OWNER_PRIVATE_KEY);
-    await importKey(EOSIO_PVT);
+    await importKey(PRIVATE_KEY);
 }
 
 export function boot() {
@@ -39,7 +40,7 @@ export function boot() {
             --filter-out=eosio:onblock: \
             --trace-history \
             --chain-state-history");
-        await delay(2000);
+        await delay(1000);
         return resolve();
     });
 }
@@ -48,15 +49,32 @@ export function kill() {
     return exec("pkill nodeos");
 }
 
-export async function compile() {
-    const input = path.join(__dirname, "..", "src", "geojsonpoint.cpp");
-    const wasm = path.join(__dirname, "..", "build", "geojsonpoint.wasm");
-    const include = path.join(__dirname, "..", "include");
-    const resources = path.join(__dirname, "..", "resources");
-
-    try { fs.mkdirSync(path.join(__dirname, "..", "build")); } catch {}
+export async function build() {
+    try { fs.mkdirSync(BUILD_PATH); } catch {}
     try {
-        await eosiocpp(`-abigen ${input} -o ${wasm} -I ${include} -R ${resources}`);
+        await eosiocpp(`-abigen ${INPUT_PATH} -o ${OUTPUT_PATH} -I ${INCLUDE_PATH} -R ${RESOURCES_PATH}`);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function setContract() {
+    try {
+        await cleos(`set contract ${ACCOUNT} ${BUILD_PATH} ${ACCOUNT}.wasm ${ACCOUNT}.abi`)
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function createAccounts() {
+    await createAccount("eosio", "geojsonpoint", PUBLIC_KEY);
+    await createAccount("eosio", "user1", PUBLIC_KEY);
+    await createAccount("eosio", "user2", PUBLIC_KEY);
+}
+
+export async function createAccount(creator: string, name: string, key: string) {
+    try {
+        await cleos(`create account ${creator} ${name} ${key}`);
     } catch (e) {
         console.error(e);
     }

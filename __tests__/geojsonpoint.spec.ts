@@ -1,10 +1,12 @@
-import { boot, kill, compile, wallet } from "./boot";
+import { boot, kill, build, configureWallet, createAccounts, setContract } from "./boot";
 
 beforeAll(async () => {
     jest.setTimeout(20000);
-    await compile();
     await boot();
-    await wallet();
+    await build();
+    await configureWallet();
+    await createAccounts();
+    await setContract();
 });
 
 afterAll(async () => {
