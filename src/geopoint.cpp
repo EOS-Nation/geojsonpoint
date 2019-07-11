@@ -1,4 +1,4 @@
 #include "geopoint.hpp"
-#include "geometry.cpp"
+#include "node.cpp"
+#include "tag.cpp"
 #include "clean.cpp"
-#include "validation.cpp"

@@ -29,52 +29,84 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         /**
          * Create point (longitude & latitude) with properties
          *
-         * @param {name} owner - creator of the Point
-         * @param {double} lat - latitude (degrees)
-         * @param {double} lon - longitude (degrees)
-         * @param {vector<tag>} properties - list of key & value tags
+         * @param {name} owner - creator of the node
+         * @param {node} node - {lat: double, lon: double}
+         * @param {vector<tag>} tags - array of key & value tags
          */
-        [[eosio::action]] void create(
+        [[eosio::action]] void createnode(
             const name              owner,
-            const double            lat,
-            const double            lon,
-            const vector<tag>       properties
-         );
+            const node              node,
+            const vector<tag>       tags
+        );
 
         /**
          * Move point to new coordinates
          *
-         * @param {name} user - User to modify the point
-         * @param {name} id - Points Identifier
-         * @param {float} lat - Latitude (degrees)
-         * @param {float} lon - Longitude (degrees)
+         * @param {name} user - authenticated user
+         * @param {uint64_t} id - node identifier
+         * @param {node} node - {lat: double, lon: double}
          */
-        [[eosio::action]] void move(
-            const name      user,
-            const uint64_t  id,
-            const double    lat,
-            const double    lon
+        [[eosio::action]] void movenode(
+            const name          user,
+            const uint64_t      id,
+            const node          node
         );
 
+        // /**
+        //  * update single tag
+        //  *
+        //  * @param {name} user - authenticated user
+        //  * @param {uint64_t} id - node identifier
+        //  * @param {tag} tag - {k: "key", v: "value"} tag
+        //  */
+        // [[eosio::action]] void updatetag(
+        //     const name          user,
+        //     const uint64_t      id,
+        //     const tag           tag
+        // );
+
         /**
-         * Update all properties
+         * replace multiple tags
          *
-         * @param {name} user - User to modify the point
-         * @param {name} geo_id - Unique Name Identifier
-         * @param {vector<name>} keys - List of Keys
-         * @param {vector<string>} values - List of Values
+         * @param {name} user - authenticated user
+         * @param {uint64_t} id - node identifier
+         * @param {vector<tag>} tags - array of {k: "key", v: "value"} tags
          */
-        [[eosio::action]] void update(
-            const name            user,
-            const name            geo_id,
-            const vector<name>    keys,
-            const vector<string>  values
+        [[eosio::action]] void replacetags(
+            const name          user,
+            const uint64_t      id,
+            const vector<tag>   tags
         );
 
         /**
-         * Clean - Removes all rows in table
+         * delete single tag
+         *
+         * @param {name} user - authenticated user
+         * @param {uint64_t} id - node identifier
+         * @param {name} k - key
+         */
+        [[eosio::action]] void deletetag(
+            const name          user,
+            const uint64_t      id,
+            const name          k
+        );
+
+        /**
+         * delete multiple tags
+         *
+         * @param {name} user - authenticated user
+         * @param {uint64_t} id - node identifier
+         */
+        [[eosio::action]] void deletetags(
+            const name          user,
+            const uint64_t      id
+        );
+
+        /**
+         * Clean - Removes all rows in tables
          */
         [[eosio::action]] void clean();
+
     private:
         /**
          * Node (point) table
@@ -98,11 +130,12 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         struct [[eosio::table]] tag_row {
             uint64_t        tag_id;
             uint64_t        id;
-            string          k;
+            name            k;
             string          v;
 
             uint64_t primary_key() const { return tag_id; }
             uint64_t by_id() const { return id; }
+            // uint64_t by_key() const { return key; }
         };
 
         // Multi-Index table
@@ -116,7 +149,23 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         node_table          _node;
         tag_table           _tag;
 
-        // Private helper methods used by other actions.
-        void validate_properties( vector<tag> properties );
-        bool id_exists( name id );
+        // void compute_by_id_key(const uint64_t id, const name key);
+
+        // tag - private helpers
+        void create_tags( uint64_t id, vector<tag> tags );
+        void create_tag( uint64_t id, tag tag );
+        void modify_tag( uint64_t tag_id, tag tag );
+        void replace_tag( uint64_t tag_id, tag tag );
+        void delete_tags( uint64_t id );
+        void delete_tag( uint64_t id, name k );
+        void check_tag( tag tag );
+        bool tag_exists( uint64_t tag_id );
+        void check_tag_exists( uint64_t tag_id );
+
+        // node - private helpers
+        uint64_t create_node( name owner, node node );
+        void move_node( uint64_t id, node node );
+        void update_node_version( name user, uint64_t id );
+        bool node_exists( uint64_t id );
+        void check_node_exists( uint64_t id );
 };

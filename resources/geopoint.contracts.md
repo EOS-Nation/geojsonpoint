@@ -1,20 +1,26 @@
-<h1 class="contract">create</h1>
+<h1 class="contract">createnode</h1>
 
 ## Description
 
-Create point (longitude & latitude) with properties.
+Create node (longitude & latitude) with tags.
 
-<h1 class="contract">move</h1>
-
-## Description
-
-Move point to new coordinates.
-
-<h1 class="contract">update</h1>
+<h1 class="contract">movenode</h1>
 
 ## Description
 
-Update all properties.
+Move node to new coordinates.
+
+<h1 class="contract">modifytag</h1>
+
+## Description
+
+Modify single tag
+
+<h1 class="contract">replacetags</h1>
+
+## Description
+
+Modify multiple tags
 
 <h1 class="contract">clean</h1>
 

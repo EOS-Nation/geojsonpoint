@@ -21,6 +21,6 @@ struct node {
  * }
  */
 struct tag {
-    string      k;
+    name        k;
     string      v;
 };
