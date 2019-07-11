@@ -13,6 +13,16 @@
 - Multi-Dimensions Geometry (Latitude, Longitude & Elevation)
 - Mutable or Immutable Metadata
 
+## Attributes
+
+- X
+- Y
+- Z
+- Time
+- Rotate
+- Scale
+- Resolution
+
 ## To-Do
 
 - Prevent adding two keys of the same value

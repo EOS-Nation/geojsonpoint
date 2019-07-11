@@ -6,15 +6,10 @@
 #include <string>
 #include <optional>
 
-using eosio::check;
-using eosio::current_time_point;
-using eosio::time_point_sec;
-using eosio::name;
-using eosio::print;
+#include <geometry.hpp>
 
-using std::vector;
-using std::string;
-using std::optional;
+using namespace eosio;
+using namespace std;
 
 class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract {
     public:
@@ -28,28 +23,23 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         geojsonpoint( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
                 _points( _self, _self.value ),
-                _geometries( _self, _self.value ),
                 _properties( _self, _self.value )
         {}
 
         /**
          * Create point (longitude & latitude) with properties
          *
-         * @param {name} owner - Creator of the Point
-         * @param {name} geo_id - Unique Name Identifier
-         * @param {float} x - Longitude (degrees)
-         * @param {float} y - Latitude (degrees)
-         * @param {vector<name>} keys - List of Keys
-         * @param {vector<string>} values - List of Values
+         * @param {name} owner - creator of the Point
+         * @param {double} lat - latitude (degrees)
+         * @param {double} lon - longitude (degrees)
+         * @param {vector<tag>} properties - list of key & value tags
          */
         [[eosio::action]] void create(
-            const name            owner,
-            const name            geo_id,
-            const float           x,
-            const float           y,
-            const vector<name>    keys,
-            const vector<string>  values
-        );
+            const name              owner,
+            const double            lat,
+            const double            lon,
+            const vector<tag>       properties
+         );
 
         /**
          * Move point to new coordinates
@@ -85,65 +75,49 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          * Clean - Removes all rows in table
          */
         [[eosio::action]] void clean();
-
     private:
         /**
          * Points table
          */
         struct [[eosio::table]] points_row {
-            name            geo_id;
-            time_point_sec  created_at;
-
-            // Premium Features
-            vector<name>    owners;
-            vector<name>    recipients;
-            bool            is_public = 1;
-            uint32_t        max_owners = 5;
-            uint32_t        max_recipients = 5;
-            uint32_t        max_properties = 10;
-
-            uint64_t primary_key() const { return geo_id.value; }
-        };
-
-        /**
-         * Geometries table
-         */
-        struct [[eosio::table]] geometries_row {
-            name            geo_id;
-            float           x;
-            float           y;
+            uint64_t        id;
+            double          lat;
+            double          lon;
 
             // Version Control Attributes
             name            user;
             uint32_t        version;
             time_point_sec  timestamp;
 
-            uint64_t primary_key() const { return geo_id.value; }
+            uint64_t primary_key() const { return id; }
         };
 
         /**
          * Properties table
          */
         struct [[eosio::table]] properties_row {
-            name            geo_id;
-            vector<name>    keys;
-            vector<string>  values;
+            uint64_t        id;
+            uint64_t        points_id;
+            name            k;
+            string          v;
 
-            // Version Control Attributes
-            name            user;
-            uint32_t        version;
-            time_point_sec  timestamp;
-
-            uint64_t primary_key() const { return geo_id.value; }
+            uint64_t primary_key() const { return id; }
+            uint64_t by_points() const { return points_id; }
         };
 
         // Multi-Index table
         typedef eosio::multi_index< "points"_n, points_row> points_table;
-        typedef eosio::multi_index< "geometries"_n, geometries_row> geometries_table;
-        typedef eosio::multi_index< "properties"_n, properties_row> properties_table;
+        typedef eosio::multi_index<
+            "properties"_n, properties_row,
+            indexed_by<"bypoints"_n, const_mem_fun<properties_row, uint64_t, &properties_row::by_points>>
+        > properties_table;
 
         // local instances of the multi indexes
-        points_table        _points;
-        geometries_table    _geometries;
-        properties_table    _properties;
+        points_table            _points;
+        properties_table        _properties;
+
+        // Private helper methods used by other actions.
+        void validate_properties( vector<tag> properties );
+        void validate_geometry( point geometry );
+        bool id_exists( name id );
 };
