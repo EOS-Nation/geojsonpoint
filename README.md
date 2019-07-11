@@ -1,4 +1,4 @@
-# GeoJSON Point EOSIO smart contract
+# Geo Point EOSIO smart contract
 
 ## Roadmap
 

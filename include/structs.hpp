@@ -5,17 +5,6 @@ using namespace eosio;
 
 /**
  * {
- *   "type": "point"
- *   "coordinates": [110, 10]
- * }
- */
-struct point {
-    name                type;
-    vector<double>      coordinates;
-};
-
-/**
- * {
  *   "lat": 10,
  *   "lon": 110
  * }
@@ -32,6 +21,6 @@ struct node {
  * }
  */
 struct tag {
-    name        k;
+    string      k;
     string      v;
 };

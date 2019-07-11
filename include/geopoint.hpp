@@ -6,12 +6,12 @@
 #include <string>
 #include <optional>
 
-#include <geometry.hpp>
+#include <structs.hpp>
 
 using namespace eosio;
 using namespace std;
 
-class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract {
+class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
     public:
         /**
          * Construct a new contract given the contract name
@@ -20,10 +20,10 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          * @param {name} code - The code name of the action this contract is processing.
          * @param {datastream} ds - The datastream used
          */
-        geojsonpoint( name receiver, name code, eosio::datastream<const char*> ds )
+        geopoint( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
-                _points( _self, _self.value ),
-                _properties( _self, _self.value )
+                _node( get_self(), get_self().value ),
+                _tag( get_self(), get_self().value )
         {}
 
         /**
@@ -45,15 +45,15 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
          * Move point to new coordinates
          *
          * @param {name} user - User to modify the point
-         * @param {name} geo_id - Unique Name Identifier
-         * @param {float} x - Longitude (degrees)
-         * @param {float} y - Latitude (degrees)
+         * @param {name} id - Points Identifier
+         * @param {float} lat - Latitude (degrees)
+         * @param {float} lon - Longitude (degrees)
          */
         [[eosio::action]] void move(
-            const name   user,
-            const name   geo_id,
-            const float  x,
-            const float  y
+            const name      user,
+            const uint64_t  id,
+            const double    lat,
+            const double    lon
         );
 
         /**
@@ -77,9 +77,9 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         [[eosio::action]] void clean();
     private:
         /**
-         * Points table
+         * Node (point) table
          */
-        struct [[eosio::table]] points_row {
+        struct [[eosio::table]] node_row {
             uint64_t        id;
             double          lat;
             double          lon;
@@ -93,31 +93,30 @@ class [[eosio::contract("geojsonpoint")]] geojsonpoint : public eosio::contract 
         };
 
         /**
-         * Properties table
+         * Tag (properties) table
          */
-        struct [[eosio::table]] properties_row {
+        struct [[eosio::table]] tag_row {
+            uint64_t        tag_id;
             uint64_t        id;
-            uint64_t        points_id;
-            name            k;
+            string          k;
             string          v;
 
-            uint64_t primary_key() const { return id; }
-            uint64_t by_points() const { return points_id; }
+            uint64_t primary_key() const { return tag_id; }
+            uint64_t by_id() const { return id; }
         };
 
         // Multi-Index table
-        typedef eosio::multi_index< "points"_n, points_row> points_table;
+        typedef eosio::multi_index< "node"_n, node_row> node_table;
         typedef eosio::multi_index<
-            "properties"_n, properties_row,
-            indexed_by<"bypoints"_n, const_mem_fun<properties_row, uint64_t, &properties_row::by_points>>
-        > properties_table;
+            "tag"_n, tag_row,
+            indexed_by<"byid"_n, const_mem_fun<tag_row, uint64_t, &tag_row::by_id>>
+        > tag_table;
 
         // local instances of the multi indexes
-        points_table            _points;
-        properties_table        _properties;
+        node_table          _node;
+        tag_table           _tag;
 
         // Private helper methods used by other actions.
         void validate_properties( vector<tag> properties );
-        void validate_geometry( point geometry );
         bool id_exists( name id );
 };
