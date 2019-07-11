@@ -27,6 +27,7 @@ void geopoint::deletetags( name user, uint64_t id ) {
 
 void geopoint::deletetag( name user, uint64_t id, name k ) {
     require_auth( user );
+    delete_tag( id, k );
     update_node_version( user, id );
 }
 
@@ -42,10 +43,12 @@ void geopoint::delete_tags( uint64_t id ) {
 }
 
 void geopoint::delete_tag( uint64_t id, name k ) {
-    // check_tag_exists( tag_id );
+    auto key_id = compute_by_id_key( id, k );
+    check_tag_exists( key_id );
 
-    // auto tag_itr = _tag.find( tag_id );
-    // _tag.erase( tag_itr );
+    auto tag_index = _tag.get_index<"bykey"_n>();
+    auto tag_itr = tag_index.find( key_id );
+    tag_index.erase( tag_itr );
 }
 
 void geopoint::create_tags( uint64_t id, vector<tag> tags ) {
@@ -84,15 +87,12 @@ void geopoint::check_tag( tag tag ) {
     check( tag.v.length() <= 255, "[tag.v] cannot be greater than 255 characters");
 }
 
-bool geopoint::tag_exists( uint64_t tag_id ) {
-    auto tag_itr = _tag.find( tag_id );
-    return tag_itr != _tag.end();
+bool geopoint::tag_exists( uint128_t key_id ) {
+    auto tag_index = _tag.get_index<"bykey"_n>();
+    auto tag_itr = tag_index.find( key_id );
+    return tag_itr != tag_index.end();
 }
 
-void geopoint::check_tag_exists( uint64_t tag_id ) {
-    check( tag_exists( tag_id ), "[tag_id] no matching results" );
+void geopoint::check_tag_exists( uint128_t key_id ) {
+    check( tag_exists( key_id ), "[key_id] no matching results" );
 }
-
-// uint128_t geopoint::compute_by_id_key(const uint64_t id, const name key) {
-//     return ((uint128_t) key.value) << 64 | id;
-// }

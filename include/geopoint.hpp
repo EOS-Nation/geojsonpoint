@@ -79,7 +79,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * delete single tag
+         * delete single tag from node
          *
          * @param {name} user - authenticated user
          * @param {uint64_t} id - node identifier
@@ -92,7 +92,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * delete multiple tags
+         * delete all tags from node
          *
          * @param {name} user - authenticated user
          * @param {uint64_t} id - node identifier
@@ -135,21 +135,20 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
 
             uint64_t primary_key() const { return tag_id; }
             uint64_t by_id() const { return id; }
-            // uint64_t by_key() const { return key; }
+            uint64_t by_key() const { return compute_by_id_key( id, k ); }
         };
 
         // Multi-Index table
         typedef eosio::multi_index< "node"_n, node_row> node_table;
         typedef eosio::multi_index<
             "tag"_n, tag_row,
-            indexed_by<"byid"_n, const_mem_fun<tag_row, uint64_t, &tag_row::by_id>>
+            indexed_by<"byid"_n, const_mem_fun<tag_row, uint64_t, &tag_row::by_id>>,
+            indexed_by<"bykey"_n, const_mem_fun<tag_row, uint64_t, &tag_row::by_key>>
         > tag_table;
 
         // local instances of the multi indexes
         node_table          _node;
         tag_table           _tag;
-
-        // void compute_by_id_key(const uint64_t id, const name key);
 
         // tag - private helpers
         void create_tags( uint64_t id, vector<tag> tags );
@@ -159,8 +158,8 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         void delete_tags( uint64_t id );
         void delete_tag( uint64_t id, name k );
         void check_tag( tag tag );
-        bool tag_exists( uint64_t tag_id );
-        void check_tag_exists( uint64_t tag_id );
+        bool tag_exists( uint128_t key_id );
+        void check_tag_exists( uint128_t key_id );
 
         // node - private helpers
         uint64_t create_node( name owner, node node );
@@ -168,4 +167,9 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         void update_node_version( name user, uint64_t id );
         bool node_exists( uint64_t id );
         void check_node_exists( uint64_t id );
+
+        // static methods
+        static uint128_t compute_by_id_key( const uint64_t id, const name key ) {
+            return ((uint128_t) key.value) << 64 | id;
+        }
 };

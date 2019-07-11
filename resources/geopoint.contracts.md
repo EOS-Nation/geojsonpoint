@@ -22,6 +22,20 @@ Modify single tag
 
 Modify multiple tags
 
+
+<h1 class="contract">deletetag</h1>
+
+## Description
+
+Delete tag
+
+<h1 class="contract">deletetags</h1>
+
+## Description
+
+Delete tags
+
+
 <h1 class="contract">clean</h1>
 
 ## Description
