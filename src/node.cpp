@@ -3,17 +3,16 @@ void geopoint::createnode(
     const node              node,
     const vector<tag>       tags
 ) {
-    // validation
     require_auth( owner );
-    uint64_t id = create_node( owner, node );
-    create_tags( id, tags );
+    uint64_t id = emplace_node( owner, node );
+    emplace_tags( id, tags );
 }
 
-uint64_t geopoint::create_node( name owner, node node ) {
+uint64_t geopoint::emplace_node( name owner, node node ) {
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = _node.available_primary_key();
+    uint64_t id = global_available_primary_key();
 
     // Create row in `node` TABLE
     _node.emplace( _self, [&]( auto & row ) {
@@ -27,6 +26,13 @@ uint64_t geopoint::create_node( name owner, node node ) {
         row.timestamp  = timestamp;
     });
     return id;
+}
+
+uint64_t geopoint::global_available_primary_key() {
+    global_row global = _global.get_or_default();
+    global.last_id += 1;
+    _global.set(global, get_self());
+    return global.id;
 }
 
 void geopoint::movenode(

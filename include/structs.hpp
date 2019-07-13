@@ -16,11 +16,11 @@ struct node {
 
 /**
  * {
- *   "k": "prop0",
- *   "v": "value0"
+ *   "key": "prop0",
+ *   "value": "value0"
  * }
  */
 struct tag {
-    name        k;
-    string      v;
+    name        key;
+    string      value;
 };
