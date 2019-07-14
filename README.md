@@ -2,37 +2,24 @@
 
 ## Roadmap
 
-- GeoID Auction
-- GeoID NFT Owernship
-- GeoLocation Token (GEO)
-- Multi-Blockchain Support (EOSIO chains)
-- Web Vector Tile Services
-- GeoID & GeoLocation Permission Management
-- Private or Public GeoLocation Permissions
-- Smart Contract Notifications
-- Multi-Dimensions Geometry (Latitude, Longitude & Elevation)
-- Mutable or Immutable Metadata
+- GeoPoint EOSIO Smart Contract standard
+- GeoJSON & Map Vector Tile Services
+- UI map example for Block Explorers
 
-## Attributes
+## Tables
 
-- X
-- Y
-- Z
-- Time
-- Rotate
-- Scale
-- Resolution
+### `node`
 
-## To-Do
+- `id`
+- `lat`
+- `lon`
 
-- Prevent adding two keys of the same value
-- Set Key value action
+### `tag`
 
-## Quickstart
-
-**Create a point**
-
-https://jungle.eosx.io/tools/contract?contractAccount=geojsonpoint
+- `id`
+- `node_id`
+- `key`
+- `value`
 
 ## References
 
