@@ -21,6 +21,11 @@
 - `key`
 - `value`
 
+## Map viewers
+
+- [Leaflet](https://leafletjs.com/)
+- [Leaflet Mapbox GL](https://github.com/mapbox/mapbox-gl-leaflet)
+
 ## References
 
 - [upgrading/1.5-to-1.6.md](https://github.com/EOSIO/eosio.cdt/blob/master/docs/upgrading/1.5-to-1.6.md)
