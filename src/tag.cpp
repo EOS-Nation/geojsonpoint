@@ -41,7 +41,7 @@ void geopoint::emplace_tags( uint64_t id, vector<tag> tags ) {
 
 void geopoint::update_tags( uint64_t id, vector<tag> tags ) {
     for ( auto const tag : tags ) {
-        emplace_tag( id, tag );
+        update_tag( id, tag );
     }
 }
 
