@@ -42,6 +42,7 @@ uint64_t geopoint::emplace_node( name owner, node node ) {
         row.user       = owner;
         row.version    = version;
         row.timestamp  = timestamp;
+        row.changeset  = get_trx_id();
     });
     return id;
 }
@@ -80,6 +81,7 @@ void geopoint::update_node_version( name user, uint64_t id ) {
         row.user        = user;
         row.version     = row.version + 1;
         row.timestamp   = current_time_point();
+        row.changeset   = get_trx_id();
     });
 }
 

@@ -152,7 +152,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
             name            user;
             uint32_t        version;
             time_point_sec  timestamp;
-            uint64_t        changeset;
+            checksum256     changeset;
 
             uint64_t primary_key() const { return id; }
         };
@@ -238,5 +238,13 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
             uint64_t available_primary_key = _global.get_or_default().available_primary_key;
             _global.set(global_row{ available_primary_key + 1 }, get_self());
             return available_primary_key;
+        }
+
+        checksum256 get_trx_id() {
+            size_t size = transaction_size();
+            char buf[size];
+            size_t read = read_transaction( buf, size );
+            check( size == read, "read_transaction failed");
+            return sha256( buf, read );
         }
 };

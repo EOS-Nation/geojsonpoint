@@ -5,9 +5,13 @@ CONTRACT=geojsonspec2
 ENDPOINT=https://jungle.eosn.io
 
 cleos -u $ENDPOINT push action $CONTRACT createnode \
-    "{\"owner\":\"${USER}\",\"node\": {\"lat\":10, \"lon\": 110}, \"tags\":[{\"key\":\"foo\",\"value\":\"bar\"}, {\"key\":\"hello\",\"value\":\"world\"}]}" \
+    "{\"owner\":\"${USER}\",\"node\": {\"lat\":10, \"lon\": 95}, \"tags\":[{\"key\":\"foo\",\"value\":\"bar\"}, {\"key\":\"hello\",\"value\":\"world\"}]}" \
     -p $USER
 
 cleos -u $ENDPOINT push action $CONTRACT createnode \
     "[${USER},{\"lat\":45, \"lon\": 110}, [{\"key\":\"second\",\"value\":\"value\"}]]" \
+    -p $USER
+
+cleos -u $ENDPOINT push action $CONTRACT movenode \
+    "[${USER},0, {\"lat\":20, \"lon\": 50}]" \
     -p $USER
