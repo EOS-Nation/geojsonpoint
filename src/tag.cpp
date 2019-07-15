@@ -1,10 +1,10 @@
-void geopoint::addtags(
+void geopoint::updatetags(
     const name            user,
     const uint64_t        id,
     const vector<tag>     tags
 ) {
     require_auth( user );
-    add_tags( id, tags );
+    update_tags( id, tags );
     update_node_version( user, id );
 }
 
@@ -15,7 +15,7 @@ void geopoint::replacetags(
 ) {
     require_auth( user );
     erase_tags( id );
-    replace_tags( id, tags );
+    emplace_tags( id, tags );
     update_node_version( user, id );
 }
 
@@ -35,6 +35,22 @@ void geopoint::emplace_tags( uint64_t id, vector<tag> tags ) {
     check( tags.size() <= 255, "[tags] cannot have more than 255 elements");
 
     for ( auto const tag : tags ) {
+        emplace_tag( id, tag );
+    }
+}
+
+void geopoint::update_tags( uint64_t id, vector<tag> tags ) {
+    for ( auto const tag : tags ) {
+        emplace_tag( id, tag );
+    }
+}
+
+void geopoint::update_tag( uint64_t id, tag tag ) {
+    auto key_id = compute_by_id_key( id, tag.key );
+
+    if ( tag_exists( key_id ) ) {
+        modify_tag( id, tag );
+    } else {
         emplace_tag( id, tag );
     }
 }
@@ -60,8 +76,8 @@ void geopoint::modify_tag( uint64_t id, tag tag ) {
     auto tag_itr = tag_index.find( key_id );
 
     tag_index.modify( tag_itr, _self, [&](auto & row) {
-        row.key = node.key;
-        row.value = node.value;
+        row.key = tag.key;
+        row.value = tag.value;
     });
 }
 
@@ -76,7 +92,7 @@ void geopoint::erase_tags( uint64_t id ) {
     }
 }
 
-void geopoint::erase_keys( uint64_t id, vector<tag> keys ) {
+void geopoint::erase_keys( uint64_t id, vector<name> keys ) {
     check_node_exists( id );
     check( keys.size() <= 255, "[keys] cannot have more than 255 elements");
 

@@ -14,4 +14,7 @@ void geopoint::clean()
     while ( tag_itr != _tag.end() ) {
         tag_itr = _tag.erase(tag_itr);
     }
+
+    // Set Global to 0
+    _global.remove();
 }

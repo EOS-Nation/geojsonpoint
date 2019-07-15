@@ -35,6 +35,30 @@ Delete tag
 
 Delete tags
 
+<h1 class="contract">updatetags</h1>
+
+## Description
+
+Update tags
+
+<h1 class="contract">erasetags</h1>
+
+## Description
+
+Erase tag(s)
+
+<h1 class="contract">erasekeys</h1>
+
+## Description
+
+Erase keys
+
+<h1 class="contract">erasenodes</h1>
+
+## Description
+
+Erase node(s)
+
 
 <h1 class="contract">clean</h1>
 

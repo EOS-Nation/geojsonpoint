@@ -10,8 +10,8 @@ using namespace eosio;
  * }
  */
 struct node {
-    double      lat;
-    double      lon;
+    float      lat;
+    float      lon;
 };
 
 /**

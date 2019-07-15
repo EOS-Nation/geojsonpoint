@@ -8,6 +8,24 @@ void geopoint::createnode(
     emplace_tags( id, tags );
 }
 
+void geopoint::movenode(
+    const name      user,
+    const uint64_t  id,
+    const node      node
+) {
+    require_auth( user );
+    move_node( id, node );
+    update_node_version( user, id );
+}
+
+void geopoint::erasenodes(
+    const name              user,
+    const vector<uint64_t>  ids
+) {
+    require_auth( user );
+    erase_nodes( ids );
+}
+
 uint64_t geopoint::emplace_node( name owner, node node ) {
     // Point default attributes
     time_point_sec timestamp = current_time_point();
@@ -28,22 +46,21 @@ uint64_t geopoint::emplace_node( name owner, node node ) {
     return id;
 }
 
-uint64_t geopoint::global_available_primary_key() {
-    global_row global = _global.get_or_default();
-    global.last_id += 1;
-    _global.set(global, get_self());
-    return global.id;
+void geopoint::erase_nodes( vector<uint64_t> ids ) {
+    check( ids.size() <= 255, "[ids] cannot have more than 255 elements");
+
+    for ( auto const id : ids ) {
+        erase_node( id );
+    }
 }
 
-void geopoint::movenode(
-    const name      user,
-    const uint64_t  id,
-    const node      node
-) {
-    require_auth( user );
-    move_node( id, node );
-    update_node_version( user, id );
+void geopoint::erase_node( uint64_t id ) {
+    check_node_exists( id );
+
+    auto node_itr = _node.find( id );
+    _node.erase( node_itr );
 }
+
 
 void geopoint::move_node( uint64_t id, node node ) {
     check_node_exists( id );
