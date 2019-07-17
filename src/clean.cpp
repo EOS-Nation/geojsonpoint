@@ -9,12 +9,6 @@ void geopoint::clean()
         node_itr = _node.erase(node_itr);
     }
 
-    // Remove all rows from `tag` TABLE
-    auto tag_itr = _tag.begin();
-    while ( tag_itr != _tag.end() ) {
-        tag_itr = _tag.erase(tag_itr);
-    }
-
     // Remove Singletons
     _global.remove();
     _bounds.remove();

@@ -9,11 +9,11 @@ cleos -u $ENDPOINT push action $CONTRACT clean \
     -p $USER
 
 cleos -u $ENDPOINT push action $CONTRACT createnode \
-    "{\"owner\":\"${USER}\",\"node\": {\"lat\":10, \"lon\": 95}, \"tags\":[{\"key\":\"foo\",\"value\":\"bar\"}, {\"key\":\"hello\",\"value\":\"world\"}]}" \
+    "{\"owner\":\"${USER}\",\"node\": {\"lat\":10, \"lon\": 95}, \"tags\":[{\"k\":\"foo\",\"v\":\"bar\"}, {\"k\":\"hello\",\"v\":\"world\"}]}" \
     -p $USER
 
 cleos -u $ENDPOINT push action $CONTRACT createnode \
-    "[${USER},{\"lat\":45, \"lon\": 110}, [{\"key\":\"second\",\"value\":\"value\"}]]" \
+    "[${USER},{\"lat\":45, \"lon\": 110}, [{\"k\":\"second\",\"v\":\"value0\"}]]" \
     -p $USER
 
 cleos -u $ENDPOINT push action $CONTRACT movenode \
@@ -21,5 +21,5 @@ cleos -u $ENDPOINT push action $CONTRACT movenode \
     -p $USER
 
 cleos -u $ENDPOINT push action $CONTRACT updatetags \
-    "[${USER},1, [{\"key\":\"second\", \"value\": \"updated\"}]]" \
+    "[${USER},1, [{\"k\":\"second\", \"v\": \"updated\"}]]" \
     -p $USER

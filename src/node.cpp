@@ -1,14 +1,15 @@
-void geopoint::createnode(
+uint64_t geopoint::create(
     const name              owner,
     const node              node,
     const vector<tag>       tags
 ) {
     require_auth( owner );
-    uint64_t id = emplace_node( owner, node );
-    emplace_tags( id, tags );
+    uint64_t id = emplace_node( owner, node, tags );
+    update_bounds( node );
+    return id;
 }
 
-void geopoint::movenode(
+void geopoint::move(
     const name      user,
     const uint64_t  id,
     const node      node
@@ -16,9 +17,10 @@ void geopoint::movenode(
     require_auth( user );
     move_node( id, node );
     update_node_version( user, id );
+    update_bounds( node );
 }
 
-void geopoint::erasenodes(
+void geopoint::erase(
     const name              user,
     const vector<uint64_t>  ids
 ) {
@@ -26,7 +28,9 @@ void geopoint::erasenodes(
     erase_nodes( ids );
 }
 
-uint64_t geopoint::emplace_node( name owner, node node ) {
+uint64_t geopoint::emplace_node( name owner, node node, vector<tag> tags ) {
+    check_tags( tags );
+
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
@@ -37,6 +41,7 @@ uint64_t geopoint::emplace_node( name owner, node node ) {
         row.id         = id;
         row.lat        = node.lat;
         row.lon        = node.lon;
+        row.tags       = tags;
 
         // Initial version vontrol attributes
         row.user       = owner;
