@@ -1,25 +1,36 @@
+/**
+ * ACTION create
+ */
 uint64_t geopoint::create(
     const name              owner,
-    const node              node,
+    const float             lat,
+    const float             lon,
     const vector<tag>       tags
 ) {
     require_auth( owner );
-    uint64_t id = emplace_node( owner, node, tags );
-    update_bounds( node );
+    uint64_t id = emplace_node( owner, node{lat, lon}, tags );
+    update_bounds( node{lat, lon} );
     return id;
 }
 
+/**
+ * ACTION move
+ */
 void geopoint::move(
     const name      user,
     const uint64_t  id,
-    const node      node
+    const float     lat,
+    const float     lon
 ) {
     require_auth( user );
-    move_node( id, node );
+    move_node( id, node{lat, lon} );
     update_node_version( user, id );
-    update_bounds( node );
+    update_bounds( node{lat, lon} );
 }
 
+/**
+ * ACTION erase
+ */
 void geopoint::erase(
     const name              user,
     const vector<uint64_t>  ids

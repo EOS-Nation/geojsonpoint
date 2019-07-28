@@ -30,20 +30,26 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         {}
 
         /**
+         * ACTION create
+         *
          * Create node (longitude & latitude) with tags
          *
          * @param {name} owner - creator of the node
-         * @param {node} node - {lat: float, lon: float}
+         * @param {float} lat - latitude
+         * @param {float} lon - longitude
          * @param {vector<tag>} tags - array of key & value tags
          * @returns {uint64_t} node id
          */
         [[eosio::action]] uint64_t create(
             const name              owner,
-            const node              node,
+            const float             lat,
+            const float             lon,
             const vector<tag>       tags
         );
 
         /**
+         * ACTION erase
+         *
          * Erase node and all associated tags
          *
          * @param {name} user - authenticated user
@@ -55,19 +61,25 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
+         * ACTION move
+         *
          * Move node to a new location
          *
          * @param {name} user - authenticated user
          * @param {uint64_t} id - node identifier
-         * @param {node} node - {lat: float, lon: float}
+         * @param {float} lat - latitude
+         * @param {float} lon - longitude
          */
         [[eosio::action]] void move(
             const name          user,
             const uint64_t      id,
-            const node          node
+            const float         lat,
+            const float         lon
         );
 
         /**
+         * ACTION modify
+         *
          * Modify tags from a node/way
          *
          * @param {name} user - authenticated user
@@ -81,6 +93,8 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
+         * PRIVATE ACTION clean
+         *
          * Clean - Removes all rows in tables
          */
         [[eosio::action]] void clean();
@@ -121,31 +135,12 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
             uint64_t primary_key() const { return id; }
         };
 
-        // /**
-        //  * Tag (properties) table
-        //  */
-        // struct [[eosio::table("tag")]] tag_row {
-        //     uint64_t        tag_id;
-        //     uint64_t        id;
-        //     name            key;
-        //     string          value;
-
-        //     uint64_t primary_key() const { return tag_id; }
-        //     uint64_t by_id() const { return id; }
-        //     uint128_t by_key() const { return compute_by_id_key( id, key ); }
-        // };
-
         // Singleton table
         typedef singleton<"global"_n, global_row> global_table;
         typedef singleton<"bounds"_n, bounds_row> bounds_table;
 
         // Multi-Index table
         typedef eosio::multi_index< "node"_n, node_row> node_table;
-        // typedef eosio::multi_index<
-        //     "tag"_n, tag_row,
-        //     indexed_by<"byid"_n, const_mem_fun<tag_row, uint64_t, &tag_row::by_id>>,
-        //     indexed_by<"bykey"_n, const_mem_fun<tag_row, uint128_t, &tag_row::by_key>>
-        // > tag_table;
 
         // local instances of the multi indexes
         node_table          _node;
