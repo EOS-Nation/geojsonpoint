@@ -8,18 +8,18 @@ cleos -u $ENDPOINT push action $CONTRACT clean \
     "[]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $CONTRACT createnode \
-    "{\"owner\":\"${USER}\",\"node\": {\"lat\":10, \"lon\": 95}, \"tags\":[{\"k\":\"foo\",\"v\":\"bar\"}, {\"k\":\"hello\",\"v\":\"world\"}]}" \
+cleos -u $ENDPOINT push action $CONTRACT create \
+    "{\"owner\":\"${USER}\",\"lat\": 10, \"lon\": 95, \"tags\":[{\"k\":\"foo\",\"v\":\"bar\"}, {\"k\":\"hello\",\"v\":\"world\"}]}" \
     -p $USER
 
-cleos -u $ENDPOINT push action $CONTRACT createnode \
-    "[${USER},{\"lat\":45, \"lon\": 110}, [{\"k\":\"second\",\"v\":\"value0\"}]]" \
+cleos -u $ENDPOINT push action $CONTRACT create \
+    "[${USER},45, 110, [{\"k\":\"second\",\"v\":\"value0\"}]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $CONTRACT movenode \
-    "[${USER},0, {\"lat\":20, \"lon\": 50}]" \
+cleos -u $ENDPOINT push action $CONTRACT move \
+    "[${USER},0, 20, 50]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $CONTRACT updatetags \
+cleos -u $ENDPOINT push action $CONTRACT modify \
     "[${USER},1, [{\"k\":\"second\", \"v\": \"updated\"}]]" \
     -p $USER
