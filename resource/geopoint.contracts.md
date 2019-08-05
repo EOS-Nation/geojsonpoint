@@ -2,7 +2,13 @@
 
 ## Description
 
-Create new node {lat, lon} with tags [{k, v}]
+Create new point with tags
+
+<h1 class="contract">createline</h1>
+
+## Description
+
+Create new linestring with tags
 
 <h1 class="contract">move</h1>
 

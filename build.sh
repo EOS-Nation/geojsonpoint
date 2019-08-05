@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-cd src
-eosio-cpp geopoint.cpp -o ../geopoint.wasm -abigen -I ../include -I ./ -R ../resources
+CODE=geopoint
+
+eosio-cpp -abigen -I include -R resource -contract $CODE -o $CODE.wasm src/$CODE.cpp

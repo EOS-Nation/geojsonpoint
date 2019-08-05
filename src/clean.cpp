@@ -4,9 +4,9 @@ void geopoint::clean()
     require_auth( get_self() );
 
     // Remove all rows from `node` TABLE
-    auto node_itr = _node.begin();
-    while ( node_itr != _node.end() ) {
-        node_itr = _node.erase(node_itr);
+    auto point_itr = _point.begin();
+    while ( point_itr != _point.end() ) {
+        point_itr = _point.erase(point_itr);
     }
 
     // Remove Singletons
