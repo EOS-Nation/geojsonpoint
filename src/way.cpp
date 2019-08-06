@@ -1,5 +1,5 @@
 /**
- * ACTION create
+ * ACTION createway
  */
 uint64_t geopoint::createway(
     const name                  owner,
@@ -20,18 +20,18 @@ uint64_t geopoint::emplace_way( name owner, vector<point> way, vector<tag> tags 
     uint64_t id = global_available_primary_key();
 
     // node id cointainer
-    vector<uint64_t> ref;
+    vector<uint64_t> refs;
 
     for (auto const& node: way) {
         uint64_t id = emplace_node( owner, node, vector<tag>() );
         update_bounds( node );
-        ref.push_back(id);
+        refs.push_back(id);
     }
 
     // Create row in `node` TABLE
     _way.emplace( _self, [&]( auto & row ) {
         row.id         = id;
-        row.ref        = ref;
+        row.refs       = refs;
         row.tags       = tags;
 
         // Initial version vontrol attributes
@@ -49,5 +49,5 @@ bool geopoint::way_exists( uint64_t id ) {
 }
 
 void geopoint::check_way_exists( uint64_t id ) {
-    check( way_exists( id ), "[id] no matching results" );
+    check( way_exists( id ), "[id] no way matching results" );
 }

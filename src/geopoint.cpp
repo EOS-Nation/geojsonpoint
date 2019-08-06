@@ -2,6 +2,7 @@
 #include "global.cpp"
 #include "node.cpp"
 #include "way.cpp"
+#include "relation.cpp"
 #include "tag.cpp"
 #include "clean.cpp"
 #include "erase.cpp"

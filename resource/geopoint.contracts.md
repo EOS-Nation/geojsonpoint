@@ -1,14 +1,20 @@
-<h1 class="contract">create</h1>
+<h1 class="contract">createnode</h1>
 
 ## Description
 
-Create new point with tags
+Create new node with tags
 
 <h1 class="contract">createway</h1>
 
 ## Description
 
 Create new way with tags
+
+<h1 class="contract">createrel</h1>
+
+## Description
+
+Create new relation with tags
 
 <h1 class="contract">move</h1>
 

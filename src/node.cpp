@@ -1,7 +1,7 @@
 /**
- * ACTION create
+ * ACTION createnode
  */
-uint64_t geopoint::create(
+uint64_t geopoint::createnode(
     const name              owner,
     const point             node,
     const vector<tag>       tags
@@ -76,5 +76,5 @@ bool geopoint::node_exists( uint64_t id ) {
 }
 
 void geopoint::check_node_exists( uint64_t id ) {
-    check( node_exists( id ), "[id] no matching results" );
+    check( node_exists( id ), "[id] no node matching results" );
 }

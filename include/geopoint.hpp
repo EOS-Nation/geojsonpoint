@@ -28,12 +28,13 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
             : contract( receiver, code, ds ),
                 _node( get_self(), get_self().value ),
                 _way( get_self(), get_self().value ),
+                _relation( get_self(), get_self().value ),
                 _global( get_self(), get_self().value ),
                 _bounds( get_self(), get_self().value )
         {}
 
         /**
-         * ACTION create
+         * ACTION createnode
          *
          * Create node (longitude & latitude) with tags
          *
@@ -42,7 +43,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
          * @param {vector<tag>} tags - array of key & value tags
          * @returns {uint64_t} node id
          */
-        [[eosio::action]] uint64_t create(
+        [[eosio::action]] uint64_t createnode(
             const name              owner,
             const point             node,
             const vector<tag>       tags
@@ -61,6 +62,22 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         [[eosio::action]] uint64_t createway(
             const name                  owner,
             const vector<point>         way,
+            const vector<tag>           tags
+        );
+
+        /**
+         * ACTION createrel
+         *
+         * Create relation with tags
+         *
+         * @param {name} owner - creator of the way
+         * @param {vector<member>} member - array of member
+         * @param {vector<tag>} tags - array of key & value tags
+         * @returns {uint64_t} member id
+         */
+        [[eosio::action]] uint64_t createrel(
+            const name                  owner,
+            const vector<member>        member,
             const vector<tag>           tags
         );
 
@@ -154,7 +171,24 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
          */
         struct [[eosio::table("way")]] way_row {
             uint64_t            id;
-            vector<uint64_t>    ref;
+            vector<uint64_t>    refs;
+
+            // Version Control Attributes
+            name                user;
+            uint32_t            version;
+            time_point_sec      timestamp;
+            checksum256         changeset;
+            vector<tag>         tags;
+
+            uint64_t primary_key() const { return id; }
+        };
+
+        /**
+         * relation table
+         */
+        struct [[eosio::table("relation")]] relation_row {
+            uint64_t            id;
+            vector<member>      members;
 
             // Version Control Attributes
             name                user;
@@ -173,10 +207,12 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         // Multi-Index table
         typedef eosio::multi_index< "node"_n, node_row> node_table;
         typedef eosio::multi_index< "way"_n, way_row> way_table;
+        typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
 
         // local instances of the multi indexes
         node_table          _node;
         way_table           _way;
+        relation_table      _relation;
         bounds_table        _bounds;
         global_table        _global;
 
@@ -203,6 +239,14 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         bool erase_ways( vector<uint64_t> ids );
         bool way_exists( uint64_t id );
         void check_way_exists( uint64_t id );
+
+        // relation - private helpers
+        // ==========================
+        uint64_t emplace_relation( name owner, vector<member> member, vector<tag> tags );
+        bool erase_relation( uint64_t id );
+        bool erase_relations( vector<uint64_t> ids );
+        bool relation_exists( uint64_t id );
+        void check_relation_exists( uint64_t id );
 
         // bound - private helpers
         // =======================

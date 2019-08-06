@@ -32,6 +32,10 @@ ENDPOINT=http://localhost:8888
 #     "[${USER},1, [{\"k\":\"second\", \"v\": \"updated\"}]]" \
 #     -p $USER
 
-cleos -u $ENDPOINT push action $CONTRACT erase \
-    "[${USER},[6]]" \
+# cleos -u $ENDPOINT push action $CONTRACT erase \
+#     "[${USER},[6]]" \
+#     -p $USER
+
+cleos -u $ENDPOINT push action $CONTRACT createrel \
+    "[${USER},[{\"type\": \"way\", \"ref\": 14, \"role\": \"\"}, {\"type\": \"node\", \"ref\": 8, \"role\": \"\"}], [{\"k\":\"foo\", \"v\": \"bar\"}]]" \
     -p $USER
