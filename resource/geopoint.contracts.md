@@ -4,17 +4,17 @@
 
 Create new point with tags
 
-<h1 class="contract">createline</h1>
+<h1 class="contract">createway</h1>
 
 ## Description
 
-Create new linestring with tags
+Create new way with tags
 
 <h1 class="contract">move</h1>
 
 ## Description
 
-Move node {lat, lon} to new coordinates.
+Move node to new coordinates.
 
 <h1 class="contract">modify</h1>
 

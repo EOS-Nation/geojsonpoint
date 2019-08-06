@@ -6,22 +6,21 @@ namespace geometry {
 /**
  * @struct Stores information for point geometry
  */
-template <class T>
 struct point
 {
     /**
      * Template for coordinate types
      */
-    using coordinate_type = T;
+    using coordinate_type = float;
 
     /**
      * x coordinate (longitude)
      */
-    T x;
+    float x;
     /**
      * y coordinate (latitude)
      */
-    T y;
+    float y;
 
     /**
      * Default constructor, construct a new point
@@ -29,7 +28,7 @@ struct point
      * @brief Construct a new point object
      * @example
      *
-     * auto pt = point<double>{};
+     * auto pt = point{};
      */
     constexpr point() : x(), y() {}
 
@@ -41,9 +40,9 @@ struct point
      * @param y_ - y coordinate (latitude)
      * @example
      *
-     * auto pt = point<double>{110.1, 90.5};
+     * auto pt = point{110.1, 90.5};
      */
-    constexpr point(T x_, T y_) : x(x_), y(y_) {}
+    constexpr point(float x_, float y_) : x(x_), y(y_) {}
 
     /**
      * Equality operator
@@ -55,8 +54,8 @@ struct point
      * @pre Both point must have the same coordinate_type
      * @example
      *
-     * auto pt1 = point<double>{110, 90};
-     * auto pt2 = point<double>{110, 90};
+     * auto pt1 = point{110, 90};
+     * auto pt2 = point{110, 90};
      *
      * if (pt1 == pt2) print("pt1 and pt2 are equal");
      */
@@ -75,8 +74,8 @@ struct point
      * @pre Both point must have the same coordinate_type
      * @example
      *
-     * auto pt1 = point<double>{110, 90};
-     * auto pt2 = point<double>{110, 90};
+     * auto pt1 = point{110, 90};
+     * auto pt2 = point{110, 90};
      *
      * if (pt1 != pt2) print("pt1 and pt2 are not equal");
      */

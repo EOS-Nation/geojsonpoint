@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mapbox/geometry/point.hpp>
-#include <mapbox/geometry/linestring.hpp>
+// #include <mapbox/geometry/linestring.hpp>
 // #include <mapbox/geometry/polygon.hpp>
 // #include <mapbox/geometry/multi_point.hpp>
 // #include <mapbox/geometry/multi_line_string.hpp>

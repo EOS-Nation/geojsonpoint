@@ -4,9 +4,15 @@ void geopoint::clean()
     require_auth( get_self() );
 
     // Remove all rows from `node` TABLE
-    auto point_itr = _point.begin();
-    while ( point_itr != _point.end() ) {
-        point_itr = _point.erase(point_itr);
+    auto node_itr = _node.begin();
+    while ( node_itr != _node.end() ) {
+        node_itr = _node.erase(node_itr);
+    }
+
+    // Remove all rows from `way` TABLE
+    auto way_itr = _way.begin();
+    while ( way_itr != _way.end() ) {
+        way_itr = _way.erase(way_itr);
     }
 
     // Remove Singletons

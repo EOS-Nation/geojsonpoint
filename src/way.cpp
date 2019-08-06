@@ -1,0 +1,53 @@
+/**
+ * ACTION create
+ */
+uint64_t geopoint::createway(
+    const name                  owner,
+    const vector<point>         way,
+    const vector<tag>           tags
+) {
+    require_auth( owner );
+    uint64_t id = emplace_way( owner, way, tags );
+    return id;
+}
+
+uint64_t geopoint::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
+    check_tags( tags );
+
+    // Point default attributes
+    time_point_sec timestamp = current_time_point();
+    uint32_t version = 1;
+    uint64_t id = global_available_primary_key();
+
+    // node id cointainer
+    vector<uint64_t> ref;
+
+    for (auto const& node: way) {
+        uint64_t id = emplace_node( owner, node, vector<tag>() );
+        update_bounds( node );
+        ref.push_back(id);
+    }
+
+    // Create row in `node` TABLE
+    _way.emplace( _self, [&]( auto & row ) {
+        row.id         = id;
+        row.ref        = ref;
+        row.tags       = tags;
+
+        // Initial version vontrol attributes
+        row.user       = owner;
+        row.version    = version;
+        row.timestamp  = timestamp;
+        row.changeset  = get_trx_id();
+    });
+    return id;
+}
+
+bool geopoint::way_exists( uint64_t id ) {
+    auto way_itr = _way.find( id );
+    return way_itr != _way.end();
+}
+
+void geopoint::check_way_exists( uint64_t id ) {
+    check( way_exists( id ), "[id] no matching results" );
+}

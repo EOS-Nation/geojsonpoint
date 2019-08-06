@@ -5,15 +5,15 @@ void geopoint::modify(
 ) {
     require_auth( user );
     modify_tags( id, tags );
-    update_point_version( user, id );
+    update_node_version( user, id );
 }
 
 void geopoint::modify_tags( uint64_t id, vector<tag> tags ) {
-    check_point_exists( id );
+    check_node_exists( id );
     check_tags( tags );
 
-    auto point_itr = _point.find( id );
-    _point.modify( point_itr, get_self() , [&]( auto & row ) {
+    auto point_itr = _node.find( id );
+    _node.modify( point_itr, get_self() , [&]( auto & row ) {
         row.tags = tags;
     });
 }

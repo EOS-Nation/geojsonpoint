@@ -16,9 +16,13 @@ ENDPOINT=http://localhost:8888
 #     "{\"owner\":\"${USER}\",\"lat\": 10, \"lon\": 95, \"tags\":[{\"k\":\"foo\",\"v\":\"bar\"}, {\"k\":\"hello\",\"v\":\"world\"}]}" \
 #     -p $USER
 
-cleos -u $ENDPOINT push action $CONTRACT create \
-    "[${USER},[45.12345678912345, 110.12345678912345], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
-    -p $USER
+# cleos -u $ENDPOINT push action $CONTRACT create \
+#     "[${USER},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
+#     -p $USER
+
+# cleos -u $ENDPOINT push action $CONTRACT createway \
+#     "[${USER},[[-25, -45], [65, 180]], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
+#     -p $USER
 
 # cleos -u $ENDPOINT push action $CONTRACT move \
 #     "[${USER},0, 20, 50]" \
@@ -27,3 +31,7 @@ cleos -u $ENDPOINT push action $CONTRACT create \
 # cleos -u $ENDPOINT push action $CONTRACT modify \
 #     "[${USER},1, [{\"k\":\"second\", \"v\": \"updated\"}]]" \
 #     -p $USER
+
+cleos -u $ENDPOINT push action $CONTRACT erase \
+    "[${USER},[6]]" \
+    -p $USER

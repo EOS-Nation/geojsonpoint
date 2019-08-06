@@ -26,8 +26,8 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
          */
         geopoint( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
-                _point( get_self(), get_self().value ),
-                _linestring( get_self(), get_self().value ),
+                _node( get_self(), get_self().value ),
+                _way( get_self(), get_self().value ),
                 _global( get_self(), get_self().value ),
                 _bounds( get_self(), get_self().value )
         {}
@@ -35,32 +35,32 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         /**
          * ACTION create
          *
-         * Create point (longitude & latitude) with tags
+         * Create node (longitude & latitude) with tags
          *
-         * @param {name} owner - creator of the point
-         * @param {point<double>} pt - point{x, y}
+         * @param {name} owner - creator of the node
+         * @param {point} node - point{x, y}
          * @param {vector<tag>} tags - array of key & value tags
-         * @returns {uint64_t} point id
+         * @returns {uint64_t} node id
          */
         [[eosio::action]] uint64_t create(
             const name              owner,
-            const point<double>     pt,
+            const point             node,
             const vector<tag>       tags
         );
 
         /**
-         * ACTION createline
+         * ACTION createway
          *
-         * Create linestring with tags
+         * Create way with tags
          *
-         * @param {name} owner - creator of the linestring
-         * @param {linestring<double>} line - linestring
+         * @param {name} owner - creator of the way
+         * @param {vector<point>} way - way
          * @param {vector<tag>} tags - array of key & value tags
-         * @returns {uint64_t} linestring id
+         * @returns {uint64_t} way id
          */
-        [[eosio::action]] uint64_t createline(
+        [[eosio::action]] uint64_t createway(
             const name                  owner,
-            const linestring<double>    line,
+            const vector<point>         way,
             const vector<tag>           tags
         );
 
@@ -80,25 +80,25 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         /**
          * ACTION move
          *
-         * Move point to a new location
+         * Move node to a new location
          *
          * @param {name} user - authenticated user
          * @param {uint64_t} id - point identifier
-         * @param {point<double>} pt - point{x, y}
+         * @param {point} node - point{x, y}
          */
         [[eosio::action]] void move(
             const name          user,
             const uint64_t      id,
-            const point<double> pt
+            const point         node
         );
 
         /**
          * ACTION modify
          *
-         * Modify tags from a point
+         * Modify tags from a node
          *
          * @param {name} user - authenticated user
-         * @param {uint64_t} id - point identifier
+         * @param {uint64_t} id - node identifier
          * @param {vector<tag>} tags - array of key & value tags
          */
         [[eosio::action]] void modify(
@@ -126,18 +126,18 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
          * Bounds table
          */
         struct [[eosio::table("bounds")]] bounds_row {
-            float minlat = 0;
-            float minlon = 0;
-            float maxlat = 0;
-            float maxlon = 0;
+            float min_x;
+            float min_y;
+            float max_x;
+            float max_y;
         };
 
         /**
-         * point table
+         * node table
          */
-        struct [[eosio::table("point")]] point_row {
+        struct [[eosio::table("node")]] node_row {
             uint64_t        id;
-            point<double>   point;
+            point           node;
 
             // Version Control Attributes
             name            user;
@@ -150,18 +150,18 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         };
 
         /**
-         * linestring table
+         * way table
          */
-        struct [[eosio::table("linestring")]] linestring_row {
-            uint64_t                id;
-            linestring<double>      linestring;
+        struct [[eosio::table("way")]] way_row {
+            uint64_t            id;
+            vector<uint64_t>    ref;
 
             // Version Control Attributes
-            name            user;
-            uint32_t        version;
-            time_point_sec  timestamp;
-            checksum256     changeset;
-            vector<tag>     tags;
+            name                user;
+            uint32_t            version;
+            time_point_sec      timestamp;
+            checksum256         changeset;
+            vector<tag>         tags;
 
             uint64_t primary_key() const { return id; }
         };
@@ -171,38 +171,42 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         typedef singleton<"bounds"_n, bounds_row> bounds_table;
 
         // Multi-Index table
-        typedef eosio::multi_index< "point"_n, point_row> point_table;
-        typedef eosio::multi_index< "linestring"_n, linestring_row> linestring_table;
+        typedef eosio::multi_index< "node"_n, node_row> node_table;
+        typedef eosio::multi_index< "way"_n, way_row> way_table;
 
         // local instances of the multi indexes
-        point_table         _point;
-        linestring_table    _linestring;
+        node_table          _node;
+        way_table           _way;
         bounds_table        _bounds;
         global_table        _global;
 
-        // tag - private helpers
-        // =====================
+        // properties - private helpers
+        // ============================
         void modify_tags( uint64_t id, vector<tag> tags );
         void check_tag( tag tag );
         void check_tags( vector<tag> tags );
 
         // node - private helpers
-        // =====================
-        uint64_t emplace_point( name owner, point<double> pt, vector<tag> tags );
-        void erase_point( uint64_t id );
-        void erase_points( vector<uint64_t> ids );
-        void move_point( uint64_t id, point<double> pt );
-        void update_point_version( name user, uint64_t id );
-        bool point_exists( uint64_t id );
-        void check_point_exists( uint64_t id );
+        // ======================
+        uint64_t emplace_node( name owner, point node, vector<tag> tags );
+        bool erase_node( uint64_t id );
+        bool erase_nodes( vector<uint64_t> ids );
+        void move_node( uint64_t id, point node );
+        void update_node_version( name user, uint64_t id );
+        bool node_exists( uint64_t id );
+        void check_node_exists( uint64_t id );
 
-        // linestring - private helpers
-        // ============================
-        uint64_t emplace_linestring( name owner, linestring<double> line, vector<tag> tags );
+        // way - private helpers
+        // =====================
+        uint64_t emplace_way( name owner, vector<point> way, vector<tag> tags );
+        bool erase_way( uint64_t id );
+        bool erase_ways( vector<uint64_t> ids );
+        bool way_exists( uint64_t id );
+        void check_way_exists( uint64_t id );
 
         // bound - private helpers
         // =======================
-        void update_bounds( point<double> pt );
+        void update_bounds( point node );
 
         // global - private helpers
         // ========================
