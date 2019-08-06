@@ -1,4 +1,5 @@
-#include "geopoint.hpp"
+#include "xy.hpp"
+
 #include "global.cpp"
 #include "node.cpp"
 #include "way.cpp"
@@ -8,4 +9,3 @@
 #include "erase.cpp"
 #include "bounds.cpp"
 #include "get_trx_id.cpp"
-

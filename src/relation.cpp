@@ -1,7 +1,7 @@
 /**
  * ACTION createrel
  */
-uint64_t geopoint::createrel(
+uint64_t xy::createrel(
     const name                  owner,
     const vector<member>        members,
     const vector<tag>           tags
@@ -11,7 +11,7 @@ uint64_t geopoint::createrel(
     return id;
 }
 
-uint64_t geopoint::emplace_relation( name owner, vector<member> members, vector<tag> tags ) {
+uint64_t xy::emplace_relation( name owner, vector<member> members, vector<tag> tags ) {
     check_tags( tags );
 
     // Point default attributes
@@ -41,11 +41,11 @@ uint64_t geopoint::emplace_relation( name owner, vector<member> members, vector<
     return id;
 }
 
-bool geopoint::relation_exists( uint64_t id ) {
+bool xy::relation_exists( uint64_t id ) {
     auto relation_itr = _relation.find( id );
     return relation_itr != _relation.end();
 }
 
-void geopoint::check_relation_exists( uint64_t id ) {
+void xy::check_relation_exists( uint64_t id ) {
     check( relation_exists( id ), "[id] no relation matching results" );
 }

@@ -1,4 +1,4 @@
-void geopoint::update_bounds( point node ) {
+void xy::update_bounds( point node ) {
     bounds_row bounds = _bounds.get_or_create( get_self(), {node.x, node.y, node.x, node.y} );
 
     bool modified = false;

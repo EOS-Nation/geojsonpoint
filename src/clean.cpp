@@ -1,4 +1,4 @@
-void geopoint::clean()
+void xy::clean()
 {
     // Only `_self` can call `clean` action
     require_auth( get_self() );

@@ -1,7 +1,7 @@
 /**
  * ACTION erase
  */
-void geopoint::erase(
+void xy::erase(
     const name              user,
     const vector<uint64_t>  ids
 ) {
@@ -15,7 +15,7 @@ void geopoint::erase(
     check( is_erased, "[ids] no ids found to erase");
 }
 
-bool geopoint::erase_nodes( vector<uint64_t> ids ) {
+bool xy::erase_nodes( vector<uint64_t> ids ) {
     bool is_erased = false;
 
     for ( auto const id : ids ) {
@@ -24,7 +24,7 @@ bool geopoint::erase_nodes( vector<uint64_t> ids ) {
     return is_erased;
 }
 
-bool geopoint::erase_ways( vector<uint64_t> ids ) {
+bool xy::erase_ways( vector<uint64_t> ids ) {
     bool is_erased = false;
 
     for ( auto const id : ids ) {
@@ -33,7 +33,7 @@ bool geopoint::erase_ways( vector<uint64_t> ids ) {
     return is_erased;
 }
 
-bool geopoint::erase_node( uint64_t id ) {
+bool xy::erase_node( uint64_t id ) {
     if ( !node_exists( id ) ) return false;
 
     auto node_itr = _node.find( id );
@@ -41,7 +41,7 @@ bool geopoint::erase_node( uint64_t id ) {
     return true;
 }
 
-bool geopoint::erase_way( uint64_t id ) {
+bool xy::erase_way( uint64_t id ) {
     if ( !way_exists( id ) ) return false;
 
     auto way_itr = _way.find( id );

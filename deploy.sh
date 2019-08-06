@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CODE=geopoint
+CODE=xy
 CONTRACT=eosio
 ENDPOINT=http://localhost:8888
 # CONTRACT=geojsonspec2

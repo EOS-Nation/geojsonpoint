@@ -1,4 +1,4 @@
-void geopoint::modify(
+void xy::modify(
     const name            user,
     const uint64_t        id,
     const vector<tag>     tags
@@ -8,7 +8,7 @@ void geopoint::modify(
     update_node_version( user, id );
 }
 
-void geopoint::modify_tags( uint64_t id, vector<tag> tags ) {
+void xy::modify_tags( uint64_t id, vector<tag> tags ) {
     check_node_exists( id );
     check_tags( tags );
 
@@ -18,7 +18,7 @@ void geopoint::modify_tags( uint64_t id, vector<tag> tags ) {
     });
 }
 
-void geopoint::check_tags( vector<tag> tags ) {
+void xy::check_tags( vector<tag> tags ) {
     check( tags.size() <= 255, "[tags] cannot have more than 255 elements");
 
     for ( auto const tag : tags ) {
@@ -26,7 +26,7 @@ void geopoint::check_tags( vector<tag> tags ) {
     }
 }
 
-void geopoint::check_tag( tag tag ) {
+void xy::check_tag( tag tag ) {
     check( tag.k.length() > 0, "[tag.k] must contain at least 1 character");
     check( tag.k.length() <= 255, "[tag.k] cannot be greater than 255 characters");
     check( tag.v.length() <= 255, "[tag.v] cannot be greater than 255 characters");

@@ -1,7 +1,7 @@
 /**
  * ACTION createway
  */
-uint64_t geopoint::createway(
+uint64_t xy::createway(
     const name                  owner,
     const vector<point>         way,
     const vector<tag>           tags
@@ -11,7 +11,7 @@ uint64_t geopoint::createway(
     return id;
 }
 
-uint64_t geopoint::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
+uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
     check_tags( tags );
 
     // Point default attributes
@@ -43,11 +43,11 @@ uint64_t geopoint::emplace_way( name owner, vector<point> way, vector<tag> tags 
     return id;
 }
 
-bool geopoint::way_exists( uint64_t id ) {
+bool xy::way_exists( uint64_t id ) {
     auto way_itr = _way.find( id );
     return way_itr != _way.end();
 }
 
-void geopoint::check_way_exists( uint64_t id ) {
+void xy::check_way_exists( uint64_t id ) {
     check( way_exists( id ), "[id] no way matching results" );
 }

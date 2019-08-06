@@ -15,7 +15,7 @@ using namespace eosio;
 using namespace std;
 using namespace mapbox::geometry;
 
-class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
+class [[eosio::contract("xy")]] xy : public eosio::contract {
     public:
         /**
          * Construct a new contract given the contract name
@@ -24,7 +24,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
          * @param {name} code - The code name of the action this contract is processing.
          * @param {datastream} ds - The datastream used
          */
-        geopoint( name receiver, name code, eosio::datastream<const char*> ds )
+        xy( name receiver, name code, eosio::datastream<const char*> ds )
             : contract( receiver, code, ds ),
                 _node( get_self(), get_self().value ),
                 _way( get_self(), get_self().value ),
@@ -34,7 +34,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         {}
 
         /**
-         * ACTION createnode
+         * ACTION `createnode`
          *
          * Create node (longitude & latitude) with tags
          *
@@ -50,7 +50,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * ACTION createway
+         * ACTION `createway`
          *
          * Create way with tags
          *
@@ -66,23 +66,23 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * ACTION createrel
+         * ACTION `createrel`
          *
          * Create relation with tags
          *
          * @param {name} owner - creator of the way
-         * @param {vector<member>} member - array of member
+         * @param {vector<member>} members - array of member
          * @param {vector<tag>} tags - array of key & value tags
          * @returns {uint64_t} member id
          */
         [[eosio::action]] uint64_t createrel(
             const name                  owner,
-            const vector<member>        member,
+            const vector<member>        members,
             const vector<tag>           tags
         );
 
         /**
-         * ACTION erase
+         * ACTION `erase`
          *
          * Erase node and all associated tags
          *
@@ -95,7 +95,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * ACTION move
+         * ACTION `move`
          *
          * Move node to a new location
          *
@@ -110,7 +110,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * ACTION modify
+         * ACTION `modify`
          *
          * Modify tags from a node
          *
@@ -125,22 +125,22 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         );
 
         /**
-         * PRIVATE ACTION clean
+         * PRIVATE ACTION `clean`
          *
-         * Clean - Removes all rows in tables
+         * Removes all rows in tables
          */
         [[eosio::action]] void clean();
 
     private:
         /**
-         * Global table
+         * TABLE `global`
          */
         struct [[eosio::table("global")]] global_row {
             uint64_t available_primary_key = 0;
         };
 
         /**
-         * Bounds table
+         * TABLE `bounds`
          */
         struct [[eosio::table("bounds")]] bounds_row {
             float min_x;
@@ -150,7 +150,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         };
 
         /**
-         * node table
+         * TABLE `node`
          */
         struct [[eosio::table("node")]] node_row {
             uint64_t        id;
@@ -167,7 +167,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         };
 
         /**
-         * way table
+         * TABLE `way`
          */
         struct [[eosio::table("way")]] way_row {
             uint64_t            id;
@@ -184,7 +184,7 @@ class [[eosio::contract("geopoint")]] geopoint : public eosio::contract {
         };
 
         /**
-         * relation table
+         * TABLE `relation`
          */
         struct [[eosio::table("relation")]] relation_row {
             uint64_t            id;
