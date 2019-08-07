@@ -7,6 +7,7 @@ uint64_t xy::createway(
     const vector<tag>           tags
 ) {
     require_auth( owner );
+    check_way( way );
     uint64_t id = emplace_way( owner, way, tags );
     return id;
 }
@@ -24,7 +25,6 @@ uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
 
     for (auto const& node: way) {
         uint64_t id = emplace_node( owner, node, vector<tag>() );
-        update_bounds( node );
         refs.push_back(id);
     }
 
@@ -50,4 +50,9 @@ bool xy::way_exists( uint64_t id ) {
 
 void xy::check_way_exists( uint64_t id ) {
     check( way_exists( id ), "[id] no way matching results" );
+}
+
+void xy::check_way( vector<point> way ) {
+    check( way.size() > 1, "[way] must contain at least 2 nodes");
+    check( way.size() <= 255, "[way] cannot contain be greater than 255 nodes");
 }

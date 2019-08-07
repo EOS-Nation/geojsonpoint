@@ -33,7 +33,6 @@
 - [`way`](#way-table)
 - [`relation`](#relation-table)
 - [`global`](#global-table)
-- [`bounds`](#bounds-table)
 
 ## ACTION `createnode`
 
@@ -250,10 +249,3 @@ cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
 ## TABLE `global`
 
 - `{uint64_t} available_primary_key` - global id for node/way/relation
-
-## TABLE `bounds`
-
-- `{float} min_x` - minimum x coordinate
-- `{float} min_y` - minimum y coordinate
-- `{float} max_x` - maximum x coordinate
-- `{float} max_x` - maximum y coordinate

@@ -8,7 +8,6 @@ uint64_t xy::createnode(
 ) {
     require_auth( owner );
     uint64_t id = emplace_node( owner, node, tags );
-    update_bounds( node );
     return id;
 }
 
@@ -24,7 +23,6 @@ void xy::move(
     check_owner( user, id );
     move_node( id, node );
     update_version( id );
-    update_bounds( node );
 }
 
 uint64_t xy::emplace_node( name owner, point node, vector<tag> tags ) {

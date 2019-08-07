@@ -29,8 +29,7 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
                 _node( get_self(), get_self().value ),
                 _way( get_self(), get_self().value ),
                 _relation( get_self(), get_self().value ),
-                _global( get_self(), get_self().value ),
-                _bounds( get_self(), get_self().value )
+                _global( get_self(), get_self().value )
         {}
 
         /**
@@ -160,21 +159,6 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
         };
 
         /**
-         * TABLE `bounds`
-         *
-         * @param {float} min_x - minimum x coordinate
-         * @param {float} min_y - minimum y coordinate
-         * @param {float} max_x - maximum x coordinate
-         * @param {float} max_x - maximum y coordinate
-         */
-        struct [[eosio::table("bounds")]] bounds_row {
-            float min_x;
-            float min_y;
-            float max_x;
-            float max_y;
-        };
-
-        /**
          * TABLE `node`
          *
          * @param {uint64_t} id - object unique identifier
@@ -284,7 +268,6 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
 
         // Singleton table
         typedef singleton<"global"_n, global_row> global_table;
-        typedef singleton<"bounds"_n, bounds_row> bounds_table;
 
         // Multi-Index table
         typedef eosio::multi_index< "node"_n, node_row> node_table;
@@ -295,7 +278,6 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
         node_table          _node;
         way_table           _way;
         relation_table      _relation;
-        bounds_table        _bounds;
         global_table        _global;
 
         // properties - private helpers
@@ -320,6 +302,7 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
         bool erase_ways( vector<uint64_t> ids );
         bool way_exists( uint64_t id );
         void check_way_exists( uint64_t id );
+        void check_way( vector<point> way );
 
         // relation - private helpers
         // ==========================
@@ -328,10 +311,6 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
         bool erase_relations( vector<uint64_t> ids );
         bool relation_exists( uint64_t id );
         void check_relation_exists( uint64_t id );
-
-        // bound - private helpers
-        // =======================
-        void update_bounds( point node );
 
         // utils - private helpers
         // =======================

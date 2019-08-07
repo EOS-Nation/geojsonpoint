@@ -17,5 +17,4 @@ void xy::clean()
 
     // Remove Singletons
     _global.remove();
-    _bounds.remove();
 }
