@@ -10,6 +10,11 @@ void xy::erase(
 
     bool is_erased = false;
 
+    // Authentication user by id owner
+    for ( auto const id : ids ) {
+        check_owner( user, id );
+    }
+
     if ( erase_nodes( ids ) ) is_erased = true;
     if ( erase_ways( ids ) ) is_erased = true;
     check( is_erased, "[ids] no ids found to erase");

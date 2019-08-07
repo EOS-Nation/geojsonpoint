@@ -153,15 +153,15 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          * TABLE `node`
          */
         struct [[eosio::table("node")]] node_row {
-            uint64_t        id;
-            point           node;
+            uint64_t            id;
+            point               node;
 
             // Version Control Attributes
-            name            user;
-            uint32_t        version;
-            time_point_sec  timestamp;
-            checksum256     changeset;
-            vector<tag>     tags;
+            name                owner;
+            uint32_t            version;
+            time_point_sec      timestamp;
+            checksum256         changeset;
+            vector<tag>         tags;
 
             uint64_t primary_key() const { return id; }
         };
@@ -174,7 +174,7 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
             vector<uint64_t>    refs;
 
             // Version Control Attributes
-            name                user;
+            name                owner;
             uint32_t            version;
             time_point_sec      timestamp;
             checksum256         changeset;
@@ -191,7 +191,7 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
             vector<member>      members;
 
             // Version Control Attributes
-            name                user;
+            name                owner;
             uint32_t            version;
             time_point_sec      timestamp;
             checksum256         changeset;
@@ -228,7 +228,6 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
         bool erase_node( uint64_t id );
         bool erase_nodes( vector<uint64_t> ids );
         void move_node( uint64_t id, point node );
-        void update_node_version( name user, uint64_t id );
         bool node_exists( uint64_t id );
         void check_node_exists( uint64_t id );
 
@@ -252,8 +251,11 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
         // =======================
         void update_bounds( point node );
 
-        // global - private helpers
-        // ========================
-        uint64_t global_available_primary_key();
+        // utils - private helpers
+        // =======================
         checksum256 get_trx_id();
+        uint64_t global_available_primary_key();
+        name get_owner( uint64_t id );
+        void check_owner( name user, uint64_t id );
+        void update_version( uint64_t id );
 };

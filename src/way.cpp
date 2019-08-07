@@ -35,7 +35,7 @@ uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.user       = owner;
+        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();

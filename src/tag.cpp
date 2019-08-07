@@ -4,18 +4,32 @@ void xy::modify(
     const vector<tag>     tags
 ) {
     require_auth( user );
+    check_owner( user, id );
+    check_tags( tags );
     modify_tags( id, tags );
-    update_node_version( user, id );
+    update_version( id );
 }
 
 void xy::modify_tags( uint64_t id, vector<tag> tags ) {
-    check_node_exists( id );
-    check_tags( tags );
-
-    auto point_itr = _node.find( id );
-    _node.modify( point_itr, get_self() , [&]( auto & row ) {
-        row.tags = tags;
-    });
+    if (node_exists( id )) {
+        auto node_itr = _node.find( id );
+        _node.modify( node_itr, get_self(), [&]( auto & row ) {
+            row.tags = tags;
+        });
+    }
+    else if (way_exists( id )) {
+        auto way_itr = _way.find( id );
+        _way.modify( way_itr, get_self(), [&]( auto & row ) {
+            row.tags = tags;
+        });
+    }
+    else if (relation_exists( id )) {
+        auto relation_itr = _relation.find( id );
+        _relation.modify( relation_itr, get_self(), [&]( auto & row ) {
+            row.tags = tags;
+        });
+    }
+    check(false, "[id] not found to modify tags");
 }
 
 void xy::check_tags( vector<tag> tags ) {

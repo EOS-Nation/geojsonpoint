@@ -21,8 +21,9 @@ void xy::move(
     const point         node
 ) {
     require_auth( user );
+    check_owner( user, id );
     move_node( id, node );
-    update_node_version( user, id );
+    update_version( id );
     update_bounds( node );
 }
 
@@ -41,7 +42,7 @@ uint64_t xy::emplace_node( name owner, point node, vector<tag> tags ) {
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.user       = owner;
+        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();
@@ -55,18 +56,6 @@ void xy::move_node( uint64_t id, point node ) {
     auto node_itr = _node.find( id );
     _node.modify( node_itr, _self, [&](auto & row) {
         row.node = node;
-    });
-}
-
-void xy::update_node_version( name user, uint64_t id ) {
-    check_node_exists( id );
-
-    auto node_itr = _node.find( id );
-    _node.modify( node_itr, _self, [&](auto & row) {
-        row.user        = user;
-        row.version     = row.version + 1;
-        row.timestamp   = current_time_point();
-        row.changeset   = get_trx_id();
     });
 }
 

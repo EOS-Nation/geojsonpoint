@@ -1,6 +1,5 @@
 #include "xy.hpp"
 
-#include "global.cpp"
 #include "node.cpp"
 #include "way.cpp"
 #include "relation.cpp"
@@ -8,4 +7,4 @@
 #include "clean.cpp"
 #include "erase.cpp"
 #include "bounds.cpp"
-#include "get_trx_id.cpp"
+#include "utils.cpp"

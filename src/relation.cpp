@@ -33,7 +33,7 @@ uint64_t xy::emplace_relation( name owner, vector<member> members, vector<tag> t
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.user       = owner;
+        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();
