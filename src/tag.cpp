@@ -44,6 +44,5 @@ void xy::check_tags( vector<tag> tags ) {
 
 void xy::check_tag( tag tag ) {
     check( tag.k.length() > 0, "[tag.k] must contain at least 1 character");
-    check( tag.k.length() <= 255, "[tag.k] cannot be greater than 255 characters");
     check( tag.v.length() <= 255, "[tag.v] cannot be greater than 255 characters");
 }

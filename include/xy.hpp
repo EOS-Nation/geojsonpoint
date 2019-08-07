@@ -42,6 +42,9 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          * @param {point} node - point{x, y}
          * @param {vector<tag>} tags - array of key & value tags
          * @returns {uint64_t} node id
+         * @example
+         *
+         * cleos push action xy createnode '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}]]'
          */
         [[eosio::action]] uint64_t createnode(
             const name              owner,
@@ -58,6 +61,9 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          * @param {vector<point>} way - way
          * @param {vector<tag>} tags - array of key & value tags
          * @returns {uint64_t} way id
+         * @example
+         *
+         * cleos push action xy createway '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}]]'
          */
         [[eosio::action]] uint64_t createway(
             const name                  owner,
@@ -74,6 +80,9 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          * @param {vector<member>} members - array of member
          * @param {vector<tag>} tags - array of key & value tags
          * @returns {uint64_t} member id
+         * @example
+         *
+         * cleos push action xy createway '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}]]'
          */
         [[eosio::action]] uint64_t createrel(
             const name                  owner,
@@ -88,6 +97,9 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          *
          * @param {name} user - authenticated user
          * @param {vector<uint64_t>} ids - array of node identifiers
+         * @example
+         *
+         * cleos push action xy erase '["myaccount", [0]]'
          */
         [[eosio::action]] void erase(
             const name              user,
@@ -102,6 +114,9 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          * @param {name} user - authenticated user
          * @param {uint64_t} id - point identifier
          * @param {point} node - point{x, y}
+         * @example
+         *
+         * cleos push action xy move '["myaccount", 0, [45.0, 110.5]]'
          */
         [[eosio::action]] void move(
             const name          user,
@@ -117,6 +132,9 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
          * @param {name} user - authenticated user
          * @param {uint64_t} id - node identifier
          * @param {vector<tag>} tags - array of key & value tags
+         * @example
+         *
+         * cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
          */
         [[eosio::action]] void modify(
             const name          user,
@@ -134,6 +152,8 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
     private:
         /**
          * TABLE `global`
+         *
+         * @param {uint64_t} available_primary_key - global id for node/way/relation
          */
         struct [[eosio::table("global")]] global_row {
             uint64_t available_primary_key = 0;
@@ -141,6 +161,11 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
 
         /**
          * TABLE `bounds`
+         *
+         * @param {float} min_x - minimum x coordinate
+         * @param {float} min_y - minimum y coordinate
+         * @param {float} max_x - maximum x coordinate
+         * @param {float} max_x - maximum y coordinate
          */
         struct [[eosio::table("bounds")]] bounds_row {
             float min_x;
@@ -151,6 +176,25 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
 
         /**
          * TABLE `node`
+         *
+         * @param {uint64_t} id - object unique identifier
+         * @param {point} node - point{x, y} coordinate
+         * @param {name} owner - creator of object
+         * @param {uint32_t} version - amount of times object has been modified
+         * @param {time_point_sec} timestamp - last time object was modified
+         * @param {checksum256} changeset - transaction ID used to last modify object
+         * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
+         * @example
+         *
+         * {
+         *   "id": 0,
+         *   "node": {"x": 45.0, "y": 110.5},
+         *   "owner": "myaccount",
+         *   "version": 1,
+         *   "timestamp": "2019-08-07T18:37:37",
+         *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08",
+         *   "tags": [ { "k": "key", "v": "value" } ]
+         * }
          */
         struct [[eosio::table("node")]] node_row {
             uint64_t            id;
@@ -168,6 +212,25 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
 
         /**
          * TABLE `way`
+         *
+         * @param {uint64_t} id - object unique identifier
+         * @param {vector<uint64_t} refs - array of node ids
+         * @param {name} owner - creator of object
+         * @param {uint32_t} version - amount of times object has been modified
+         * @param {time_point_sec} timestamp - last time object was modified
+         * @param {checksum256} changeset - transaction ID used to last modify object
+         * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
+         * @example
+         *
+         * {
+         *   "id": 0,
+         *   "refs": [0, 1],
+         *   "owner": "myaccount",
+         *   "version": 1,
+         *   "timestamp": "2019-08-07T18:37:37",
+         *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08",
+         *   "tags": [ { "k": "key", "v": "value" } ]
+         * }
          */
         struct [[eosio::table("way")]] way_row {
             uint64_t            id;
@@ -185,6 +248,25 @@ class [[eosio::contract("xy")]] xy : public eosio::contract {
 
         /**
          * TABLE `relation`
+         *
+         * @param {uint64_t} id - object unique identifier
+         * @param {vector<member} members - array of member{type, ref, role}
+         * @param {name} owner - creator of object
+         * @param {uint32_t} version - amount of times object has been modified
+         * @param {time_point_sec} timestamp - last time object was modified
+         * @param {checksum256} changeset - transaction ID used to last modify object
+         * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
+         * @example
+         *
+         * {
+         *   "id": 0,
+         *   "members": [{"type": "way", "ref": 1, "role": "outer"}],
+         *   "owner": "myaccount",
+         *   "version": 1,
+         *   "timestamp": "2019-08-07T18:37:37",
+         *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08",
+         *   "tags": [ { "k": "key", "v": "value" } ]
+         * }
          */
         struct [[eosio::table("relation")]] relation_row {
             uint64_t            id;

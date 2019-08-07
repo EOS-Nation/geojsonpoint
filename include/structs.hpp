@@ -1,3 +1,5 @@
+#pragma once
+
 #include <eosio/eosio.hpp>
 
 using namespace std;
@@ -16,8 +18,8 @@ using namespace eosio;
  * }
  */
 struct tag {
-    name        k;
-    string      v;
+    eosio::name        k;
+    std::string        v;
 };
 
 /**
@@ -35,7 +37,7 @@ struct tag {
  * }
  */
 struct member {
-    name        type;
-    uint64_t    ref;
-    name        role;
+    eosio::name     type;
+    uint64_t        ref;
+    eosio::name     role;
 };
