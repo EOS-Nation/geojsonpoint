@@ -29,7 +29,9 @@ void xy::modify_tags( uint64_t id, vector<tag> tags ) {
             row.tags = tags;
         });
     }
-    check(false, "[id] not found to modify tags");
+    else {
+        check(false, "[id] not found to modify tags");
+    }
 }
 
 void xy::check_tags( vector<tag> tags ) {
