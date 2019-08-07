@@ -1,4 +1,4 @@
-# XY Geospatial Network EOSIO Smart Contracts
+# Geolocation XY Network - EOSIO Smart Contracts
 
 ## Roadmap
 
