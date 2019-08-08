@@ -10,11 +10,11 @@ ENDPOINT=http://localhost:8888
 #     "[]" \
 #     -p $USER
 
-cleos -u $ENDPOINT transfer $USER $NETWORK "1.0000 EOS"
+# cleos -u $ENDPOINT transfer $USER $NETWORK "1.0000 EOS"
 
-cleos -u $ENDPOINT push action $NETWORK createnode \
-    "[${USER},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
-    -p $USER
+# cleos -u $ENDPOINT push action $NETWORK createnode \
+#     "[${USER},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
+#     -p $USER
 
 # cleos -u $ENDPOINT push action $NETWORK createway \
 #     "[${USER},[[-25, -45], [65, 180]], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
