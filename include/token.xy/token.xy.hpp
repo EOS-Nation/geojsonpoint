@@ -103,6 +103,15 @@ public:
     void close( const name& owner, const symbol& symbol );
 
     /**
+     * Consume action.
+     *
+     * @param owner - the account to consume owner
+     * @param quantity - the quantity of tokens to be consumed
+     */
+    [[eosio::action]]
+    void consume( const name& owner, const asset& quantity );
+
+    /**
      * Get supply method.
      *
      * @details Gets the supply for token `sym_code`, created by `token_contract_account` account.
@@ -140,6 +149,8 @@ public:
     using transfer_action = eosio::action_wrapper<"transfer"_n, &token::transfer>;
     using open_action = eosio::action_wrapper<"open"_n, &token::open>;
     using close_action = eosio::action_wrapper<"close"_n, &token::close>;
+    using consume_action = eosio::action_wrapper<"consume"_n, &token::consume>;
+
 private:
     struct [[eosio::table]] account {
         asset    balance;

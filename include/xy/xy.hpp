@@ -11,11 +11,14 @@
 
 #include <xy/structs.hpp>
 #include <token.xy/token.xy.hpp>
+// #include <eosio.token/eosio.token.hpp>
 #include <mapbox/geometry.hpp>
 
 using namespace eosio;
 using namespace std;
 using namespace mapbox::geometry;
+
+const name TOKEN_CONTRACT = "token.xy"_n;
 
 class [[eosio::contract("xy")]] xy : public contract {
 public:
@@ -49,11 +52,10 @@ public:
      *
      * cleos push action xy createnode '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}]]'
      */
-    [[eosio::action]] uint64_t createnode(
-        const name              owner,
-        const point             node,
-        const vector<tag>       tags
-    );
+    [[eosio::action]]
+    uint64_t createnode( const name             owner,
+                         const point            node,
+                         const vector<tag>      tags );
 
     /**
      * ACTION `createway`
@@ -68,11 +70,10 @@ public:
      *
      * cleos push action xy createway '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}]]'
      */
-    [[eosio::action]] uint64_t createway(
-        const name                  owner,
-        const vector<point>         way,
-        const vector<tag>           tags
-    );
+    [[eosio::action]]
+    uint64_t createway( const name            owner,
+                        const vector<point>   way,
+                        const vector<tag>     tags );
 
     /**
      * ACTION `createrel`
@@ -87,11 +88,10 @@ public:
      *
      * cleos push action xy createway '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}]]'
      */
-    [[eosio::action]] uint64_t createrel(
-        const name                  owner,
-        const vector<member>        members,
-        const vector<tag>           tags
-    );
+    [[eosio::action]]
+    uint64_t createrel( const name              owner,
+                        const vector<member>    members,
+                        const vector<tag>       tags );
 
     /**
      * ACTION `erase`
@@ -104,10 +104,9 @@ public:
      *
      * cleos push action xy erase '["myaccount", [0]]'
      */
-    [[eosio::action]] void erase(
-        const name              user,
-        const vector<uint64_t>  ids
-    );
+    [[eosio::action]]
+    void erase( const name              user,
+                const vector<uint64_t>  ids );
 
     /**
      * ACTION `move`
@@ -121,11 +120,10 @@ public:
      *
      * cleos push action xy move '["myaccount", 0, [45.0, 110.5]]'
      */
-    [[eosio::action]] void move(
-        const name          user,
-        const uint64_t      id,
-        const point         node
-    );
+    [[eosio::action]]
+    void move( const name          user,
+               const uint64_t      id,
+               const point         node );
 
     /**
      * ACTION `modify`
@@ -139,11 +137,21 @@ public:
      *
      * cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
      */
-    [[eosio::action]] void modify(
-        const name          user,
-        const uint64_t      id,
-        const vector<tag>   tags
-    );
+    [[eosio::action]]
+    void modify( const name          user,
+                 const uint64_t      id,
+                 const vector<tag>   tags );
+
+    /**
+     * Notify contract when eosio.token deposits core symbol
+     *
+     * Used for token swap
+     */
+    [[eosio::on_notify("eosio.token::transfer")]]
+    void transfer( const name&    from,
+                   const name&    to,
+                   const asset&   quantity,
+                   const string&  memo );
 
     /**
      * PRIVATE ACTION `clean`
@@ -333,5 +341,5 @@ private:
 
     // consume - private helpers
     // =========================
-    void consume( name from );
+    void consume_token( name from );
 };

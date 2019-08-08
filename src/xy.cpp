@@ -8,3 +8,4 @@
 #include "erase.cpp"
 #include "utils.cpp"
 #include "consume.cpp"
+#include "on_notify.cpp"

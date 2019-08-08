@@ -32,7 +32,6 @@ name xy::get_owner( uint64_t id ) {
         check(false, "[id] owner not found");
         return ""_n;
     }
-
 }
 
 void xy::check_owner( name user, uint64_t id ) {

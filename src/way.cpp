@@ -1,11 +1,10 @@
 /**
  * ACTION createway
  */
-uint64_t xy::createway(
-    const name                  owner,
-    const vector<point>         way,
-    const vector<tag>           tags
-) {
+uint64_t xy::createway( const name              owner,
+                        const vector<point>     way,
+                        const vector<tag>       tags )
+{
     require_auth( owner );
     check_way( way );
     uint64_t id = emplace_way( owner, way, tags );

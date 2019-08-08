@@ -1,8 +1,7 @@
-void xy::modify(
-    const name            user,
-    const uint64_t        id,
-    const vector<tag>     tags
-) {
+void xy::modify( const name            user,
+                 const uint64_t        id,
+                 const vector<tag>     tags )
+{
     require_auth( user );
     check_owner( user, id );
     check_tags( tags );

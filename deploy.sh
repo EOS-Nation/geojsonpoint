@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
 
-CODE=xy
+NETWORK=xy
+TOKEN=token.xy
+USER=bob
 
-# CONTRACT=eosio
-# ENDPOINT=http://localhost:8888
-CONTRACT=geojsonspec2
-ENDPOINT=https://jungle.eosn.io
+ENDPOINT=http://localhost:8888
 
-cleos -u $ENDPOINT set contract $CONTRACT ./ $CODE.wasm $CODE.abi
+# cleos create account eosio $NETWORK EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+# cleos create account eosio $TOKEN EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+# cleos create account eosio $USER EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+# cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+
+# cleos set account permission xy active actions/xy@active.json owner
+# cleos set account permission token.xy active actions/xy@active.json owner
+
+cleos -u $ENDPOINT set contract $NETWORK ./ $NETWORK.wasm $NETWORK.abi
+cleos -u $ENDPOINT set contract $TOKEN ./ $TOKEN.wasm $TOKEN.abi
+cleos -u $ENDPOINT set contract eosio.token ./ $TOKEN.wasm $TOKEN.abi
+
+# cleos push action $TOKEN create '["xy", "1000000000.0000 XY"]' -p $TOKEN
+# cleos push action $TOKEN issue '["xy", "1.0000 XY", "init"]' -p $NETWORK
+
+# cleos push action eosio.token create '["eosio.token", "1000000000.0000 EOS"]' -p eosio.token
+# cleos push action eosio.token issue '["eosio.token", "1000000000.0000 EOS", "init"]' -p eosio.token
+# cleos push action eosio.token transfer '["eosio.token", "bob", "100.0000 EOS", "init"]' -p eosio.token

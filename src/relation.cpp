@@ -1,11 +1,10 @@
 /**
  * ACTION createrel
  */
-uint64_t xy::createrel(
-    const name                  owner,
-    const vector<member>        members,
-    const vector<tag>           tags
-) {
+uint64_t xy::createrel( const name              owner,
+                        const vector<member>    members,
+                        const vector<tag>       tags )
+{
     require_auth( owner );
     uint64_t id = emplace_relation( owner, members, tags );
     return id;

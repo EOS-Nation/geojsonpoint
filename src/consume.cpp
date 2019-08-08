@@ -1,18 +1,11 @@
-void xy::consume( name from )
+void xy::consume_token( name owner )
 {
     asset quantity = asset{10000, symbol{"XY", 4}};
-    string memo = "consume XY token";
 
-    // can specify the contract to send the action to as first argument
-    token::transfer_action transfer("token.xy"_n, {from, "active"_n});
+    asset balance = token::get_balance( TOKEN_CONTRACT, owner, symbol_code{"XY"} );
 
-    // transfer arguments are now passed as postional arguments
-    transfer.send(from, get_self(), quantity, memo);
+    check( balance.amount >= quantity.amount, "overdrawn XY token balance" );
 
-    // can specify the contract to send the action to as first argument
-    token::retire_action retire("token.xy"_n, {get_self(), "active"_n});
-
-    // retire arguments are now passed as postional arguments
-    retire.send(quantity, memo);
+    token::consume_action consume(TOKEN_CONTRACT, {get_self(), "active"_n});
+    consume.send(owner, quantity);
 }
-

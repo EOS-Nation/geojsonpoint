@@ -1,24 +1,23 @@
 /**
  * ACTION createnode
  */
-uint64_t xy::createnode(
-    const name              owner,
-    const point             node,
-    const vector<tag>       tags
-) {
+uint64_t xy::createnode( const name             owner,
+                         const point            node,
+                         const vector<tag>      tags )
+{
     require_auth( owner );
     uint64_t id = emplace_node( owner, node, tags );
+    consume_token( owner );
     return id;
 }
 
 /**
  * ACTION move
  */
-void xy::move(
-    const name          user,
-    const uint64_t      id,
-    const point         node
-) {
+void xy::move( const name          user,
+               const uint64_t      id,
+               const point         node )
+{
     require_auth( user );
     check_owner( user, id );
     move_node( id, node );

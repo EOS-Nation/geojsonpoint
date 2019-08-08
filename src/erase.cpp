@@ -1,10 +1,9 @@
 /**
  * ACTION erase
  */
-void xy::erase(
-    const name              user,
-    const vector<uint64_t>  ids
-) {
+void xy::erase( const name              user,
+                const vector<uint64_t>  ids )
+{
     require_auth( user );
     check( ids.size() <= 255, "[ids] cannot have more than 255 elements");
 

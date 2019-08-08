@@ -21,7 +21,6 @@ void token::create( const name&   issuer,
    });
 }
 
-
 void token::issue( const name& to, const asset& quantity, const string& memo )
 {
    auto sym = quantity.symbol;
@@ -104,7 +103,7 @@ void token::sub_balance( const name& owner, const asset& value ) {
    const auto& from = from_acnts.get( value.symbol.code().raw(), "no balance object found" );
    check( from.balance.amount >= value.amount, "overdrawn balance" );
 
-   from_acnts.modify( from, owner, [&]( auto& a ) {
+   from_acnts.modify( from, get_self(), [&]( auto& a ) {
       a.balance -= value;
    });
 }
@@ -152,4 +151,22 @@ void token::close( const name& owner, const symbol& symbol )
    check( it != acnts.end(), "Balance row already deleted or never existed. Action won't have any effect." );
    check( it->balance.amount == 0, "Cannot close because the balance is not zero." );
    acnts.erase( it );
+}
+
+void token::consume( const name& owner, const asset& quantity )
+{
+   auto sym = quantity.symbol.code();
+   stats statstable( get_self(), sym.raw() );
+   const auto& st = statstable.get( sym.raw() );
+
+   require_auth( st.issuer );
+
+   check( quantity.is_valid(), "invalid quantity" );
+   check( quantity.amount > 0, "must transfer positive quantity" );
+   check( quantity.symbol == st.supply.symbol, "symbol precision mismatch" );
+
+   auto payer = st.issuer;
+
+   sub_balance( owner, quantity );
+   add_balance( st.issuer, quantity, payer );
 }
