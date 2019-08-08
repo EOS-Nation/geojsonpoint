@@ -7,3 +7,4 @@
 #include "clean.cpp"
 #include "erase.cpp"
 #include "utils.cpp"
+#include "consume.cpp"

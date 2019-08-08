@@ -10,13 +10,14 @@
 #include <optional>
 
 #include <xy/structs.hpp>
+#include <token.xy/token.xy.hpp>
 #include <mapbox/geometry.hpp>
 
 using namespace eosio;
 using namespace std;
 using namespace mapbox::geometry;
 
-class [[eosio::contract("xy")]] xy : public eosio::contract {
+class [[eosio::contract("xy")]] xy : public contract {
 public:
     using contract::contract;
 
@@ -329,4 +330,8 @@ private:
     name get_owner( uint64_t id );
     void check_owner( name user, uint64_t id );
     void update_version( uint64_t id );
+
+    // consume - private helpers
+    // =========================
+    void consume( name from );
 };
