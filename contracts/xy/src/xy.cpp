@@ -1,4 +1,4 @@
-#include "xy.hpp"
+#include "xy/xy.hpp"
 
 #include "node.cpp"
 #include "way.cpp"
