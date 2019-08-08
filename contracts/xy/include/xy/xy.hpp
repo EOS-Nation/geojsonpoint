@@ -151,12 +151,12 @@ public:
      */
     [[eosio::action]] void clean();
 
-    using createnode_action = eosio::action_wrapper<"createnode"_n, &token::createnode>;
-    using createway_action = eosio::action_wrapper<"createway"_n, &token::createway>;
-    using createrel_action = eosio::action_wrapper<"createrel"_n, &token::createrel>;
-    using erase_action = eosio::action_wrapper<"erase"_n, &token::erase>;
-    using modify_action = eosio::action_wrapper<"modify"_n, &token::modify>;
-    using move_action = eosio::action_wrapper<"move"_n, &token::move>;
+    using createnode_action = eosio::action_wrapper<"createnode"_n, &xy::createnode>;
+    using createway_action = eosio::action_wrapper<"createway"_n, &xy::createway>;
+    using createrel_action = eosio::action_wrapper<"createrel"_n, &xy::createrel>;
+    using erase_action = eosio::action_wrapper<"erase"_n, &xy::erase>;
+    using modify_action = eosio::action_wrapper<"modify"_n, &xy::modify>;
+    using move_action = eosio::action_wrapper<"move"_n, &xy::move>;
 
 private:
     /**
