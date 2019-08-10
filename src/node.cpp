@@ -1,9 +1,9 @@
 /**
- * ACTION createnode
+ * ACTION node
  */
-uint64_t xy::createnode( const name             owner,
-                         const point            node,
-                         const vector<tag>      tags )
+uint64_t xy::node( const name             owner,
+                   const point            node,
+                   const vector<tag>      tags )
 {
     require_auth( owner );
     uint64_t id = emplace_node( owner, node, tags );

@@ -10,15 +10,15 @@ cleos push action $CODE setrate '["4,EOS"]' -p $CODE
 
 cleos -u $ENDPOINT transfer $USER $CODE "1.0000 EOS"
 
-cleos -u $ENDPOINT push action $CODE createnode \
+cleos -u $ENDPOINT push action $CODE node \
     "[${USER},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $CODE createway \
+cleos -u $ENDPOINT push action $CODE way \
     "[${USER},[[-25, -45], [65, 180]], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $CODE createrel \
+cleos -u $ENDPOINT push action $CODE relation \
     "[${USER},[{\"type\": \"way\", \"ref\": 1, \"role\": \"\"}, {\"type\": \"node\", \"ref\": 0, \"role\": \"\"}], [{\"k\":\"foo\", \"v\": \"bar\"}]]" \
     -p $USER
 

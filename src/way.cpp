@@ -1,9 +1,9 @@
 /**
- * ACTION createway
+ * ACTION way
  */
-uint64_t xy::createway( const name              owner,
-                        const vector<point>     way,
-                        const vector<tag>       tags )
+uint64_t xy::way( const name              owner,
+                  const vector<point>     way,
+                  const vector<tag>       tags )
 {
     require_auth( owner );
     check_way( way );

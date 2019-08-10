@@ -76,7 +76,7 @@ public:
     {}
 
     /**
-     * ACTION `createnode`
+     * ACTION `node`
      *
      * Create node (longitude & latitude) with tags
      *
@@ -86,15 +86,15 @@ public:
      * @returns {uint64_t} node id
      * @example
      *
-     * cleos push action xy createnode '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}]]'
+     * cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}]]'
      */
     [[eosio::action]]
-    uint64_t createnode( const name             owner,
-                         const point            node,
-                         const vector<tag>      tags );
+    uint64_t node( const name             owner,
+                   const point            node,
+                   const vector<tag>      tags );
 
     /**
-     * ACTION `createway`
+     * ACTION `way`
      *
      * Create way with tags
      *
@@ -104,15 +104,15 @@ public:
      * @returns {uint64_t} way id
      * @example
      *
-     * cleos push action xy createway '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}]]'
+     * cleos push action xy way '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}]]'
      */
     [[eosio::action]]
-    uint64_t createway( const name            owner,
-                        const vector<point>   way,
-                        const vector<tag>     tags );
+    uint64_t way( const name            owner,
+                  const vector<point>   way,
+                  const vector<tag>     tags );
 
     /**
-     * ACTION `createrel`
+     * ACTION `relation`
      *
      * Create relation with tags
      *
@@ -122,12 +122,12 @@ public:
      * @returns {uint64_t} member id
      * @example
      *
-     * cleos push action xy createway '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}]]'
+     * cleos push action xy relation '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}]]'
      */
     [[eosio::action]]
-    uint64_t createrel( const name              owner,
-                        const vector<member>    members,
-                        const vector<tag>       tags );
+    uint64_t relation( const name              owner,
+                       const vector<member>    members,
+                       const vector<tag>       tags );
 
     /**
      * ACTION `erase`
@@ -202,9 +202,9 @@ public:
                    const asset&   quantity,
                    const string&  memo );
 
-    using createnode_action = eosio::action_wrapper<"createnode"_n, &xy::createnode>;
-    using createway_action = eosio::action_wrapper<"createway"_n, &xy::createway>;
-    using createrel_action = eosio::action_wrapper<"createrel"_n, &xy::createrel>;
+    using node_action = eosio::action_wrapper<"node"_n, &xy::node>;
+    using way_action = eosio::action_wrapper<"way"_n, &xy::way>;
+    using relation_action = eosio::action_wrapper<"relation"_n, &xy::relation>;
     using erase_action = eosio::action_wrapper<"erase"_n, &xy::erase>;
     using modify_action = eosio::action_wrapper<"modify"_n, &xy::modify>;
     using move_action = eosio::action_wrapper<"move"_n, &xy::move>;
