@@ -3,8 +3,9 @@
 CODE=xy
 TOKEN=token.xy
 USER=bob
-
 ENDPOINT=http://localhost:8888
+
+cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 
 cleos create account eosio $CODE EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $TOKEN EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV

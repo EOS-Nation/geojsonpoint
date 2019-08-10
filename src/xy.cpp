@@ -6,7 +6,6 @@
 #include "tag.cpp"
 #include "erase.cpp"
 #include "utils.cpp"
-#include "consume.cpp"
 #include "on_notify.cpp"
 #include "get_trx_id.cpp"
 #include "global.cpp"

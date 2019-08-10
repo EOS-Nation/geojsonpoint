@@ -7,6 +7,7 @@ uint64_t xy::createrel( const name              owner,
 {
     require_auth( owner );
     uint64_t id = emplace_relation( owner, members, tags );
+    consume_token( owner, 1, tags.size() + members.size());
     return id;
 }
 

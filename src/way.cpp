@@ -8,6 +8,7 @@ uint64_t xy::createway( const name              owner,
     require_auth( owner );
     check_way( way );
     uint64_t id = emplace_way( owner, way, tags );
+    consume_token( owner, way.size(), tags.size() );
     return id;
 }
 

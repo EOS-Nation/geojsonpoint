@@ -5,6 +5,7 @@ eosc-vault.json
 *.wasm
 ./build
 
+!__tests__/*
 coverage
 
 # Prerequisites

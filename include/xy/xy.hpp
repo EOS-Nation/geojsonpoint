@@ -147,13 +147,13 @@ public:
      *
      * Set rate of <chain>XY token
      *
-     * @param {asset} rate - rate value
+     * @param {symbol} chain - chain value (ex: "EOS,4")
      * @example
      *
-     * cleos push action xy setrate '["0.1000 EOSXY""]'
+     * cleos push action xy setrate '["4,EOS"]'
      */
     [[eosio::action]]
-    void setrate( const asset rate );
+    void setrate( const symbol chain );
 
     /**
      * Notify contract when eosio.token deposits core symbol
@@ -178,10 +178,19 @@ private:
      * TABLE `global`
      *
      * @param {uint64_t} available_primary_key - global id for node/way/relation
+     * @example
+     *
+     * {
+     *   "available_primary_key": 0,
+     *   "chain": "4,EOS"
+     *   "rate": "0.1000 EOSXY",
+     *   "rammarket": 0.000088812,
+     * }
      */
     struct [[eosio::table("global")]] global_row {
         uint64_t available_primary_key = 0;
-        asset rate = asset{10000, symbol{"EOSXY", 4}};
+        symbol chain;
+        asset rate;
     };
 
     /**
@@ -341,12 +350,15 @@ private:
     // utils - private helpers
     // =======================
     checksum256 get_trx_id();
-    uint64_t global_available_primary_key();
     name get_owner( uint64_t id );
     void check_owner( name user, uint64_t id );
     void update_version( uint64_t id );
 
-    // consume - private helpers
+    // global - private helpers
     // =========================
-    void consume_token( name from );
+    uint64_t global_available_primary_key();
+    int64_t get_rammarket( symbol chain );
+    asset calculate_rate( symbol chain );
+    void consume_token( name from, int64_t points, int64_t tags );
+    int64_t calculate_consume( int64_t points, int64_t tags );
 };
