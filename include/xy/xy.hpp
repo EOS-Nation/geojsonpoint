@@ -9,7 +9,6 @@
 #include <string>
 #include <optional>
 
-#include <xy/structs.hpp>
 #include <token.xy/token.xy.hpp>
 #include <eosio.system/exchange_state.hpp>
 #include <mapbox/geometry.hpp>
@@ -19,6 +18,43 @@ using namespace std;
 using namespace mapbox::geometry;
 
 const name TOKEN_CONTRACT = "token.xy"_n;
+
+/**
+ * STRUCT tag
+ *
+ * @param {name} k - key
+ * @param {string} v - value
+ *
+ * @example
+ * {
+ *   "k": "building",
+ *   "v": "yes"
+ * }
+ */
+struct tag {
+    name        k;
+    string      v;
+};
+
+/**
+ * STRUCT member
+ *
+ * @param {name} type - type of member (way or node)
+ * @param {uint64_t} ref - ref id of way or node
+ * @param {name} role - role of member
+ *
+ * @example
+ * {
+ *   "type": "way",
+ *   "ref": 123,
+ *   "role": "outer"
+ * }
+ */
+struct member {
+    name        type;
+    uint64_t    ref;
+    name        role;
+};
 
 class [[eosio::contract("xy")]] xy : public contract {
 public:
@@ -316,11 +352,12 @@ private:
     relation_table      _relation;
     global_table        _global;
 
-    // properties - private helpers
-    // ============================
-    void modify_tags( uint64_t id, vector<tag> tags );
+    // tags - private helpers
+    // ======================
+    void modify_tags( name user, uint64_t id, vector<tag> tags );
     void check_tag( tag tag );
     void check_tags( vector<tag> tags );
+    void consume_modify_tags( name user, int64_t before, int64_t after );
 
     // node - private helpers
     // ======================
@@ -357,7 +394,7 @@ private:
     uint64_t now();
 
     // global - private helpers
-    // =========================
+    // ========================
     uint64_t global_available_primary_key();
     int64_t get_rammarket( symbol chain );
     asset calculate_rate( symbol chain );
