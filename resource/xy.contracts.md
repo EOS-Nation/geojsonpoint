@@ -34,8 +34,9 @@ modify tags [{k, v}]
 
 Erase node(s)
 
-<h1 class="contract">clean</h1>
+<h1 class="contract">setrate</h1>
 
 ## Description
 
-DEVELOPMENT ONLY: Used to remove all table rows.
+Set initial rate based on chain
+

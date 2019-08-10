@@ -51,3 +51,11 @@ The token manager agrees to remove {{quantity}} from circulation, taken from the
 If {{from}} is not already the RAM payer of their {{asset_to_symbol_code quantity}} token balance, {{from}} will be designated as such. As a result, RAM will be deducted from {{from}}’s resources to refund the original RAM payer.
 
 If {{to}} does not have a balance for {{asset_to_symbol_code quantity}}, {{from}} will be designated as the RAM payer of the {{asset_to_symbol_code quantity}} token balance for {{to}}. As a result, RAM will be deducted from {{from}}’s resources to create the necessary records.
+
+<h1 class="contract">consume</h1>
+
+The token manager agrees to remove {{quantity}} from circulation, taken from the {{owner}} account.
+
+{{#if memo}} There is a memo attached to the action stating:
+{{memo}}
+{{/if}}
