@@ -19,6 +19,7 @@ cleos -u $ENDPOINT set contract $TOKEN ./ $TOKEN.wasm $TOKEN.abi
 cleos -u $ENDPOINT set contract eosio.token ./ $TOKEN.wasm $TOKEN.abi
 
 cleos push action $TOKEN create '["xy", "1000000000.0000 XY"]' -p $TOKEN
+cleos push action $TOKEN create '["xy", "1000000000.0000 EOSXY"]' -p $TOKEN
 cleos push action $TOKEN issue '["xy", "1.0000 XY", "init"]' -p $CODE
 
 cleos push action eosio.token create '["eosio.token", "1000000000.0000 EOS"]' -p eosio.token

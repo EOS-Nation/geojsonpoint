@@ -11,7 +11,7 @@
 
 #include <xy/structs.hpp>
 #include <token.xy/token.xy.hpp>
-// #include <eosio.token/eosio.token.hpp>
+#include <eosio.system/exchange_state.hpp>
 #include <mapbox/geometry.hpp>
 
 using namespace eosio;
@@ -143,6 +143,19 @@ public:
                  const vector<tag>   tags );
 
     /**
+     * ACTION `setrate`
+     *
+     * Set rate of <chain>XY token
+     *
+     * @param {asset} rate - rate value
+     * @example
+     *
+     * cleos push action xy setrate '["0.1000 EOSXY""]'
+     */
+    [[eosio::action]]
+    void setrate( const asset rate );
+
+    /**
      * Notify contract when eosio.token deposits core symbol
      *
      * Used for token swap
@@ -152,13 +165,6 @@ public:
                    const name&    to,
                    const asset&   quantity,
                    const string&  memo );
-
-    /**
-     * PRIVATE ACTION `clean`
-     *
-     * Removes all rows in tables
-     */
-    [[eosio::action]] void clean();
 
     using createnode_action = eosio::action_wrapper<"createnode"_n, &xy::createnode>;
     using createway_action = eosio::action_wrapper<"createway"_n, &xy::createway>;
@@ -175,6 +181,7 @@ private:
      */
     struct [[eosio::table("global")]] global_row {
         uint64_t available_primary_key = 0;
+        asset rate = asset{10000, symbol{"EOSXY", 4}};
     };
 
     /**
