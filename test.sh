@@ -1,29 +1,29 @@
 #!/usr/bin/env bash
 
-NETWORK=xy
+CODE=xy
 TOKEN=token.xy
 USER=bob
 
 ENDPOINT=http://localhost:8888
 
-cleos -u $ENDPOINT transfer $USER $NETWORK "1.0000 EOS"
+cleos -u $ENDPOINT transfer $USER $CODE "1.0000 EOS"
 
-cleos -u $ENDPOINT push action $NETWORK createnode \
+cleos -u $ENDPOINT push action $CODE createnode \
     "[${USER},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $NETWORK createway \
+cleos -u $ENDPOINT push action $CODE createway \
     "[${USER},[[-25, -45], [65, 180]], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $NETWORK createrel \
+cleos -u $ENDPOINT push action $CODE createrel \
     "[${USER},[{\"type\": \"way\", \"ref\": 1, \"role\": \"\"}, {\"type\": \"node\", \"ref\": 0, \"role\": \"\"}], [{\"k\":\"foo\", \"v\": \"bar\"}]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $NETWORK move \
+cleos -u $ENDPOINT push action $CODE move \
     "[${USER},0, [20, 50]]" \
     -p $USER
 
-cleos -u $ENDPOINT push action $NETWORK modify \
+cleos -u $ENDPOINT push action $CODE modify \
     "[${USER}, 1, [{\"k\":\"second\", \"v\": \"updated\"}]]" \
     -p $USER
