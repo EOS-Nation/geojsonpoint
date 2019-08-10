@@ -105,11 +105,12 @@ public:
     /**
      * Consume action.
      *
-     * @param owner - the account to consume owner
-     * @param quantity - the quantity of tokens to be consumed
+     * @param {name} from - the owner account to consome,
+     * @param {asset} quantity - the quantity of tokens to consume,
+     * @param {string} memo - the memo string to accompany the transaction.
      */
     [[eosio::action]]
-    void consume( const name& owner, const asset& quantity );
+    void consume( const name& owner, const asset& quantity, const string& memo );
 
     /**
      * Get supply method.

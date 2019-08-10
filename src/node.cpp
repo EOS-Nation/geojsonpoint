@@ -7,7 +7,7 @@ uint64_t xy::createnode( const name             owner,
 {
     require_auth( owner );
     uint64_t id = emplace_node( owner, node, tags );
-    consume_token( owner, 1, tags.size() );
+    consume_token( owner, 1, tags.size(), "create node" );
     return id;
 }
 

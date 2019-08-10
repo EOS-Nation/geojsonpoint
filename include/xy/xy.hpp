@@ -172,6 +172,7 @@ public:
     using erase_action = eosio::action_wrapper<"erase"_n, &xy::erase>;
     using modify_action = eosio::action_wrapper<"modify"_n, &xy::modify>;
     using move_action = eosio::action_wrapper<"move"_n, &xy::move>;
+    using setrate_action = eosio::action_wrapper<"setrate"_n, &xy::setrate>;
 
 private:
     /**
@@ -353,12 +354,14 @@ private:
     name get_owner( uint64_t id );
     void check_owner( name user, uint64_t id );
     void update_version( uint64_t id );
+    uint64_t now();
 
     // global - private helpers
     // =========================
     uint64_t global_available_primary_key();
     int64_t get_rammarket( symbol chain );
     asset calculate_rate( symbol chain );
-    void consume_token( name from, int64_t points, int64_t tags );
+    void consume_token( name from, int64_t points, int64_t tags, string memo );
     int64_t calculate_consume( int64_t points, int64_t tags );
+    void deferred_setrate( symbol chain );
 };

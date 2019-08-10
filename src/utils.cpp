@@ -54,3 +54,8 @@ void xy::update_version( uint64_t id ) {
         check(false, "[id] id not found");
     }
 }
+
+uint64_t xy::now()
+{
+    return current_time_point().sec_since_epoch();
+}

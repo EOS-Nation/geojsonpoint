@@ -153,20 +153,26 @@ void token::close( const name& owner, const symbol& symbol )
    acnts.erase( it );
 }
 
-void token::consume( const name& owner, const asset& quantity )
+void token::consume( const name& owner, const asset& quantity, const string& memo )
 {
-   auto sym = quantity.symbol.code();
-   stats statstable( get_self(), sym.raw() );
-   const auto& st = statstable.get( sym.raw() );
+   auto sym = quantity.symbol;
+   check( sym.is_valid(), "invalid symbol name" );
+   check( memo.size() <= 256, "memo has more than 256 bytes" );
+
+   stats statstable( get_self(), sym.code().raw() );
+   auto existing = statstable.find( sym.code().raw() );
+   check( existing != statstable.end(), "token with symbol does not exist" );
+   const auto& st = *existing;
 
    require_auth( st.issuer );
-
    check( quantity.is_valid(), "invalid quantity" );
-   check( quantity.amount > 0, "must transfer positive quantity" );
+   check( quantity.amount > 0, "must retire positive quantity" );
+
    check( quantity.symbol == st.supply.symbol, "symbol precision mismatch" );
 
-   auto payer = st.issuer;
+   statstable.modify( st, get_self(), [&]( auto& s ) {
+      s.supply -= quantity;
+   });
 
    sub_balance( owner, quantity );
-   add_balance( st.issuer, quantity, payer );
 }
