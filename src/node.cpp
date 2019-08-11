@@ -24,7 +24,8 @@ void xy::move( const name          user,
     update_version( id );
 }
 
-uint64_t xy::emplace_node( name owner, point node, vector<tag> tags ) {
+uint64_t xy::emplace_node( name owner, point node, vector<tag> tags )
+{
     check_tags( tags );
 
     // Point default attributes
@@ -47,7 +48,8 @@ uint64_t xy::emplace_node( name owner, point node, vector<tag> tags ) {
     return id;
 }
 
-void xy::move_node( uint64_t id, point node ) {
+void xy::move_node( uint64_t id, point node )
+{
     check_node_exists( id );
 
     auto node_itr = _node.find( id );
@@ -57,11 +59,13 @@ void xy::move_node( uint64_t id, point node ) {
     });
 }
 
-bool xy::node_exists( uint64_t id ) {
+bool xy::node_exists( uint64_t id )
+{
     auto node_itr = _node.find( id );
     return node_itr != _node.end();
 }
 
-void xy::check_node_exists( uint64_t id ) {
+void xy::check_node_exists( uint64_t id )
+{
     check( node_exists( id ), "[id] no node matching results" );
 }

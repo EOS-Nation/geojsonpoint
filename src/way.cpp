@@ -12,7 +12,8 @@ uint64_t xy::way( const name              owner,
     return id;
 }
 
-uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
+uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags )
+{
     check_tags( tags );
 
     // Point default attributes
@@ -43,16 +44,19 @@ uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags ) {
     return id;
 }
 
-bool xy::way_exists( uint64_t id ) {
+bool xy::way_exists( uint64_t id )
+{
     auto way_itr = _way.find( id );
     return way_itr != _way.end();
 }
 
-void xy::check_way_exists( uint64_t id ) {
+void xy::check_way_exists( uint64_t id )
+{
     check( way_exists( id ), "[id] no way matching results" );
 }
 
-void xy::check_way( vector<point> way ) {
+void xy::check_way( vector<point> way )
+{
     check( way.size() > 1, "[way] must contain at least 2 nodes");
     check( way.size() <= 255, "[way] cannot contain be greater than 255 nodes");
 }

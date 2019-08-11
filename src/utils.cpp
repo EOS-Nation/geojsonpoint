@@ -1,5 +1,6 @@
 
-name xy::get_owner( uint64_t id ) {
+name xy::get_owner( uint64_t id )
+{
     if (node_exists( id )) {
         auto node_itr = _node.find( id );
         return node_itr->owner;
@@ -18,11 +19,13 @@ name xy::get_owner( uint64_t id ) {
     }
 }
 
-void xy::check_owner( name user, uint64_t id ) {
+void xy::check_owner( name user, uint64_t id )
+{
     check( get_owner(id) == user, "[user] does not match id owner");
 }
 
-void xy::update_version( uint64_t id ) {
+void xy::update_version( uint64_t id )
+{
     time_point_sec timestamp = current_time_point();
     checksum256 changeset = get_trx_id();
 

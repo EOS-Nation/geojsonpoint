@@ -9,7 +9,8 @@ void xy::modify( const name            user,
     update_version( id );
 }
 
-void xy::modify_tags( name user, uint64_t id, vector<tag> tags ) {
+void xy::modify_tags( name user, uint64_t id, vector<tag> tags )
+{
     if (node_exists( id )) {
         auto node_itr = _node.find( id );
         consume_modify_tags(user, node_itr->tags.size(), tags.size());
@@ -36,7 +37,8 @@ void xy::modify_tags( name user, uint64_t id, vector<tag> tags ) {
     }
 }
 
-void xy::check_tags( vector<tag> tags ) {
+void xy::check_tags( vector<tag> tags )
+{
     check( tags.size() <= 255, "[tags] cannot have more than 255 elements");
 
     for ( auto const tag : tags ) {
@@ -44,7 +46,8 @@ void xy::check_tags( vector<tag> tags ) {
     }
 }
 
-void xy::check_tag( tag tag ) {
+void xy::check_tag( tag tag )
+{
     check( tag.k.length() > 0, "[tag.k] must contain at least 1 character");
     check( tag.v.length() <= 255, "[tag.v] cannot be greater than 255 characters");
 }
