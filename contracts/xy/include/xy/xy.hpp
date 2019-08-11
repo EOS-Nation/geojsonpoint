@@ -17,7 +17,10 @@ using namespace eosio;
 using namespace std;
 using namespace mapbox::geometry;
 
+const name NETWORK_CONTRACT = "xy"_n;
 const name TOKEN_CONTRACT = "token.xy"_n;
+const name RELAY_CONTRACT = "relay.xy"_n;
+const symbol TOKEN_SYMBOL = symbol{"XY", 4};
 
 /**
  * STRUCT tag

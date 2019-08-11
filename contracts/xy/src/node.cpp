@@ -34,7 +34,7 @@ uint64_t xy::emplace_node( name owner, point node, vector<tag> tags )
     uint64_t id = global_available_primary_key();
 
     // Create row in `node` TABLE
-    _node.emplace( _self, [&]( auto & row ) {
+    _node.emplace( get_self(), [&]( auto & row ) {
         row.id         = id;
         row.node       = node;
         row.tags       = tags;
@@ -54,7 +54,7 @@ void xy::move_node( uint64_t id, point node )
 
     auto node_itr = _node.find( id );
     check( node_itr->node != node, "[node] point must be different");
-    _node.modify( node_itr, _self, [&](auto & row) {
+    _node.modify( node_itr, get_self(), [&](auto & row) {
         row.node = node;
     });
 }
