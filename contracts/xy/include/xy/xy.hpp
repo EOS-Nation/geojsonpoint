@@ -17,11 +17,6 @@ using namespace eosio;
 using namespace std;
 using namespace mapbox::geometry;
 
-const name NETWORK_CONTRACT = "xy"_n;
-const name TOKEN_CONTRACT = "token.xy"_n;
-const name RELAY_CONTRACT = "relay.xy"_n;
-const symbol TOKEN_SYMBOL = symbol{"XY", 4};
-
 /**
  * STRUCT tag
  *
@@ -75,6 +70,7 @@ public:
             _node( get_self(), get_self().value ),
             _way( get_self(), get_self().value ),
             _relation( get_self(), get_self().value ),
+            _settings( get_self(), get_self().value ),
             _global( get_self(), get_self().value )
     {}
 
@@ -182,17 +178,21 @@ public:
                  const vector<tag>   tags );
 
     /**
-     * ACTION `setrate`
+     * ACTION `init`
      *
-     * Set rate of <chain>XY token
+     * Initialize xy network contract
      *
-     * @param {symbol} chain - chain value (ex: "EOS,4")
+     * @param {extended_symbol} chain - chain (ex: {"contract":"eosio.token", "symbol": {"symbol":"EOS", "precision": 4}})
      * @example
      *
-     * cleos push action xy setrate '["4,EOS"]'
+     * cleos push action xy init '["4,EOS"]'
      */
     [[eosio::action]]
-    void setrate( const symbol chain );
+    void init( extended_symbol chain,
+               extended_symbol token,
+               extended_symbol relay,
+               uint64_t consume_rate_node,
+               uint64_t consume_rate_tag );
 
     /**
      * Notify contract when eosio.token deposits core symbol
@@ -211,26 +211,54 @@ public:
     using erase_action = eosio::action_wrapper<"erase"_n, &xy::erase>;
     using modify_action = eosio::action_wrapper<"modify"_n, &xy::modify>;
     using move_action = eosio::action_wrapper<"move"_n, &xy::move>;
-    using setrate_action = eosio::action_wrapper<"setrate"_n, &xy::setrate>;
+    using init_action = eosio::action_wrapper<"init"_n, &xy::init>;
 
 private:
     /**
      * TABLE `global`
      *
      * @param {uint64_t} available_primary_key - global id for node/way/relation
+     * @param {asset} rate - cost of 1 unit on XY network
      * @example
      *
      * {
      *   "available_primary_key": 0,
-     *   "chain": "4,EOS"
-     *   "rate": "0.1000 EOSXY",
-     *   "rammarket": 0.000088812,
+     *   "rate": "0.1000 EOSXY"
      * }
      */
     struct [[eosio::table("global")]] global_row {
         uint64_t available_primary_key = 0;
-        symbol chain;
         asset rate;
+    };
+
+    /**
+     * TABLE `settings`
+     *
+     * @example
+     *
+     * {
+     *   "chain": {
+     *     "contract": "eosio.token",
+     *     "symbol": {"code": "EOS", "precision": 4}
+     *   },
+     *   "token": {
+     *     "contract": "token.xy",
+     *     "symbol": {"code": "EOSXY", "precision": 4}
+     *   },
+     *   "relay": {
+     *     "contract": "relay.xy",
+     *     "symbol": {"code": "XY", "precision": 4}
+     *   },
+     *   "consume_rate_node": 10000,
+     *   "consume_rate_tag": 1000,
+     * }
+     */
+    struct [[eosio::table("settings")]] settings_row {
+        extended_symbol chain;
+        extended_symbol token;
+        extended_symbol relay;
+        uint64_t consume_rate_node = 10000; //  1.0000 token per node
+        uint64_t consume_rate_tag = 1000; // 0.1000 token per tag
     };
 
     /**
@@ -343,6 +371,7 @@ private:
 
     // Singleton table
     typedef singleton<"global"_n, global_row> global_table;
+    typedef singleton<"settings"_n, settings_row> settings_table;
 
     // Multi-Index table
     typedef eosio::multi_index< "node"_n, node_row> node_table;
@@ -353,6 +382,7 @@ private:
     node_table          _node;
     way_table           _way;
     relation_table      _relation;
+    settings_table      _settings;
     global_table        _global;
 
     // tags - private helpers
@@ -399,9 +429,10 @@ private:
     // global - private helpers
     // ========================
     uint64_t global_available_primary_key();
-    int64_t get_rammarket( symbol chain );
-    asset calculate_rate( symbol chain );
-    void consume_token( name from, int64_t points, int64_t tags, string memo );
-    int64_t calculate_consume( int64_t points, int64_t tags );
-    void deferred_setrate( symbol chain );
+    int64_t get_rammarket( extended_symbol chain );
+    asset calculate_rate( extended_symbol chain );
+    void consume_token( name from, int64_t nodes, int64_t tags, string memo );
+    int64_t calculate_consume( int64_t nodes, int64_t tags );
+    void deferred_setrate( extended_symbol chain );
+    void set_rate( extended_symbol chain );
 };

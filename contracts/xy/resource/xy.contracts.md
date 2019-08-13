@@ -34,9 +34,9 @@ modify tags [{k, v}]
 
 Erase node(s)
 
-<h1 class="contract">setrate</h1>
+<h1 class="contract">init</h1>
 
 ## Description
 
-Set initial rate based on chain
+Initialize network based on chain
 

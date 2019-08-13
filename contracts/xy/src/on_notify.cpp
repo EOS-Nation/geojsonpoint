@@ -12,14 +12,16 @@ void xy::transfer( const name&    from,
     // authenticate incoming `from` account
     require_auth( from );
 
-    asset rate = _global.get_or_default().rate;
-    symbol sym = symbol{quantity.symbol.code().to_string() + "XY", 4};
-    int64_t amount = quantity.amount / (rate.amount / pow(10, rate.symbol.precision()) );
-    asset convert_quantity = asset{amount, sym};
+    check(_settings.exists(), "network is not initialized");
+    extended_symbol token = _settings.get().token;
+    asset rate = _global.get().rate;
 
-    token::issue_action issue(TOKEN_CONTRACT, {get_self(), "active"_n});
+    int64_t amount = quantity.amount / (rate.amount / pow(10, rate.symbol.precision()) );
+    asset convert_quantity = asset{amount, token.get_symbol()};
+
+    token::issue_action issue(token.get_contract(), { get_self(), "active"_n });
     issue.send(get_self(), convert_quantity, "convert");
 
-    token::transfer_action transfer(TOKEN_CONTRACT, {get_self(), "active"_n});
+    token::transfer_action transfer(token.get_contract(), { get_self(), "active"_n });
     transfer.send(get_self(), from, convert_quantity, "convert");
 }

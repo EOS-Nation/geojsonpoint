@@ -2,29 +2,7 @@
 
 #include "on_notify.cpp"
 #include "bancor.cpp"
-
-void relay::init( const extended_symbol chain, const extended_symbol reserve )
-{
-    check(!_settings.exists(), "relay is already initalized");
-
-    // set max fee
-    auto settings = _settings.get_or_default();
-    settings.chain = chain;
-    settings.reserve = reserve;
-    _settings.set(settings, get_self());
-
-    // create eosio.token reserve
-    _reserves.emplace( get_self(), [&]( auto & row ) {
-        row.reserve      = chain;
-        row.ratio        = 500000;
-    });
-
-    // create token.xy reserve
-    _reserves.emplace( get_self(), [&]( auto & row ) {
-        row.reserve      = reserve;
-        row.ratio        = 500000;
-    });
-}
+#include "init.cpp"
 
 void relay::update( const bool enabled )
 {
@@ -51,6 +29,8 @@ void relay::setreserve( const extended_symbol reserve, uint64_t ratio )
 
     auto reserves_itr = _reserves.find( reserve.get_contract().value );
     check( reserves_itr != _reserves.end(), "cannot find contract reserves");
+    check( reserves_itr->reserve.get_symbol() == reserve.get_symbol(), "reserve symbol does not match");
+    check( reserves_itr->ratio != ratio, "ratio was not modified");
 
     _reserves.modify( reserves_itr, get_self(), [&]( auto & row ) {
         row.reserve = reserve;

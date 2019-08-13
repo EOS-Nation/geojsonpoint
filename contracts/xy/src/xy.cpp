@@ -9,3 +9,5 @@
 #include "on_notify.cpp"
 #include "get_trx_id.cpp"
 #include "global.cpp"
+#include "consume.cpp"
+#include "settings.cpp"
