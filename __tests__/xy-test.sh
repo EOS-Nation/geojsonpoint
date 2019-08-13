@@ -7,7 +7,7 @@ ENDPOINT=http://localhost:8888
 
 cleos push action $NETWORK init '[{"contract":"eosio.token", "symbol": "4,EOS"},{"contract":"token.xy", "symbol": "4,EOSXY"},{"contract":"relay.xy", "symbol": "4,XY"}, 10000, 1000]' -p $NETWORK
 
-cleos -u $ENDPOINT transfer $USER $NETWORK "1.0000 EOS"
+cleos -u $ENDPOINT transfer $USER $NETWORK "1.0000 EOS" "requesting EOSXY tokens from network"
 
 cleos -u $ENDPOINT push action $NETWORK node \
     "[${USER},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
