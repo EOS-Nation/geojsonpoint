@@ -14,7 +14,7 @@ void xy::transfer( const name&    from,
     token_swap( from, quantity, memo );
 }
 
-void xy::token_swap( const name&    owner,
+void xy::token_swap( const name&    from,
                      const asset&   quantity,
                      const string&  memo )
 {

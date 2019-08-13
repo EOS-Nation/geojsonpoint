@@ -12,6 +12,13 @@ void names::transfer( const name&    from,
 
     check(_settings.exists(), "XY.network::names is not initialized");
 
+    handle_deposit( from, quantity, memo );
+}
+
+void names::handle_deposit( const name&    from,
+                            const asset&   quantity,
+                            const string&  memo )
+{
     // settings
     auto settings = _settings.get();
     extended_symbol chain = settings.chain;

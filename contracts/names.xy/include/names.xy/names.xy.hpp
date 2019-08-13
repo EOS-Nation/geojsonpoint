@@ -58,13 +58,11 @@ private:
      *      "symbol": "4,EOS",
      *      "contract": "eosio.token"
      *   },
-     *   "network": "xy",
      *   "relay": "relay.xy"
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
         extended_symbol     chain;
-        name                network;
         name                relay;
     };
 
@@ -76,4 +74,5 @@ private:
 
     // private helpers
     // ========================
+    void handle_deposit( const name& from, const asset& quantity, const string& memo );
 };

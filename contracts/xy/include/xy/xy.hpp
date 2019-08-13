@@ -436,5 +436,5 @@ private:
     void set_rate( extended_symbol chain );
 
     // token swap - private helpers
-    void token_swap( const name& owner, const asset& quantity, const string& memo );
+    void token_swap( const name& from, const asset& quantity, const string& memo );
 };
