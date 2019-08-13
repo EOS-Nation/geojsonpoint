@@ -2,7 +2,6 @@
 #include <eosio/time.hpp>
 #include <eosio/system.hpp>
 #include <eosio/singleton.hpp>
-#include <eosio/transaction.hpp>
 #include <eosio/crypto.hpp>
 #include <eosio/asset.hpp>
 

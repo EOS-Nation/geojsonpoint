@@ -2,7 +2,6 @@
 #include <eosio/system.hpp>
 #include <eosio/singleton.hpp>
 #include <eosio/asset.hpp>
-// #include <eosio/transaction.hpp>
 
 #include <string>
 

@@ -18,7 +18,7 @@ void xy::token_swap( const name&    owner,
                      const asset&   quantity,
                      const string&  memo )
 {
-    check(_settings.exists(), "network is not initialized");
+    check(_settings.exists(), "XY.network settings is already initialized");
     extended_symbol token = _settings.get().token;
     extended_symbol relay = _settings.get().relay;
     extended_symbol chain = _settings.get().chain;
@@ -27,7 +27,7 @@ void xy::token_swap( const name&    owner,
     // calculate asset amounts
     int64_t amount = quantity.amount / (rate.amount / pow(10, rate.symbol.precision()) );
     asset convert_quantity = asset{ amount, token.get_symbol() };
-    asset relay_quantity = asset{ quantity.amount / 2, quantity.symbol }; // 50% goes to relay liquidity & 40% goes to network operations
+    asset relay_quantity = asset{ quantity.amount / 2, quantity.symbol }; // 50% goes to relay liquidity & 40% goes to XY.network operations
     asset ref_quantity = asset{ quantity.amount / 10, quantity.symbol }; // 10% goes to referral account
 
     // external actions
@@ -40,12 +40,12 @@ void xy::token_swap( const name&    owner,
     token_transfer.send( get_self(), owner, convert_quantity, convert_quantity.symbol.code().to_string() + " network utility tokens");
 
     // transfer incoming chain token to relay
-    chain_transfer.send( get_self(), relay.get_contract(), relay_quantity, "XY network liquidity deposit" );
+    chain_transfer.send( get_self(), relay.get_contract(), relay_quantity, "XY.network liquidity deposit" );
 
     // include referral if memo is a valid EOSIO account name
     if ( memo.size() > 0 && memo.size() <= 12 && is_account(name{memo}) ) {
         name ref = name{memo};
         check(ref != owner, "referral account cannot also be the sender");
-        chain_transfer.send( get_self(), ref, ref_quantity, "XY network referral deposit" );
+        chain_transfer.send( get_self(), ref, ref_quantity, "XY.network referral deposit" );
     }
 }

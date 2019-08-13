@@ -10,7 +10,7 @@ void relay::transfer( const name&    from,
     if ( to != get_self() ) return;
 
     // Prevent token convert from `xy`
-    if ( from == "xy"_n ) return;
+    if ( from == "xy"_n || from == "names.xy"_n ) return;
 
     // Prevent token convert by memo
     if ( memo == "init" ) return;
