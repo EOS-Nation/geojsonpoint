@@ -435,4 +435,7 @@ private:
     int64_t calculate_consume( int64_t nodes, int64_t tags );
     void deferred_setrate( extended_symbol chain );
     void set_rate( extended_symbol chain );
+
+    // token swap - private helpers
+    void token_swap( const name& owner, const asset& quantity, const string& memo );
 };

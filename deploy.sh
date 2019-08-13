@@ -4,7 +4,8 @@ NETWORK=xy
 TOKEN=token.xy
 RELAY=relay.xy
 NAMES=names.xy
-USER=bob
+USER1=bob
+USER2=alice
 ENDPOINT=http://localhost:8888
 
 cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
@@ -12,7 +13,8 @@ cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 # Create accounts
 cleos create account eosio $NETWORK EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $TOKEN EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
-cleos create account eosio $USER EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio $USER1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio $USER2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $RELAY EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $NAMES EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV

@@ -2,7 +2,7 @@
 
 #include "on_notify.cpp"
 #include "bancor.cpp"
-#include "init.cpp"
+#include "settings.cpp"
 
 void relay::update( const bool enabled )
 {

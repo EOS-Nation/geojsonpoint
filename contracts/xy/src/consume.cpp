@@ -6,6 +6,7 @@ void xy::consume_token( name owner, int64_t nodes, int64_t tags, string memo )
     extended_symbol relay = settings.relay;
 
     // calculate required tokens to be consumed
+    set_rate( settings.chain );
     int64_t amount = calculate_consume( nodes, tags );
     asset consume_quantity = asset{ amount, token.get_symbol() };
     asset relay_quantity = asset{ amount, relay.get_symbol() };
