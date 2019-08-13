@@ -23,7 +23,6 @@ public:
      */
     relay( name receiver, name code, eosio::datastream<const char*> ds )
         : contract( receiver, code, ds ),
-            _reserves( get_self(), get_self().value ),
             _settings( get_self(), get_self().value )
     {}
 
@@ -48,16 +47,6 @@ public:
     void update( const bool enabled );
 
     /**
-     * ACTION `setreserve`
-     *
-     * @example
-     *
-     * cleos push action relay.xy setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, 500000]'
-     */
-    [[eosio::action]]
-    void setreserve( const extended_symbol reserve, uint64_t ratio );
-
-    /**
      * Notify contract when eosio.token deposits core token
      */
     [[eosio::on_notify("eosio.token::transfer")]]
@@ -77,7 +66,6 @@ public:
 
     using init_action = eosio::action_wrapper<"init"_n, &relay::init>;
     using update_action = eosio::action_wrapper<"update"_n, &relay::update>;
-    using setreserve_action = eosio::action_wrapper<"setreserve"_n, &relay::setreserve>;
 
 private:
     /**
@@ -101,34 +89,10 @@ private:
         bool                require_balance = true;
     };
 
-    /**
-     * TABLE `reserves`
-     *
-     * @example
-     *
-     * {
-     *   "reserve": {
-     *      "symbol": "4,XY",
-     *      "contract": "token.xy"
-     *   },
-     *   "ratio": 500000,
-     * }
-     */
-    struct [[eosio::table("reserves")]] reserves_row {
-        extended_symbol     reserve;
-        uint64_t            ratio;
-
-        uint64_t primary_key() const { return reserve.get_contract().value; }
-    };
-
     // Singleton table
     typedef singleton<"settings"_n, settings_row> settings_table;
 
-    // Multi-Index table
-    typedef eosio::multi_index< "reserves"_n, reserves_row> reserves_table;
-
     // local instances of the multi indexes
-    reserves_table      _reserves;
     settings_table      _settings;
 
     // bancor - private helpers
