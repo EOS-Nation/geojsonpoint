@@ -1,8 +1,6 @@
 void xy::set_rate( extended_symbol chain )
 {
-    check(_global.exists(), "network is not initialized");
-
-    auto global = _global.get();
+    auto global = _global.get_or_default();
     global.rate = calculate_rate( chain );
     _global.set( global, get_self() );
 }
@@ -33,9 +31,7 @@ asset xy::calculate_rate( extended_symbol chain )
 
 uint64_t xy::global_available_primary_key()
 {
-    check(_global.exists(), "network is not initialized");
-
-    auto global = _global.get();
+    auto global = _global.get_or_default();
     uint64_t available_primary_key = global.available_primary_key;
     global.available_primary_key += 1;
     _global.set(global, get_self());
