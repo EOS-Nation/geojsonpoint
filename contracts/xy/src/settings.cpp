@@ -8,7 +8,6 @@ void xy::init( extended_symbol chain,
                uint64_t consume_rate_tag )
 {
     require_auth( get_self() );
-    check(!_settings.exists(), "network settings are already initalized");
 
     check( chain.get_symbol().is_valid(), "chain symbol is invalid" );
     check( token.get_symbol().is_valid(), "token symbol is invalid" );

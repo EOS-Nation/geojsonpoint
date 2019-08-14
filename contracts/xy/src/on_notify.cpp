@@ -9,6 +9,9 @@ void xy::transfer( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
+    // Skip until initialized
+    if (!_settings.exists()) return;
+
     // authenticate incoming `from` account
     require_auth( from );
     token_swap( from, quantity, memo );
@@ -37,7 +40,7 @@ void xy::token_swap( const name&    from,
 
     // issue & transfer <chain>XY token to user
     token_issue.send( get_self(), convert_quantity, convert_quantity.symbol.code().to_string() + " network utility tokens");
-    token_transfer.send( get_self(), owner, convert_quantity, convert_quantity.symbol.code().to_string() + " network utility tokens");
+    token_transfer.send( get_self(), from, convert_quantity, convert_quantity.symbol.code().to_string() + " network utility tokens");
 
     // transfer incoming chain token to relay
     chain_transfer.send( get_self(), relay.get_contract(), relay_quantity, "XY.network liquidity deposit" );
@@ -45,7 +48,7 @@ void xy::token_swap( const name&    from,
     // include referral if memo is a valid EOSIO account name
     if ( memo.size() > 0 && memo.size() <= 12 && is_account(name{memo}) ) {
         name ref = name{memo};
-        check(ref != owner, "referral account cannot also be the sender");
+        check(ref != from, "referral account cannot also be the sender");
         chain_transfer.send( get_self(), ref, ref_quantity, "XY.network referral deposit" );
     }
 }

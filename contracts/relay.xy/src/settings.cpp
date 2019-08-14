@@ -1,7 +1,6 @@
 void relay::init( const extended_symbol chain, const extended_symbol reserve )
 {
     require_auth( get_self() );
-    check(!_settings.exists(), "relay is already initalized");
 
     // set max fee
     auto settings = _settings.get_or_default();

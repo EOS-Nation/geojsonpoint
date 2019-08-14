@@ -20,7 +20,7 @@ cleos create account eosio $NAMES EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET
 cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 
 # Setup eosio.code permissions
-cleos set account permission $NETWORK active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "xy","permission": "eosio.code"},"weight": 1}]}' owner
+cleos set account permission $NETWORK active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "names.xy","permission": "eosio.code"},"weight": 1}, {"permission": {"actor": "xy","permission": "eosio.code"},"weight": 1}]}' owner
 cleos set account permission $RELAY active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "relay.xy","permission": "eosio.code"},"weight": 1}]}' owner
 cleos set account permission $NAMES active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "names.xy","permission": "eosio.code"},"weight": 1}]}' owner
 
@@ -39,7 +39,7 @@ cleos push action $TOKEN transfer '["xy", "relay.xy" "1000.0000 XY", "init"]' -p
 cleos push action $TOKEN transfer '["xy", "bob" "10.0000 XY", "init"]' -p $NETWORK
 
 # Create & Transfer EOS
-cleos push action eosio.token create '["eosio.token", "1000000000.0000 EOS"]' -p eosio.token
-cleos push action eosio.token issue '["eosio.token", "1000000000.0000 EOS", "init"]' -p eosio.token
-cleos push action eosio.token transfer '["eosio.token", "bob", "10.0000 EOS", "init"]' -p eosio.token
-cleos push action eosio.token transfer '["eosio.token", "relay.xy", "1000.0000 EOS", "init"]' -p eosio.token
+cleos push action eosio.token create '["eosio", "1000000000.0000 EOS"]' -p eosio.token
+cleos push action eosio.token issue '["eosio", "1010.0000 EOS", "init"]' -p eosio
+cleos push action eosio.token transfer '["eosio", "relay.xy", "1000.0000 EOS", "init"]' -p eosio
+cleos push action eosio.token transfer '["eosio", "bob", "10.0000 EOS", "init"]' -p eosio

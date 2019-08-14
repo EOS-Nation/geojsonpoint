@@ -1,5 +1,3 @@
-#include <math.h>       /* pow */
-
 [[eosio::on_notify("eosio.token::transfer")]]
 void relay::transfer( const name&    from,
                       const name&    to,
@@ -15,10 +13,11 @@ void relay::transfer( const name&    from,
     // Prevent token convert by memo
     if ( memo == "init" ) return;
 
+    // Skip until initialized
+    if (!_settings.exists()) return;
+
     // authenticate incoming `from` account
     require_auth( from );
-
-    check(_settings.exists(), "relay is not initialized");
 
     auto settings = _settings.get();
     extended_symbol chain = settings.chain;
@@ -50,6 +49,9 @@ void relay::transfer_xy( const name&    from,
 
     // Prevent token convert by memo
     if ( memo == "init" ) return;
+
+    // Skip until initialized
+    if (!_settings.exists()) return;
 
     // authenticate incoming `from` account
     require_auth( from );
