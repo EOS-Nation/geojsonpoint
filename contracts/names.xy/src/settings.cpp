@@ -12,7 +12,7 @@ void names::init( const extended_symbol chain, const extended_symbol token, cons
     check( is_account( network ), "network account does not exist");
 
     // define settings
-    settings_row settings;
+    settings_row settings = _settings.get_or_default();
     settings.chain = chain;
     settings.token = token;
     settings.relay = relay;

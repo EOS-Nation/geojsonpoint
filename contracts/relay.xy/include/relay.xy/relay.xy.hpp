@@ -31,20 +31,20 @@ public:
      *
      * @example
      *
-     * cleos push action relay.xy init '[{"contract": "eosio.token", "symbol": "4,EOS"}, {"contract": "token.xy", "symbol": "4,XY"}]'
+     * cleos push action relay.xy init '[{"contract": "eosio.token", "symbol": "4,EOS"}, {"contract": "token.xy", "symbol": "4,XY"}, 0]'
      */
     [[eosio::action]]
-    void init( const extended_symbol chain, const extended_symbol reserve );
+    void init( const extended_symbol chain, const extended_symbol reserve, const uint64_t fee );
 
     /**
      * ACTION `update`
      *
      * @example
      *
-     * cleos push action relay.xy update '[true]'
+     * cleos push action relay.xy update '[true, 0]'
      */
     [[eosio::action]]
-    void update( const bool enabled );
+    void update( const bool enabled, const uint64_t fee );
 
     /**
      * Notify contract when eosio.token deposits core token
@@ -79,7 +79,9 @@ private:
      *      "contract": "eosio.token"
      *   },
      *   "enabled": false,
-     *   "required_balance": true
+     *   "required_balance": true,
+     *   "max_fee": 30000,
+     *   "fee": 0
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
@@ -87,6 +89,8 @@ private:
         extended_symbol     reserve;
         bool                enabled = false;
         bool                require_balance = true;
+        uint64_t            max_fee = 30000;
+        uint64_t            fee = 0;
     };
 
     // Singleton table
