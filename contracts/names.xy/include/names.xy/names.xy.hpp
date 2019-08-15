@@ -13,7 +13,6 @@ using namespace eosio;
 using namespace eosiosystem;
 using namespace std;
 
-
 /**
  * memo format
  *

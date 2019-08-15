@@ -29,3 +29,7 @@ cleos -u $ENDPOINT push action $NETWORK move \
 cleos -v -u $ENDPOINT push action $NETWORK modify \
     "[${USER1}, 0, [{\"k\":\"second\", \"v\": \"updated\"}, {\"k\":\"foo\", \"v\": \"bar\"}]]" \
     -p $USER1
+
+cleos -v -u $ENDPOINT push action $NETWORK modify \
+    "[${USER1}, 0, [{\"k\":\"duplicate\", \"v\": \"key\"}, {\"k\":\"duplicate\", \"v\": \"key\"}]]" \
+    -p $USER1

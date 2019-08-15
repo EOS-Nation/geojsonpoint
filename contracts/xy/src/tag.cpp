@@ -41,7 +41,9 @@ void xy::check_tags( vector<tag> tags )
 {
     check( tags.size() <= 255, "[tags] cannot have more than 255 elements");
 
+    std::set<name> duplicates{};
     for ( auto const tag : tags ) {
+        check(duplicates.insert(tag.k).second, "[tag.k] all key names must be unique");
         check_tag( tag );
     }
 }
