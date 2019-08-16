@@ -3,8 +3,6 @@
 RELAY=relay.xy
 USER=bob
 
-ENDPOINT=http://localhost:8888
-
 cleos push action $RELAY init '
 [
     {"contract": "eosio.token", "symbol": "4,EOS"},

@@ -6,7 +6,6 @@ RELAY=relay.xy
 NAMES=names.xy
 USER1=bob
 USER2=alice
-ENDPOINT=http://localhost:8888
 
 cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 
@@ -25,11 +24,11 @@ cleos set account permission $RELAY active '{"threshold": 1,"keys": [{"key": "EO
 cleos set account permission $NAMES active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "names.xy","permission": "eosio.code"},"weight": 1}]}' owner
 
 # Deploy smart contracts
-cleos -u $ENDPOINT set contract $NETWORK ./ $NETWORK.wasm $NETWORK.abi
-cleos -u $ENDPOINT set contract $TOKEN ./ $TOKEN.wasm $TOKEN.abi
-cleos -u $ENDPOINT set contract $RELAY ./ $RELAY.wasm $RELAY.abi
-cleos -u $ENDPOINT set contract $NAMES ./ $NAMES.wasm $NAMES.abi
-cleos -u $ENDPOINT set contract eosio.token ./ $TOKEN.wasm $TOKEN.abi
+cleos set contract $NETWORK ./ $NETWORK.wasm $NETWORK.abi
+cleos set contract $TOKEN ./ $TOKEN.wasm $TOKEN.abi
+cleos set contract $RELAY ./ $RELAY.wasm $RELAY.abi
+cleos set contract $NAMES ./ $NAMES.wasm $NAMES.abi
+cleos set contract eosio.token ./ $TOKEN.wasm $TOKEN.abi
 
 # Create & Transfer XY
 cleos push action $TOKEN create '["xy", "1000000000.0000 EOSXY"]' -p $TOKEN
