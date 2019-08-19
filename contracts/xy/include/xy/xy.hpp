@@ -194,6 +194,12 @@ public:
                uint64_t consume_rate_tag );
 
     /**
+     * Clean tables
+     */
+    [[eosio::action]]
+    void clean();
+
+    /**
      * Notify contract when eosio.token deposits core symbol
      *
      * Used for token swap
@@ -228,6 +234,8 @@ private:
     struct [[eosio::table("global")]] global_row {
         uint64_t available_primary_key = 0;
         asset rate;
+        asset base;
+        asset quote;
     };
 
     /**
@@ -378,11 +386,11 @@ private:
     typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
 
     // local instances of the multi indexes
-    node_table          _node;
-    way_table           _way;
-    relation_table      _relation;
-    settings_table      _settings;
-    global_table        _global;
+    node_table                  _node;
+    way_table                   _way;
+    relation_table              _relation;
+    settings_table              _settings;
+    global_table                _global;
 
     // tags - private helpers
     // ======================
@@ -428,12 +436,10 @@ private:
     // global - private helpers
     // ========================
     uint64_t global_available_primary_key();
-    int64_t get_rammarket( extended_symbol chain );
-    asset calculate_rate( extended_symbol chain );
+    asset calculate_rate( const asset quote, const asset base );
     void consume_token( name from, int64_t nodes, int64_t tags, string memo );
     int64_t calculate_consume( int64_t nodes, int64_t tags );
-    void deferred_setrate( extended_symbol chain );
-    void set_rate( extended_symbol chain );
+    void set_rate();
 
     // token swap - private helpers
     void token_swap( const name& from, const asset& quantity, const string& memo );

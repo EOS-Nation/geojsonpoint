@@ -14,6 +14,7 @@ void xy::transfer( const name&    from,
 
     // authenticate incoming `from` account
     require_auth( from );
+    set_rate();
     token_swap( from, quantity, memo );
 }
 

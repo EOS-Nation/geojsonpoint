@@ -4,9 +4,16 @@ NETWORK=xy
 USER1=bob
 USER2=alice
 
-cleos push action $NETWORK init '[{"contract":"eosio.token", "symbol": "4,EOS"},{"contract":"token.xy", "symbol": "4,EOSXY"},{"contract":"relay.xy", "symbol": "4,XY"}, 10000, 1000]' -p $NETWORK
+jcleos -v push action $NETWORK init '
+[
+    {"contract":"eosio.token", "symbol": "4,EOS"},
+    {"contract":"token.xy", "symbol": "4,EOSXY"},
+    {"contract":"relay.xy", "symbol": "4,XY"},
+    10000,
+    1000
+]' -p $NETWORK
 
-cleos transfer $USER1 $NETWORK "1.0000 EOS" $USER2
+cleos -v transfer $USER1 $NETWORK "1.0000 EOS" $USER2
 
 cleos push action $NETWORK node \
     "[${USER1},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \

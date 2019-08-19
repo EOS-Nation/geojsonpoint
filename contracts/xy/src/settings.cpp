@@ -26,6 +26,5 @@ void xy::init( extended_symbol chain,
     settings.consume_rate_tag = consume_rate_tag;
     _settings.set( settings, get_self() );
 
-    // define global rate
-    set_rate( chain );
+    set_rate();
 }

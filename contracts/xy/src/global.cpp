@@ -1,32 +1,31 @@
-void xy::set_rate( extended_symbol chain )
+void xy::set_rate()
 {
     auto global = _global.get_or_default();
-    global.rate = calculate_rate( chain );
+
+    eosiosystem::rammarket rammarket( "eosio"_n, "eosio"_n.value );
+    auto rammarket_itr = rammarket.find( symbol{"RAMCORE", 4}.raw() );
+
+    // localhost chain doesn't have rammarket table
+    if (rammarket_itr == rammarket.end()) {
+        global.base = asset{60000000000, symbol{"RAM", 0}};
+        global.quote = asset{50000000000, symbol{"EOS", 4}};
+    } else {
+        global.base = rammarket_itr->base.balance;
+        global.quote = rammarket_itr->quote.balance;
+    }
+
+    global.rate = calculate_rate(global.quote, global.base);
     _global.set( global, get_self() );
 }
 
-int64_t xy::get_rammarket( extended_symbol chain )
+asset xy::calculate_rate( const asset quote, const asset base )
 {
-    eosiosystem::rammarket rammarket( "eosio"_n, "eosio"_n.value );
-    auto rammarket_itr = rammarket.find( chain.get_symbol().code().raw() );
 
-    // set default price to approx. eosio rammarket
-    // localhost chain doesn't have rammarket table
-    if (rammarket_itr == rammarket.end()) return 1000;
+    symbol sym = _settings.get().token.get_symbol();
+    int64_t amount = (quote.amount * 1024) / base.amount;
+    asset const rate = asset{amount, sym};
 
-    const asset base = rammarket_itr->base.balance;
-    const asset quote = rammarket_itr->quote.balance;
-
-    return quote.amount / base.amount * 1024;
-}
-
-asset xy::calculate_rate( extended_symbol chain )
-{
-    symbol sym = symbol{chain.get_symbol().code().to_string() + "XY", chain.get_symbol().precision()};
-    int64_t rammarket = get_rammarket( chain );
-    int64_t amount = rammarket;
-
-    return asset{amount, sym};
+    return rate;
 }
 
 uint64_t xy::global_available_primary_key()
