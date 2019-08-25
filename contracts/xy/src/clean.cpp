@@ -1,6 +1,6 @@
 void xy::clean()
 {
-    require_auth(_self);
+    require_auth( get_self() );
 
     auto node_itr = _node.begin();
     while ( node_itr != _node.end() ) {

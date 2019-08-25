@@ -7,32 +7,23 @@ void relay::transfer( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
-    // Prevent token convert from `xy`
-    if ( from == "xy"_n || from == "names.xy"_n ) return;
+    // Prevent token convert from `fee.xy`
+    if ( from == "fee.xy"_n ) return;
 
     // Prevent token convert by memo
     if ( memo == "init" ) return;
 
-    // Skip until initialized
-    if (!_settings.exists()) return;
-
     // authenticate incoming `from` account
     require_auth( from );
 
-    auto settings = _settings.get();
-    extended_symbol chain = settings.chain;
-    extended_symbol reserve = settings.reserve;
-
+    // settings
+    auto settings = _settings.get_or_default();
     check(settings.enabled, "relay is not enabled");
 
-    asset balance_from = token::get_balance( chain.get_contract(), get_self(), chain.get_symbol().code() );
-    asset balance_to = token::get_balance( reserve.get_contract(), get_self(), reserve.get_symbol().code() );
-    const int64_t amount = static_cast<int64_t>(bancor_formula( balance_from.amount, balance_to.amount, quantity.amount ));
-
-    const asset convert_quantity = asset{amount, reserve.get_symbol()};
-
-    token::transfer_action transfer(reserve.get_contract(), { get_self(), "active"_n });
-    transfer.send( get_self(), from, convert_quantity, "convert");
+    // convert
+    extended_symbol base = extended_symbol{settings.core_symbol, "eosio.token"_n};
+    extended_symbol quote = extended_symbol{symbol{"XY", 4}, "token.xy"_n};
+    convert( from, quantity, base, quote, settings.fee );
 }
 
 [[eosio::on_notify("token.xy::transfer")]]
@@ -44,32 +35,43 @@ void relay::transfer_xy( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
-    // Prevent token convert from `xy`
-    if ( from == "xy"_n ) return;
+    // Prevent token convert from `fee.xy`
+    if ( from == "fee.xy"_n ) return;
 
     // Prevent token convert by memo
     if ( memo == "init" ) return;
 
-    // Skip until initialized
-    if (!_settings.exists()) return;
-
     // authenticate incoming `from` account
     require_auth( from );
 
-    check(_settings.exists(), "relay is not initialized");
-
-    auto settings = _settings.get();
-    extended_symbol chain = settings.chain;
-    extended_symbol reserve = settings.reserve;
-
+    // settings
+    auto settings = _settings.get_or_default();
     check(settings.enabled, "relay is not enabled");
 
-    asset balance_from = token::get_balance( reserve.get_contract(), get_self(), reserve.get_symbol().code() );
-    asset balance_to = token::get_balance( chain.get_contract(), get_self(), chain.get_symbol().code() );
+    // convert
+    extended_symbol base = extended_symbol{symbol{"XY", 4}, "token.xy"_n};
+    extended_symbol quote = extended_symbol{settings.core_symbol, "eosio.token"_n};
+    convert( from, quantity, base, quote, settings.fee );
+}
+
+void relay::convert( const name to,
+                     const asset quantity,
+                     const extended_symbol base,
+                     const extended_symbol quote,
+                     const int64_t fee )
+{
+    // Calculate convert amount
+    asset balance_from = token::get_balance( base.get_contract(), get_self(), base.get_symbol().code() );
+    asset balance_to = token::get_balance( quote.get_contract(), get_self(), quote.get_symbol().code() );
     const int64_t amount = static_cast<int64_t>(bancor_formula( balance_from.amount, balance_to.amount, quantity.amount ));
 
-    const asset convert_quantity = asset{amount, chain.get_symbol()};
+    // Calculate fee
+    const int64_t amount_fee = amount * fee / 100000;
+    const asset quantity_convert = asset{ amount - amount_fee, quote.get_symbol() };
+    const asset quantity_fee = asset{ amount_fee, quote.get_symbol() };
 
-    token::transfer_action transfer(chain.get_contract(), { get_self(), "active"_n });
-    transfer.send( get_self(), from, convert_quantity, "convert");
+    // Send transfers
+    token::transfer_action transfer(quote.get_contract(), { get_self(), "active"_n });
+    transfer.send( get_self(), to, quantity_convert, "XY.network::relay.transfer");
+    if ( amount_fee ) transfer.send( get_self(), "fee.xy"_n, quantity_convert, "XY.network::relay.transfer");
 }

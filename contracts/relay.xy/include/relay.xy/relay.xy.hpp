@@ -6,6 +6,7 @@
 #include <string>
 
 #include <token.xy/token.xy.hpp>
+#include <eosio.system/exchange_state.hpp>
 
 using namespace eosio;
 using namespace std;
@@ -31,20 +32,10 @@ public:
      *
      * @example
      *
-     * cleos push action relay.xy init '[{"contract": "eosio.token", "symbol": "4,EOS"}, {"contract": "token.xy", "symbol": "4,XY"}, 0]'
+     * cleos push action relay.xy init '[true, 0]'
      */
     [[eosio::action]]
-    void init( const extended_symbol chain, const extended_symbol reserve, const uint64_t fee );
-
-    /**
-     * ACTION `update`
-     *
-     * @example
-     *
-     * cleos push action relay.xy update '[true, 0]'
-     */
-    [[eosio::action]]
-    void update( const bool enabled, const uint64_t fee );
+    void init( const bool enabled, const uint64_t fee );
 
     /**
      * Notify contract when eosio.token deposits core token
@@ -65,7 +56,6 @@ public:
                       const string&  memo );
 
     using init_action = eosio::action_wrapper<"init"_n, &relay::init>;
-    using update_action = eosio::action_wrapper<"update"_n, &relay::update>;
 
 private:
     /**
@@ -74,23 +64,17 @@ private:
      * @example
      *
      * {
-     *   "chain": {
-     *      "symbol": "4,EOS",
-     *      "contract": "eosio.token"
-     *   },
      *   "enabled": false,
-     *   "required_balance": true,
      *   "max_fee": 30000,
-     *   "fee": 0
+     *   "fee": 0,
+     *   "core_symbol": {"symbol": "EOS", "precision": 4}
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
-        extended_symbol     chain;
-        extended_symbol     reserve;
         bool                enabled = false;
-        bool                require_balance = true;
         uint64_t            max_fee = 30000;
         uint64_t            fee = 0;
+        symbol              core_symbol = symbol{"EOS", 4};
     };
 
     // Singleton table
@@ -99,8 +83,10 @@ private:
     // local instances of the multi indexes
     settings_table      _settings;
 
-    // bancor - private helpers
-    // ========================
+    // private helpers
+    // ===============
     double bancor_formula( double balance_from, double balance_to, double amount);
     double to_fixed( double num, int precision );
+    symbol get_core_symbol();
+    void convert( const name to, const asset quantity, const extended_symbol base, const extended_symbol quote, const int64_t fee );
 };
