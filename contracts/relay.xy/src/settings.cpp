@@ -2,7 +2,7 @@ void relay::init( const bool enabled, const uint64_t fee )
 {
     auto settings = _settings.get_or_default();
 
-    check(fee < settings.max_fee, "fee cannot be higher then maximum fee");
+    check(fee <= settings.max_fee, "fee cannot be higher then maximum fee");
 
 
     // check if balance exists of eosio.token & token.xy

@@ -65,13 +65,20 @@ void relay::convert( const name to,
     asset balance_to = token::get_balance( quote.get_contract(), get_self(), quote.get_symbol().code() );
     const int64_t amount = static_cast<int64_t>(bancor_formula( balance_from.amount, balance_to.amount, quantity.amount ));
 
+    check( amount > 0, "must transfer a higher quantity amount");
+    check( quantity.amount < balance_from.amount, "must transfer a lower quantity amount");
+
     // Calculate fee
-    const int64_t amount_fee = amount * fee / 100000;
+    const int64_t amount_fee = amount * fee / 1000000;
     const asset quantity_convert = asset{ amount - amount_fee, quote.get_symbol() };
     const asset quantity_fee = asset{ amount_fee, quote.get_symbol() };
 
     // Send transfers
     token::transfer_action transfer(quote.get_contract(), { get_self(), "active"_n });
     transfer.send( get_self(), to, quantity_convert, "XY.network::relay.transfer");
-    if ( amount_fee ) transfer.send( get_self(), "fee.xy"_n, quantity_convert, "XY.network::relay.transfer");
+
+    if ( fee ) {
+        check( amount_fee > 0, "must transfer a higher quantity amount to cover relay fee");
+        transfer.send( get_self(), "fee.xy"_n, quantity_fee, "XY.network::relay.transfer");
+    }
 }
