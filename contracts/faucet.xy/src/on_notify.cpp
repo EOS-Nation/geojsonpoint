@@ -22,10 +22,12 @@ void faucet::exchange_token( const name to, const asset quantity )
 
     // external actions
     token::issue_action token_issue( "token.xy"_n, { "xy"_n, "active"_n });
+    token::transfer_action token_xy_transfer( "token.xy"_n, { "xy"_n, "active"_n });
     token::transfer_action token_transfer( "token.xy"_n, { get_self(), "active"_n });
 
     // issue & transfer XY tokens to user
-    token_issue.send( get_self(), convert_quantity, "XY.network::faucet.transfer");
+    token_issue.send( "xy"_n, convert_quantity, "XY.network::faucet.transfer");
+    token_xy_transfer.send( "xy"_n, get_self(), convert_quantity, "XY.network::faucet.transfer");
     token_transfer.send( get_self(), to, convert_quantity, "XY.network::faucet.transfer");
 }
 

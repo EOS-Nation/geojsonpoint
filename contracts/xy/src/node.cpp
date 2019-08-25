@@ -53,7 +53,7 @@ void xy::move_node( uint64_t id, point node )
     check_node_exists( id );
 
     auto node_itr = _node.find( id );
-    check( node_itr->node != node, "[node] point must be different");
+    check( node_itr->node != node, "[node] must be different than current point");
     _node.modify( node_itr, get_self(), [&](auto & row) {
         row.node = node;
     });

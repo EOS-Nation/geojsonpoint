@@ -1,40 +1,25 @@
 #!/usr/bin/env bash
 
 NETWORK=xy
-USER1=bob
-USER2=alice
-
-jcleos -v push action $NETWORK init '
-[
-    {"contract":"eosio.token", "symbol": "4,EOS"},
-    {"contract":"token.xy", "symbol": "4,EOSXY"},
-    {"contract":"relay.xy", "symbol": "4,XY"},
-    10000,
-    1000
-]' -p $NETWORK
-
-cleos -v transfer $USER1 $NETWORK "1.0000 EOS" $USER2
 
 cleos push action $NETWORK node \
-    "[${USER1},[45.123, 150.123], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
-    -p $USER1
+    '["bob",[45.123, 150.123], [{"k":"key","v":"value"}]]' \
+    -p bob
 
 cleos push action $NETWORK way \
-    "[${USER1},[[-25, -45], [65, 180]], [{\"k\":\"second\",\"v\":\"value0\"}]]" \
-    -p $USER1
+    '["bob",[[-25, -45], [65, 180]], [{"k":"key","v":"value"}]]' \
+    -p bob
 
 cleos push action $NETWORK relation \
-    "[${USER1},[{\"type\": \"way\", \"ref\": 1, \"role\": \"\"}, {\"type\": \"node\", \"ref\": 0, \"role\": \"\"}], [{\"k\":\"foo\", \"v\": \"bar\"}]]" \
-    -p $USER1
+    '["bob",[{"type": "way", "ref": 1, "role": ""}, {"type": "node", "ref": 0, "role": ""}], [{"k":"foo", "v": "bar"}]]' \
+    -p bob
 
+echo "ERROR OK: [node] must be different than current point"
 cleos push action $NETWORK move \
-    "[${USER1},0, [20, 50]]" \
-    -p $USER1
+    '["bob",0, [20, 50]]' \
+    -p bob
 
+echo "ERROR OK: [tag.k] all key names must be unique"
 cleos -v push action $NETWORK modify \
-    "[${USER1}, 0, [{\"k\":\"second\", \"v\": \"updated\"}, {\"k\":\"foo\", \"v\": \"bar\"}]]" \
-    -p $USER1
-
-cleos -v push action $NETWORK modify \
-    "[${USER1}, 0, [{\"k\":\"duplicate\", \"v\": \"key\"}, {\"k\":\"duplicate\", \"v\": \"key\"}]]" \
-    -p $USER1
+    '["bob", 0, [{"k":"duplicate", "v": "key"}, {"k":"duplicate", "v": "key"}]]' \
+    -p bob

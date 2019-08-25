@@ -202,9 +202,6 @@ private:
      */
     struct [[eosio::table("global")]] global_row {
         uint64_t available_primary_key = 0;
-        asset rate;
-        asset base;
-        asset quote;
     };
 
     /**
@@ -222,23 +219,23 @@ private:
      * {
      *   "id": 0,
      *   "node": {"x": 45.0, "y": 110.5},
+     *   "tags": [ { "k": "key", "v": "value" } ],
      *   "owner": "myaccount",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
-     *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08",
-     *   "tags": [ { "k": "key", "v": "value" } ]
+     *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
      * }
      */
     struct [[eosio::table("node")]] node_row {
         uint64_t            id;
         point               node;
+        vector<tag>         tags;
 
         // Version Control Attributes
         name                owner;
         uint32_t            version;
         time_point_sec      timestamp;
         checksum256         changeset;
-        vector<tag>         tags;
 
         uint64_t primary_key() const { return id; }
     };
@@ -259,22 +256,22 @@ private:
      *   "id": 0,
      *   "refs": [0, 1],
      *   "owner": "myaccount",
+     *   "tags": [ { "k": "key", "v": "value" } ],
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
-     *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08",
-     *   "tags": [ { "k": "key", "v": "value" } ]
+     *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
      * }
      */
     struct [[eosio::table("way")]] way_row {
         uint64_t            id;
         vector<uint64_t>    refs;
+        vector<tag>         tags;
 
         // Version Control Attributes
         name                owner;
         uint32_t            version;
         time_point_sec      timestamp;
         checksum256         changeset;
-        vector<tag>         tags;
 
         uint64_t primary_key() const { return id; }
     };
@@ -294,23 +291,23 @@ private:
      * {
      *   "id": 0,
      *   "members": [{"type": "way", "ref": 1, "role": "outer"}],
+     *   "tags": [ { "k": "key", "v": "value" } ],
      *   "owner": "myaccount",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
-     *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08",
-     *   "tags": [ { "k": "key", "v": "value" } ]
+     *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
      * }
      */
     struct [[eosio::table("relation")]] relation_row {
         uint64_t            id;
         vector<member>      members;
+        vector<tag>         tags;
 
         // Version Control Attributes
         name                owner;
         uint32_t            version;
         time_point_sec      timestamp;
         checksum256         changeset;
-        vector<tag>         tags;
 
         uint64_t primary_key() const { return id; }
     };
