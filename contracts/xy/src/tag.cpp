@@ -56,5 +56,5 @@ void xy::check_tag( tag tag )
 
 void xy::consume_modify_tags( name user, int64_t before, int64_t after )
 {
-    if (after > before) consume_token(user, 0, after - before, "modify tags");
+    if (after > before) consume_token(user, 0, after - before, "XY.network::modify");
 }

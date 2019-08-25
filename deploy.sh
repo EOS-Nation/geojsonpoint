@@ -4,6 +4,8 @@ NETWORK=xy
 TOKEN=token.xy
 RELAY=relay.xy
 NAMES=names.xy
+FAUCET=faucet.xy
+FEE=fee.xy
 USER1=bob
 USER2=alice
 
@@ -16,18 +18,22 @@ cleos create account eosio $USER1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET
 cleos create account eosio $USER2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $RELAY EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $NAMES EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio $FAUCET EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio $FEE EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio eosio.token EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 
 # Setup eosio.code permissions
-cleos set account permission $NETWORK active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "names.xy","permission": "eosio.code"},"weight": 1}, {"permission": {"actor": "xy","permission": "eosio.code"},"weight": 1}]}' owner
+cleos set account permission $NETWORK active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "faucet.xy","permission": "eosio.code"},"weight": 1}, {"permission": {"actor": "names.xy","permission": "eosio.code"},"weight": 1}, {"permission": {"actor": "xy","permission": "eosio.code"},"weight": 1}]}' owner
 cleos set account permission $RELAY active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "relay.xy","permission": "eosio.code"},"weight": 1}]}' owner
 cleos set account permission $NAMES active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "names.xy","permission": "eosio.code"},"weight": 1}]}' owner
+cleos set account permission $FAUCET active '{"threshold": 1,"keys": [{"key": "EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV","weight": 1}],"accounts": [{"permission": {"actor": "faucet.xy","permission": "eosio.code"},"weight": 1}]}' owner
 
 # Deploy smart contracts
 cleos set contract $NETWORK ./ $NETWORK.wasm $NETWORK.abi
 cleos set contract $TOKEN ./ $TOKEN.wasm $TOKEN.abi
 cleos set contract $RELAY ./ $RELAY.wasm $RELAY.abi
 cleos set contract $NAMES ./ $NAMES.wasm $NAMES.abi
+cleos set contract $FAUCET ./ $FAUCET.wasm $FAUCET.abi
 cleos set contract eosio.token ./ $TOKEN.wasm $TOKEN.abi
 
 # Create & Transfer XY

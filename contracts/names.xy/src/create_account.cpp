@@ -1,8 +1,25 @@
 void names::create_account( name creator, name name, public_key key )
 {
+    symbol sym = _settings.get().chain.get_symbol();
+
     authority auth = public_key_to_authority( key );
     native::newaccount_action newaccount( "eosio"_n, { creator, "active"_n } );
     newaccount.send( creator, name, auth, auth );
+
+    system_contract::delegatebw_action delegatebw( "eosio"_n, { creator, "active"_n } );
+    delegatebw.send( creator, name, asset{ 1000, sym }, asset{ 5000, sym }, true );
+
+    system_contract::buyrambytes_action buyrambytes( "eosio"_n, { creator, "active"_n } );
+    buyrambytes.send( creator, name, 1024 * 4 );
+}
+
+void names::key( eosio::public_key key )
+{
+    // // trim EOS from key
+    // if (key.find("EOS") != string::npos) key.replace(0, 3, "");
+    // print(key, "\n");
+    // eosio::public_key pub = string_to_public_key( 1, key );
+    print( std::string(key.data.begin(), key.data.end()), "\n" );
 }
 
 authority names::public_key_to_authority( public_key const key )
@@ -24,8 +41,11 @@ authority names::public_key_to_authority( public_key const key )
     return auth;
 }
 
-eosio::public_key names::string_to_public_key( unsigned int const key_type, const string public_key_str )
+eosio::public_key names::string_to_public_key( unsigned int const key_type, string public_key_str )
 {
+    // remove EOS suffix if present
+    if (public_key_str.find("EOS") != string::npos) public_key_str.replace(0, 3, "");
+
     eosio::public_key public_key;
     public_key.type = key_type; // Could be K1 or R1 enum
     for(int i = 0; i < 33; ++i)

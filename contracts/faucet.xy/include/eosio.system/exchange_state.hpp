@@ -25,14 +25,12 @@ namespace eosiosystem {
       struct connector {
          asset balance;
          double weight = .5;
-
-         EOSLIB_SERIALIZE( connector, (balance)(weight) )
       };
 
       connector base;
       connector quote;
 
-      uint64_t primary_key()const { return supply.symbol.raw(); }
+      uint64_t primary_key() const { return supply.symbol.raw(); }
 
       asset convert_to_exchange( connector& reserve, const asset& payment );
       asset convert_from_exchange( connector& reserve, const asset& tokens );
@@ -54,8 +52,6 @@ namespace eosiosystem {
       static int64_t get_bancor_input( int64_t out_reserve,
                                        int64_t inp_reserve,
                                        int64_t out );
-
-      EOSLIB_SERIALIZE( exchange_state, (supply)(base)(quote) )
    };
 
    typedef eosio::multi_index< "rammarket"_n, exchange_state > rammarket;

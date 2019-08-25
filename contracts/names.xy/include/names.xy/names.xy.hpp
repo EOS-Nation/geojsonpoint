@@ -55,6 +55,9 @@ public:
     [[eosio::action]]
     void init( const extended_symbol chain, const extended_symbol token, const extended_symbol relay, const name network );
 
+    [[eosio::action]]
+    void key( eosio::public_key key );
+
     /**
      * Notify contract when eosio.token deposits core token
      */
@@ -104,9 +107,11 @@ private:
     // private helpers
     // ========================
     void handle_deposit( const name from, const asset quantity, const name ref );
-    public_key string_to_public_key( unsigned int const key_type, const string public_key_str );
+    public_key string_to_public_key( unsigned int const key_type, string public_key_str );
     authority public_key_to_authority( const public_key key );
     void create_account( const name creator, const name name, const public_key key );
     vector<string> split(const string& str, const string& delim);
     memo_format parse_memo( const string memo );
 };
+
+u0003�p��6�j�[3u0019�U�2�su0002c�Ru0001��u0001w���jb+

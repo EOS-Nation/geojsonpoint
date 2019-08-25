@@ -8,7 +8,7 @@ uint64_t xy::way( const name              owner,
     require_auth( owner );
     check_way( way );
     uint64_t id = emplace_way( owner, way, tags );
-    consume_token( owner, way.size(), tags.size(), "create way" );
+    consume_token( owner, way.size(), tags.size(), "XY.network::way" );
     return id;
 }
 

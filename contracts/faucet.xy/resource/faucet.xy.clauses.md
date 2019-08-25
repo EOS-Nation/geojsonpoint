@@ -4,4 +4,4 @@ This contract contains the entire agreement of the parties, for all described ac
 
 <h1 class="clause">BINDING CONSTITUTION</h1>
 
-All the the action descibed in this contract are subject to the XY GeoLocation Network. This includes, but is not limited to membership terms and conditions, dispute resolution and severability.
+All the the action descibed in this contract are subject to the XY GeoLocation Network as held at https://addxy.com. This includes, but is not limited to membership terms and conditions, dispute resolution and severability.

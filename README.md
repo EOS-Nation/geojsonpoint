@@ -1,15 +1,17 @@
 # GeoLocation XY Network - EOSIO Smart Contracts
 
+## Smart Contracts
+
+- [xy](contracts/xy) - XY GeoLocation Network
+- [names.xy](contracts/names.xy) - Name Auction
+- [relay.xy](contracts/relay.xy) - Bancor Exchange
+- [token.xy](contracts/token.xy) - XY Token
+- [faucet.xy](contracts/faucet.xy) - XY Token generation
+- [fee.xy](contracts/fee.xy) - Fee collector
+
 ## Features
 
 - Mapbox `geometry.hpp` C++ library compatible with EOSIO Smart Contracts
-
-## Smart Contracts
-
-- [xy](contracts/xy) - XY.network
-- [names.xy](contracts/names.xy) - XY.network::names
-- [relay.xy](contracts/relay.xy) - XY.network::relay
-- [token.xy](contracts/token.xy) - XY.network::token
 
 ## Related
 

@@ -117,9 +117,9 @@ namespace eosiosystem {
          void buyrambytes( const name& payer, const name& receiver, uint32_t bytes );
 
          using delegatebw_action = eosio::action_wrapper<"delegatebw"_n, &system_contract::delegatebw>;
-         using undelegatebw_action = eosio::action_wrapper<"undelegatebw"_n, &system_contract::undelegatebw>;
-         using buyram_action = eosio::action_wrapper<"buyram"_n, &system_contract::buyram>;
          using buyrambytes_action = eosio::action_wrapper<"buyrambytes"_n, &system_contract::buyrambytes>;
+         using buyram_action = eosio::action_wrapper<"buyram"_n, &system_contract::buyram>;
+         using undelegatebw_action = eosio::action_wrapper<"undelegatebw"_n, &system_contract::undelegatebw>;
    };
 
    /** @}*/ // end of @defgroup eosiosystem eosio.system

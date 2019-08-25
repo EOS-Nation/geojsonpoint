@@ -18,5 +18,4 @@ void xy::clean()
     }
 
     if ( _global.exists() ) _global.remove();
-    if ( _settings.exists() ) _settings.remove();
 }

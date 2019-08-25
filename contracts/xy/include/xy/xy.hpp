@@ -9,7 +9,6 @@
 #include <optional>
 
 #include <token.xy/token.xy.hpp>
-#include <eosio.system/exchange_state.hpp>
 #include <mapbox/geometry.hpp>
 
 using namespace eosio;
@@ -69,7 +68,6 @@ public:
             _node( get_self(), get_self().value ),
             _way( get_self(), get_self().value ),
             _relation( get_self(), get_self().value ),
-            _settings( get_self(), get_self().value ),
             _global( get_self(), get_self().value )
     {}
 
@@ -177,38 +175,10 @@ public:
                  const vector<tag>   tags );
 
     /**
-     * ACTION `init`
-     *
-     * Initialize xy network contract
-     *
-     * @param {extended_symbol} chain - chain (ex: {"contract":"eosio.token", "symbol": {"symbol":"EOS", "precision": 4}})
-     * @example
-     *
-     * cleos push action xy init '["4,EOS"]'
-     */
-    [[eosio::action]]
-    void init( extended_symbol chain,
-               extended_symbol token,
-               extended_symbol relay,
-               uint64_t consume_rate_node,
-               uint64_t consume_rate_tag );
-
-    /**
      * Clean tables
      */
     [[eosio::action]]
     void clean();
-
-    /**
-     * Notify contract when eosio.token deposits core symbol
-     *
-     * Used for token swap
-     */
-    [[eosio::on_notify("eosio.token::transfer")]]
-    void transfer( const name&    from,
-                   const name&    to,
-                   const asset&   quantity,
-                   const string&  memo );
 
     using node_action = eosio::action_wrapper<"node"_n, &xy::node>;
     using way_action = eosio::action_wrapper<"way"_n, &xy::way>;
@@ -216,7 +186,6 @@ public:
     using erase_action = eosio::action_wrapper<"erase"_n, &xy::erase>;
     using modify_action = eosio::action_wrapper<"modify"_n, &xy::modify>;
     using move_action = eosio::action_wrapper<"move"_n, &xy::move>;
-    using init_action = eosio::action_wrapper<"init"_n, &xy::init>;
 
 private:
     /**
@@ -236,36 +205,6 @@ private:
         asset rate;
         asset base;
         asset quote;
-    };
-
-    /**
-     * TABLE `settings`
-     *
-     * @example
-     *
-     * {
-     *   "chain": {
-     *     "contract": "eosio.token",
-     *     "symbol": {"code": "EOS", "precision": 4}
-     *   },
-     *   "token": {
-     *     "contract": "token.xy",
-     *     "symbol": {"code": "EOSXY", "precision": 4}
-     *   },
-     *   "relay": {
-     *     "contract": "relay.xy",
-     *     "symbol": {"code": "XY", "precision": 4}
-     *   },
-     *   "consume_rate_node": 10000,
-     *   "consume_rate_tag": 1000,
-     * }
-     */
-    struct [[eosio::table("settings")]] settings_row {
-        extended_symbol chain;
-        extended_symbol token;
-        extended_symbol relay;
-        uint64_t consume_rate_node = 10000; //  1.0000 token per node
-        uint64_t consume_rate_tag = 1000; // 0.1000 token per tag
     };
 
     /**
@@ -378,7 +317,6 @@ private:
 
     // Singleton table
     typedef singleton<"global"_n, global_row> global_table;
-    typedef singleton<"settings"_n, settings_row> settings_table;
 
     // Multi-Index table
     typedef eosio::multi_index< "node"_n, node_row> node_table;
@@ -389,7 +327,6 @@ private:
     node_table                  _node;
     way_table                   _way;
     relation_table              _relation;
-    settings_table              _settings;
     global_table                _global;
 
     // tags - private helpers
@@ -436,11 +373,6 @@ private:
     // global - private helpers
     // ========================
     uint64_t global_available_primary_key();
-    asset calculate_rate( const asset quote, const asset base );
     void consume_token( name from, int64_t nodes, int64_t tags, string memo );
     int64_t calculate_consume( int64_t nodes, int64_t tags );
-    void set_rate();
-
-    // token swap - private helpers
-    void token_swap( const name& from, const asset& quantity, const string& memo );
 };

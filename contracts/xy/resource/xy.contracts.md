@@ -40,3 +40,9 @@ Erase node(s)
 
 Initialize network based on chain
 
+<h1 class="contract">clean</h1>
+
+## Description
+
+Erases all tables
+
