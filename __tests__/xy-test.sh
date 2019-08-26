@@ -14,6 +14,10 @@ cleos push action $NETWORK relation \
     '["bob",[{"type": "way", "ref": 1, "role": ""}, {"type": "node", "ref": 0, "role": ""}], [{"k":"foo", "v": "bar"}]]' \
     -p bob
 
+cleos push action $NETWORK move \
+    '["bob",0, [20, 50]]' \
+    -p bob
+
 echo "ERROR OK: [node] must be different than current point"
 cleos push action $NETWORK move \
     '["bob",0, [20, 50]]' \

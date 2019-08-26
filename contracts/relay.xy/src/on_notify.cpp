@@ -7,8 +7,8 @@ void relay::transfer( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
-    // Prevent token convert from ops.xy account
-    if ( from == "ops.xy"_n) return;
+    // Prevent token convert from *.xy accounts
+    if ( from == "ops.xy"_n || from == "fee.xy"_n ) return;
 
     // Prevent token convert by memo
     if ( memo == "init" ) return;
@@ -35,8 +35,8 @@ void relay::transfer_xy( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
-    // Prevent token convert from ops.xy account
-    if ( from == "ops.xy"_n) return;
+    // Prevent token convert from *.xy accounts
+    if ( from == "ops.xy"_n || from == "fee.xy"_n ) return;
 
     // Prevent token convert by memo
     if ( memo == "init" ) return;
@@ -80,7 +80,14 @@ void relay::convert( const name to,
     transfer.send( get_self(), to, quantity_convert, "XY.network::relay.transfer");
 
     if ( fee.amount ) {
-        token::transfer_action transfer_fee(base.get_contract(), { get_self(), "active"_n });
+        token::transfer_action transfer_fee( base.get_contract(), { get_self(), "active"_n } );
         transfer_fee.send( get_self(), "fee.xy"_n, fee, "XY.network::relay.transfer");
+
+        // Deferred Transaction
+
+        // action act = transfer_fee.to_action( get_self(), "fee.xy"_n, fee, "XY.network::relay.transfer" );
+        // eosio::transaction deferred;
+        // deferred.actions.emplace_back( act );
+        // deferred.send( to.value + quantity.amount + quantity.symbol.code().raw(), get_self() );
     }
 }
