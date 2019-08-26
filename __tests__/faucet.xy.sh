@@ -2,7 +2,7 @@
 
 FAUCET=faucet.xy
 
-cleos push action $FAUCET request \
+cleos -v push action $FAUCET request \
     '["bob"]' \
     -p bob
 

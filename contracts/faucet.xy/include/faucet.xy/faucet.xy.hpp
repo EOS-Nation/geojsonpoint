@@ -57,20 +57,20 @@ private:
     /**
      * TABLE `request`
      *
-     * @param {name} accoun` - account name
+     * @param {name} owner - the owner account to execute the request action for
      * @param {time_point_sec} timestamp - last time request occured
      * @example
      *
      * {
-     *   "account": "myaccount",
+     *   "owner": "myaccount",
      *   "timestamp": "2019-08-07T18:37:37"
      * }
      */
     struct [[eosio::table("request")]] request_row {
-        name                account;
+        name                owner;
         time_point_sec      timestamp;
 
-        uint64_t primary_key() const { return account.value; }
+        uint64_t primary_key() const { return owner.value; }
     };
 
     // Multi-Index table
