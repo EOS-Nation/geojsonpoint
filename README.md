@@ -3,11 +3,13 @@
 ## Smart Contracts
 
 - [xy](contracts/xy) - XY GeoLocation Network
-- [names.xy](contracts/names.xy) - Name Auction
+- [names.xy](contracts/names.xy) - Name Marketplace
 - [relay.xy](contracts/relay.xy) - Bancor Exchange
 - [token.xy](contracts/token.xy) - XY Token
 - [faucet.xy](contracts/faucet.xy) - XY Token generation
-- [fee.xy](contracts/fee.xy) - Fee collector
+- [fee.xy](contracts/fee.xy) - Fee collector & distributor
+- [stake.xy](contracts/stake.xy) - REX staking
+- [ops.xy](contracts/ops.xy) - Network operational expenses
 
 ## Features
 

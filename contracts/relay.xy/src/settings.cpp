@@ -1,9 +1,6 @@
-void relay::init( const bool enabled, const uint64_t fee )
+void relay::init( const bool enabled )
 {
     auto settings = _settings.get_or_default();
-
-    check(fee <= settings.max_fee, "fee cannot be higher then maximum fee");
-
 
     // check if balance exists of eosio.token & token.xy
     symbol core_symbol = get_core_symbol();
@@ -15,7 +12,6 @@ void relay::init( const bool enabled, const uint64_t fee )
 
     // init settings
     settings.enabled = enabled;
-    settings.fee = fee;
     settings.core_symbol = core_symbol;
     _settings.set( settings, get_self() );
 }

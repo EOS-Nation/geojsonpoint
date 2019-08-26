@@ -32,10 +32,10 @@ public:
      *
      * @example
      *
-     * cleos push action relay.xy init '[true, 0]'
+     * cleos push action relay.xy init '[true]'
      */
     [[eosio::action]]
-    void init( const bool enabled, const uint64_t fee );
+    void init( const bool enabled );
 
     /**
      * Notify contract when eosio.token deposits core token
@@ -72,8 +72,6 @@ private:
      */
     struct [[eosio::table("settings")]] settings_row {
         bool                enabled = false;
-        uint64_t            max_fee = 30000;
-        uint64_t            fee = 0;
         symbol              core_symbol = symbol{"EOS", 4};
     };
 
@@ -88,5 +86,5 @@ private:
     double bancor_formula( double balance_from, double balance_to, double amount);
     double to_fixed( double num, int precision );
     symbol get_core_symbol();
-    void convert( const name to, const asset quantity, const extended_symbol base, const extended_symbol quote, const int64_t fee );
+    void convert( const name to, const asset quantity, const extended_symbol base, const extended_symbol quote );
 };

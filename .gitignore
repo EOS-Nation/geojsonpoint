@@ -3,7 +3,8 @@ eosc-vault.json
 .vscode
 *.abi
 *.wasm
-./build
+dist
+
 
 !__tests__/*
 coverage

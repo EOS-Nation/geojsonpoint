@@ -12,7 +12,7 @@ void faucet::request( const name owner )
         });
     } else {
         // enforce 24 hour faucet limit
-        check( request_itr->timestamp.sec_since_epoch() < current_time_point().sec_since_epoch() - 60 * 60 * 24, "owner can only request faucet every 24 hours");
+        check( request_itr->timestamp < time_point_sec(current_time_point()) - 60 * 60 * 24, "owner can only request faucet every 24 hours");
         _request.modify( request_itr, get_self(), [&]( auto & row ) {
             row.timestamp  = current_time_point();
         });
