@@ -3,7 +3,7 @@ void names::init( symbol core_symbol = symbol{"EOS", 4})
     require_auth( get_self() );
 
     // 100.0000 EOS
-    set_rate( 4,  asset{100000, core_symbol} );
+    set_rate( 4,  asset{1000000, core_symbol} );
 
     // 50.0000 EOS
     set_rate( 5,  asset{500000, core_symbol} );

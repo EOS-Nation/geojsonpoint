@@ -13,8 +13,6 @@ using namespace eosio;
 using namespace eosiosystem;
 using namespace std;
 
-namespace xy {
-
 class [[eosio::contract("names.xy")]] names : public contract {
 public:
     using contract::contract;
@@ -54,7 +52,7 @@ public:
     void setrate( const uint8_t size, const asset amount );
 
     /**
-     * ACTION `newaccount`
+     * ACTION `claimaccount`
      *
      * Account can create a new account using `*.xy` prefix.
      *
@@ -64,10 +62,10 @@ public:
      *
      * @example
      *
-     * cleos push action names.xy newaccount '["myaccount", "account.xy","EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV"]' -p myaccount
+     * cleos push action names.xy claimaccount '["myaccount", "account.xy","EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV"]' -p myaccount
      */
     [[eosio::action]]
-    void newaccount( const name bidder, const name name, const public_key key );
+    void claimaccount( const name bidder, const name name, const public_key key );
 
     /**
      * Notify contract when eosio.token deposits core token
@@ -105,13 +103,15 @@ public:
      * @param {name} name - account name claimed
      * @param {name} bidder - bidder account name
      * @param {asset} amount - amount paid for name
+     * @param {checksum256} trx_id - claim transaction id
      * @param {time_point_sec} timestamp - bid timestamp
      *
      * @example
      * {
-     *   "name": "myaccount",
-     *   "bidder": "account.xy",
+     *   "name": "account.xy",
+     *   "bidder": "myaccount",
      *   "amount": "1.0000 EOS",
+     *   "trx_id": "3ab7022027117c4e901597bdfe6e078526f5228f806ca9e03ae729614641e5c2",
      *   "timestamp": "2019-08-07T18:37:37"
      * }
      */
@@ -131,16 +131,16 @@ public:
      * @param {name} name - account name created
      * @param {name} bidder - bidder account name
      * @param {asset} amount - amount paid for name
-     * @param {time_point_sec} timestamp - name creation timestamp
      * @param {checksum256} trx_id - creation transaction id
+     * @param {time_point_sec} timestamp - name creation timestamp
      *
      * @example
      * {
-     *   "name": "myaccount",
-     *   "bidder": "account.xy",
+     *   "name": "account.xy",
+     *   "bidder": "myaccount",
      *   "amount": "1.0000 EOS",
-     *   "bid_time": "2019-08-07T18:37:37",
-     *   "trx_id": "3ab7022027117c4e901597bdfe6e078526f5228f806ca9e03ae729614641e5c2"
+     *   "trx_id": "3ab7022027117c4e901597bdfe6e078526f5228f806ca9e03ae729614641e5c2",
+     *   "timestamp": "2019-08-07T18:37:37"
      * }
      */
     struct [[eosio::table("sold")]] sold_row {
@@ -168,9 +168,8 @@ public:
     void send_fees( const asset quanity );
     name parse_memo( const string memo );
     authority public_key_to_authority( const public_key key );
-    void claim_account( const name bidder, const name name, const asset quantity );
+    void purchase_account( const name bidder, const name name, const asset quantity );
     void new_account( const name bidder, const name name, const public_key key );
     void set_rate( const uint8_t length, const asset quantity );
     checksum256 get_trx_id();
 };
-} /// namespace xy

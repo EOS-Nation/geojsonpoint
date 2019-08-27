@@ -12,6 +12,6 @@ void names::transfer( const name&    from,
 
     // Handle account creation & deposits
     name account = parse_memo( memo );
-    claim_account( from, account, quantity );
+    purchase_account( from, account, quantity );
     send_fees( quantity );
 }

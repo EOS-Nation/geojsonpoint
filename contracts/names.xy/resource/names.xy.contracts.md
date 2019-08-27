@@ -17,8 +17,8 @@ set rate action
 set rate action
 
 
-<h1 class="contract">newaccount</h1>
+<h1 class="contract">claimaccount</h1>
 
 ## Description
 
-new account action
+claim new account action
