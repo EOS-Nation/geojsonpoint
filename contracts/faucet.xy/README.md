@@ -1,4 +1,4 @@
-# XY.network
+# XY.network::faucet
 
 ## ACTION
 

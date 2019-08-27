@@ -1,5 +1,7 @@
 #include "names.xy/names.xy.hpp"
 
+#include "claim.cpp"
+#include "get_trx_id.cpp"
 #include "on_notify.cpp"
-#include "create_account.cpp"
-#include "settings.cpp"
+#include "rates.cpp"
+#include "sold.cpp"

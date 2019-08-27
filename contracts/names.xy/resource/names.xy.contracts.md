@@ -4,14 +4,21 @@
 
 init action
 
-<h1 class="contract">update</h1>
+<h1 class="contract">setrate</h1>
 
 ## Description
 
-update action
+set rate action
 
-<h1 class="contract">setreserve</h1>
+<h1 class="contract">setrate</h1>
 
 ## Description
 
-setreserve action
+set rate action
+
+
+<h1 class="contract">newaccount</h1>
+
+## Description
+
+new account action
