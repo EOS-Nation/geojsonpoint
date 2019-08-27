@@ -21,3 +21,11 @@
 - UI map example for Block Explorers
   - [Leaflet](https://leafletjs.com/)
   - [Leaflet Mapbox GL](https://github.com/mapbox/mapbox-gl-leaflet)
+
+## References
+
+- https://opensky-network.org/network/explorer
+- https://www.maptiler.com/google-maps-coordinates-tile-bounds-projection/
+- http://geojson.io
+- https://github.com/DenisCarriere/global-mercator
+- https://github.com/mapbox/vector-tile-spec

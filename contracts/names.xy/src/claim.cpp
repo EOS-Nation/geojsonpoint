@@ -64,9 +64,15 @@ void names::new_account( const name bidder, const name name, const public_key ke
     native::newaccount_action newaccount( "eosio"_n, { creator, "active"_n } );
     newaccount.send( creator, name, auth, auth );
 
-    // // buy 3.5kb RAM
-    // system_contract::buyrambytes_action buyrambytes( "eosio"_n, { creator, "active"_n } );
-    // buyrambytes.send( creator, name, 1024 * 3.5 );
+    // localhost does not have RAM
+    eosiosystem::rammarket rammarket( "eosio"_n, "eosio"_n.value );
+    auto rammarket_itr = rammarket.find( symbol{"RAMCORE", 4}.raw() );
+
+    if (rammarket_itr != rammarket.end()) {
+        // buy 3.5kb RAM
+        system_contract::buyrambytes_action buyrambytes( "eosio"_n, { creator, "active"_n } );
+        buyrambytes.send( creator, name, 1024 * 3.5 );
+    }
 
     // move entry from claim => sold
     _sold.emplace( get_self(), [&]( auto & row ) {
