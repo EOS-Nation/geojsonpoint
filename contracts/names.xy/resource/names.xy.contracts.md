@@ -22,3 +22,9 @@ set rate action
 ## Description
 
 claim new account action
+
+<h1 class="contract">clean</h1>
+
+## Description
+
+clean tables

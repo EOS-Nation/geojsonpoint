@@ -76,8 +76,20 @@ public:
                    const asset&   quantity,
                    const string&  memo );
 
-    using init_action = eosio::action_wrapper<"init"_n, &names::init>;
 
+    /**
+     * Clean tables
+     *
+     * Requires ADMIN permissions
+     */
+    [[eosio::action]]
+    void clean();
+
+    using init_action = eosio::action_wrapper<"init"_n, &names::init>;
+    using setrate_action = eosio::action_wrapper<"setrate"_n, &names::setrate>;
+    using claimaccount_action = eosio::action_wrapper<"claimaccount"_n, &names::claimaccount>;
+
+private:
     /**
      * TABLE `rates`
      *

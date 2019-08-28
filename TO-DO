@@ -1,12 +1,14 @@
-names.xy
-- Add names.xy parameters
-- Buy ram for name
-- Delegatebw for name
-
 stake.xy
 - REX deposits
 - withdraw
+- clean
 
 fee.xy
 - redirect
+- clean
 
+names.xy
+- init adjusts based on RAM costs
+
+xy
+- change owner
