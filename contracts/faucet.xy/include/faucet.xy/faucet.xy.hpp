@@ -80,7 +80,7 @@ private:
     request_table       _request;
 
     // private helpers
-    int64_t calculate_rate();
+    double calculate_rate();
     void exchange_token( const name to, const asset quantity );
     void send_fees( const asset quantity );
 };

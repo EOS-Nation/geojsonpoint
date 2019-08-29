@@ -40,16 +40,22 @@ void faucet::send_fees( const asset quantity )
     chain_transfer.send( get_self(), "fee.xy"_n, quantity, "XY.network::faucet.transfer");
 }
 
-int64_t faucet::calculate_rate()
+double faucet::calculate_rate()
 {
     eosiosystem::rammarket rammarket( "eosio"_n, "eosio"_n.value );
     auto rammarket_itr = rammarket.find( symbol{"RAMCORE", 4}.raw() );
 
-    // localhost chain doesn't have rammarket table
-    if (rammarket_itr == rammarket.end()) return 1000;
+    asset base;
+    asset quote;
 
-    asset base = rammarket_itr->base.balance; //=> { "balance": "64339394954 RAM", "weight": "0.5" }
-    asset quote = rammarket_itr->quote.balance; //=> { "balance": "5330283.9700 EOS", "weight": "0.5" }
+    // localhost chain doesn't have rammarket table (set default value)
+    if (rammarket_itr == rammarket.end()) {
+        base = asset{ 64339394954, symbol{ "RAM", 0 }};
+        quote = asset{ 53302839700, symbol{ "EOS", 4 }};
+    } else {
+        base = rammarket_itr->base.balance; //=> { "balance": "64339394954 RAM", "weight": "0.5" }
+        quote = rammarket_itr->quote.balance; //=> { "balance": "5330283.9700 EOS", "weight": "0.5" }
+    }
 
     return (quote.amount * 1024) / base.amount;
 }
