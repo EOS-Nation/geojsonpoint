@@ -31,6 +31,7 @@ uint64_t xy::emplace_relation( const name owner, const vector<member> members, c
     // Create row in `node` TABLE
     _relation.emplace( _self, [&]( auto & row ) {
         row.id         = id;
+        row.uid        = uid;
         row.members    = members;
         row.tags       = tags;
 

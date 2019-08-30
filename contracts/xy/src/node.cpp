@@ -37,6 +37,7 @@ uint64_t xy::emplace_node( const name owner, const point node, const vector<tag>
     // Create row in `node` TABLE
     _node.emplace( get_self(), [&]( auto & row ) {
         row.id         = id;
+        row.uid        = uid;
         row.node       = node;
         row.tags       = tags;
 

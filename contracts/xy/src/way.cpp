@@ -33,6 +33,7 @@ uint64_t xy::emplace_way( const name owner, const vector<point> way, const vecto
     // Create row in `node` TABLE
     _way.emplace( _self, [&]( auto & row ) {
         row.id         = id;
+        row.uid        = uid;
         row.refs       = refs;
         row.tags       = tags;
 

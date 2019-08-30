@@ -229,15 +229,16 @@ private:
     /**
      * TABLE `global`
      *
-     * @param {uint64_t} id - global id for node/way/relation
-     * @param {name} uid - unique id defined by owner
+     * @param {uint64_t} id - global object identifier
+     * @param {name} uid - unique identifier
+     * @param {name} owner - owner name of xy object
      * @param {name} type - object type (node/way/relation)
      * @example
      *
      * {
      *   "id": 0,
-     *   "uid": "mynode",
-     *   "owner": "myaccount",
+     *   "uid": "mynode.xy",
+     *   "owner": "myaccount.xy",
      *   "type": "node"
      * }
      */
@@ -255,7 +256,8 @@ private:
     /**
      * TABLE `node`
      *
-     * @param {uint64_t} id - object unique identifier
+     * @param {uint64_t} id - global object identifier
+     * @param {name} uid - unique identifier
      * @param {point} node - point{x, y} coordinate
      * @param {name} owner - creator of object
      * @param {uint32_t} version - amount of times object has been modified
@@ -266,9 +268,10 @@ private:
      *
      * {
      *   "id": 0,
+     *   "uid": "mynode.xy",
      *   "node": {"x": 45.0, "y": 110.5},
      *   "tags": [ { "k": "key", "v": "value" } ],
-     *   "owner": "myaccount",
+     *   "owner": "myaccount.xy",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
      *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
@@ -276,6 +279,7 @@ private:
      */
     struct [[eosio::table("node")]] node_row {
         uint64_t            id;
+        name                uid;
         point               node;
         vector<tag>         tags;
 
@@ -286,12 +290,15 @@ private:
         checksum256         changeset;
 
         uint64_t primary_key() const { return id; }
+        uint64_t by_uid() const { return uid.value; }
+        uint64_t by_owner() const { return owner.value; }
     };
 
     /**
      * TABLE `way`
      *
-     * @param {uint64_t} id - object unique identifier
+     * @param {uint64_t} id - global object identifier
+     * @param {name} uid - unique identifier
      * @param {vector<uint64_t} refs - array of node ids
      * @param {name} owner - creator of object
      * @param {uint32_t} version - amount of times object has been modified
@@ -302,9 +309,10 @@ private:
      *
      * {
      *   "id": 0,
+     *   "uid": "myway.xy"
      *   "refs": [0, 1],
-     *   "owner": "myaccount",
      *   "tags": [ { "k": "key", "v": "value" } ],
+     *   "owner": "myaccount.xy",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
      *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
@@ -312,6 +320,7 @@ private:
      */
     struct [[eosio::table("way")]] way_row {
         uint64_t            id;
+        name                uid;
         vector<uint64_t>    refs;
         vector<tag>         tags;
 
@@ -322,12 +331,15 @@ private:
         checksum256         changeset;
 
         uint64_t primary_key() const { return id; }
+        uint64_t by_uid() const { return uid.value; }
+        uint64_t by_owner() const { return owner.value; }
     };
 
     /**
      * TABLE `relation`
      *
-     * @param {uint64_t} id - object unique identifier
+     * @param {uint64_t} id - global object identifier
+     * @param {name} uid - unique identifier
      * @param {vector<member} members - array of member{type, ref, role}
      * @param {name} owner - creator of object
      * @param {uint32_t} version - amount of times object has been modified
@@ -338,9 +350,10 @@ private:
      *
      * {
      *   "id": 0,
+     *   "uid": "myrel.xy"
      *   "members": [{"type": "way", "ref": 1, "role": "outer"}],
      *   "tags": [ { "k": "key", "v": "value" } ],
-     *   "owner": "myaccount",
+     *   "owner": "myaccount.xy",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
      *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
@@ -348,6 +361,7 @@ private:
      */
     struct [[eosio::table("relation")]] relation_row {
         uint64_t            id;
+        name                uid;
         vector<member>      members;
         vector<tag>         tags;
 
@@ -358,12 +372,23 @@ private:
         checksum256         changeset;
 
         uint64_t primary_key() const { return id; }
+        uint64_t by_uid() const { return uid.value; }
+        uint64_t by_owner() const { return owner.value; }
     };
 
     // Multi-Index table
-    typedef eosio::multi_index< "node"_n, node_row> node_table;
-    typedef eosio::multi_index< "way"_n, way_row> way_table;
-    typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
+    typedef eosio::multi_index< "node"_n, node_row,
+        indexed_by<"byuid"_n, const_mem_fun<node_row, uint64_t, &node_row::by_uid>>,
+        indexed_by<"byowner"_n, const_mem_fun<node_row, uint64_t, &node_row::by_owner>>
+    > node_table;
+    typedef eosio::multi_index< "way"_n, way_row,
+        indexed_by<"byuid"_n, const_mem_fun<way_row, uint64_t, &way_row::by_uid>>,
+        indexed_by<"byowner"_n, const_mem_fun<way_row, uint64_t, &way_row::by_owner>>
+    > way_table;
+    typedef eosio::multi_index< "relation"_n, relation_row,
+        indexed_by<"byuid"_n, const_mem_fun<relation_row, uint64_t, &relation_row::by_uid>>,
+        indexed_by<"byowner"_n, const_mem_fun<relation_row, uint64_t, &relation_row::by_owner>>
+    > relation_table;
     typedef eosio::multi_index< "global"_n, global_row,
         indexed_by<"byuid"_n, const_mem_fun<global_row, uint64_t, &global_row::by_uid>>,
         indexed_by<"byowner"_n, const_mem_fun<global_row, uint64_t, &global_row::by_owner>>
