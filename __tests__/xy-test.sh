@@ -15,12 +15,6 @@ cleos push action xy node \
     -p alice.xy
 
 # Error Details:
-# assertion failure with message: uid is only availble for *.xy premium accounts (cannot be <12 length)
-cleos push action xy node \
-    '["alice",[45.123, 150.123], [{"k":"building","v":"yes"}], "alice"]' \
-    -p alice
-
-# Error Details:
 # assertion failure with message: uid is only availble for *.xy premium accounts (cannot contain '.')
 cleos push action xy node \
     '["alice",[45.123, 150.123], [{"k":"building","v":"yes"}], "myaccount.xy"]' \
