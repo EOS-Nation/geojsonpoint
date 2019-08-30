@@ -16,7 +16,9 @@ cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
 cleos create account eosio $NETWORK EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $TOKEN EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $USER1 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio $USER1.xy EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $USER2 EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
+cleos create account eosio $USER2.xy EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $RELAY EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $NAMES EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
 cleos create account eosio $FAUCET EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV
@@ -40,10 +42,12 @@ cleos set contract eosio.token ./dist $TOKEN.wasm $TOKEN.abi
 
 # Create & Transfer XY
 cleos push action $TOKEN create '["xy", "1000000000.0000 XY"]' -p $TOKEN
-cleos push action $TOKEN issue '["xy", "2100.0000 XY", "init"]' -p $NETWORK
+cleos push action $TOKEN issue '["xy", "2300.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "relay.xy" "1000.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "faucet.xy" "1000.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "bob" "100.0000 XY", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "bob.xy" "100.0000 XY", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "alice.xy" "100.0000 XY", "init"]' -p $NETWORK
 
 # Create & Transfer EOS
 cleos push action eosio.token create '["eosio", "1000000000.0000 EOS"]' -p eosio.token

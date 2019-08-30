@@ -1,27 +1,13 @@
 
 name xy::get_owner( uint64_t id )
 {
-    if (node_exists( id )) {
-        auto node_itr = _node.find( id );
-        return node_itr->owner;
-    }
-    else if (way_exists( id )) {
-        auto way_itr = _way.find( id );
-        return way_itr->owner;
-    }
-    else if (relation_exists( id )) {
-        auto relation_itr = _relation.find( id );
-        return relation_itr->owner;
-    }
-    else {
-        check(false, "[id] owner not found");
-        return ""_n;
-    }
+    auto global_itr = _global.get( id, "id not found" );
+    return global_itr.owner;
 }
 
 void xy::check_owner( name user, uint64_t id )
 {
-    check( get_owner(id) == user, "[user] does not match id owner");
+    check( get_owner(id) == user, "user does not match id owner");
 }
 
 void xy::update_version( uint64_t id )

@@ -186,6 +186,38 @@ public:
     [[eosio::action]]
     void clean();
 
+    /**
+     * Convert unique identifier name to global object identifier
+     *
+     * @param {name} uid - unique identifier name
+     * @returns {uint64_t} id - global object identifier
+     * @example
+     *
+     * uid_to_id("mynode"_n); // => 123
+     */
+    static uint64_t uid_to_id( const name uid )
+    {
+        global_table global( "xy"_n, "xy"_n.value );
+        auto index = global.get_index<"byuid"_n>();
+        return index.get( uid.value, "uid does not exist" ).id;
+    }
+
+    /**
+     * Check if unique identifier exists
+     *
+     * @param {name} uid - unique identifier
+     * @returns {bool} true/false
+     * @example
+     *
+     * uid_exists("mynode"); // => true/false
+     */
+    static uint64_t uid_exists( const name uid )
+    {
+        global_table global( "xy"_n, "xy"_n.value );
+        auto index = global.get_index<"byuid"_n>();
+        return index.find( uid.value ) != index.end();
+    }
+
     using node_action = eosio::action_wrapper<"node"_n, &xy::node>;
     using way_action = eosio::action_wrapper<"way"_n, &xy::way>;
     using relation_action = eosio::action_wrapper<"relation"_n, &xy::relation>;
@@ -216,6 +248,7 @@ private:
         name type;
 
         uint64_t primary_key() const { return id; }
+        uint64_t by_uid() const { return uid.value; }
         uint64_t by_owner() const { return owner.value; }
     };
 
@@ -332,6 +365,7 @@ private:
     typedef eosio::multi_index< "way"_n, way_row> way_table;
     typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
     typedef eosio::multi_index< "global"_n, global_row,
+        indexed_by<"byuid"_n, const_mem_fun<global_row, uint64_t, &global_row::by_uid>>,
         indexed_by<"byowner"_n, const_mem_fun<global_row, uint64_t, &global_row::by_owner>>
     > global_table;
 
