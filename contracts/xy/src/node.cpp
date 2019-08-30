@@ -8,7 +8,7 @@ uint64_t xy::node( const name           owner,
 {
     require_auth( owner );
     uint64_t id = emplace_node( owner, node, tags, uid );
-    consume_token( owner, 1, tags.size(), "XY.network::node" );
+    consume_token( owner, uid, 1, tags.size(), "XY.network::node" );
     return id;
 }
 

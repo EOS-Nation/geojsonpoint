@@ -8,7 +8,7 @@ uint64_t xy::relation( const name              owner,
 {
     require_auth( owner );
     uint64_t id = emplace_relation( owner, members, tags, uid );
-    consume_token( owner, 1, tags.size() + members.size(), "XY.network::relation");
+    consume_token( owner, uid, 1, tags.size() + members.size(), "XY.network::relation");
     return id;
 }
 

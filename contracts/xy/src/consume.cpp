@@ -1,5 +1,9 @@
-void xy::consume_token( name owner, int64_t nodes, int64_t tags, string memo )
+void xy::consume_token( const name owner, const name uid, const int64_t nodes, const int64_t tags, const string memo )
 {
+    // do not charge XY tokens if uid is the owner name
+    if ( owner == uid ) return;
+
+    // calculate consume rate
     symbol sym = symbol{"XY", 4};
     int64_t amount = calculate_consume( nodes, tags );
     asset quantity = asset{ amount, sym };

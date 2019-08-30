@@ -27,7 +27,7 @@ cleos push action xy node \
     -p alice
 
 cleos push action xy node \
-    '["alice",[45.123, 150.123], [{"k":"building","v":"yes"}], "myaccountxyz"]' \
+    '["alice",[45.123, 150.123], [{"k":"building","v":"yes"}], "alice"]' \
     -p alice
 
 cleos push action xy node \
@@ -35,8 +35,8 @@ cleos push action xy node \
     -p bob.xy
 
 cleos push action xy node \
-    '["deniscarrier",[45.0, 130.0], [{"k":"building","v":"house"}], ""]' \
-    -p deniscarrier
+    '["bob",[45.0, 130.0], [{"k":"building","v":"house"}], ""]' \
+    -p bob
 
 cleos push action xy way \
     '["bob",[[-25, -45], [65, 180]], [{"k":"key","v":"value"}], ""]' \

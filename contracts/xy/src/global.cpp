@@ -9,17 +9,19 @@ uint64_t xy::global_available_primary_key( const name owner, const name type, co
         check( !uid_exists( uid ), "uid already exists" );
 
         // reserve uid for owner account name
-        if ( is_account( uid ) ) check( uid == owner, "uid is reserved for owner account");
+        if ( is_account( uid ) ) {
+            check( uid == owner, "uid is reserved for owner account");
+        } else {
+            // owner is no-premium *.xy account
+            const name suffix = owner.suffix();
 
-        // owner is no-premium *.xy account
-        const name suffix = owner.suffix();
+            if (suffix != "xy"_n) {
+                // must be 12 characters
+                check( uid.length() == 12, "uid is only availble for *.xy premium accounts (cannot be <12 length)");
 
-        if (suffix != "xy"_n) {
-            // must be 12 characters
-            check( uid.length() == 12, "uid is only availble for *.xy premium accounts (cannot be <12 length)");
-
-            // cannot contain `.`
-            check( uid.suffix() == uid , "uid is only availble for *.xy premium accounts (cannot contain '.')");
+                // cannot contain `.`
+                check( uid.suffix() == uid , "uid is only availble for *.xy premium accounts (cannot contain '.')");
+            }
         }
     }
 

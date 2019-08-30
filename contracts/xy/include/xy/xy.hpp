@@ -408,7 +408,7 @@ private:
     void modify_tags( name user, uint64_t id, vector<tag> tags );
     void check_tag( tag tag );
     void check_tags( vector<tag> tags );
-    void consume_modify_tags( name user, int64_t before, int64_t after );
+    void consume_modify_tags( const name user, const name uid, const int64_t before, const int64_t after );
 
     // node
     // ====
@@ -450,6 +450,6 @@ private:
 
     // consume
     // =======
-    void consume_token( name from, int64_t nodes, int64_t tags, string memo );
+    void consume_token( const name owner, const name uid, const int64_t nodes, const int64_t tags, const string memo );
     int64_t calculate_consume( int64_t nodes, int64_t tags );
 };
