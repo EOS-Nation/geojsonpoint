@@ -25,14 +25,16 @@ void xy::update_version( uint64_t id )
             row.timestamp   = timestamp;
             row.changeset   = changeset;
         });
-    } else if (type == "way"_n) {
+    }
+    else if (type == "way"_n) {
         auto way_itr = _way.find( id );
         _way.modify( way_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
             row.timestamp   = timestamp;
             row.changeset   = changeset;
         });
-    } else if ( type == "relation"_n) {
+    }
+    else if ( type == "relation"_n) {
         auto relation_itr = _relation.find( id );
         _relation.modify( relation_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;

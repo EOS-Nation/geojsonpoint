@@ -11,29 +11,28 @@ void xy::modify( const name            user,
 
 void xy::modify_tags( name user, uint64_t id, vector<tag> tags )
 {
-    if (node_exists( id )) {
+    name type = _global.get( id, "id not found").type;
+
+    if ( type == "node"_n ) {
         auto node_itr = _node.find( id );
         consume_modify_tags(user, node_itr->tags.size(), tags.size());
         _node.modify( node_itr, get_self(), [&]( auto & row ) {
             row.tags = tags;
         });
     }
-    else if (way_exists( id )) {
+    else if ( type == "way"_n ) {
         auto way_itr = _way.find( id );
         consume_modify_tags(user, way_itr->tags.size(), tags.size());
         _way.modify( way_itr, get_self(), [&]( auto & row ) {
             row.tags = tags;
         });
     }
-    else if (relation_exists( id )) {
+    else if ( type == "relation"_n ) {
         auto relation_itr = _relation.find( id );
         consume_modify_tags(user, relation_itr->tags.size(), tags.size());
         _relation.modify( relation_itr, get_self(), [&]( auto & row ) {
             row.tags = tags;
         });
-    }
-    else {
-        check(false, "[id] not found to modify tags");
     }
 }
 
