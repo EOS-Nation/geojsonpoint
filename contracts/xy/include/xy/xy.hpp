@@ -83,7 +83,7 @@ public:
      * @returns {uint64_t} node id
      * @example
      *
-     * cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}], ""]'
+     * cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}], "mynode"]' -p myaccount
      */
     [[eosio::action]]
     uint64_t node( const name           owner,
@@ -99,15 +99,17 @@ public:
      * @param {name} owner - creator of the way
      * @param {vector<point>} way - way
      * @param {vector<tag>} tags - array of key & value tags
+     * @param {name} [uid=""] - unique identifier
      * @returns {uint64_t} way id
      * @example
      *
-     * cleos push action xy way '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}]]'
+     * cleos push action xy way '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}], "myway"]' -p myaccount
      */
     [[eosio::action]]
     uint64_t way( const name            owner,
                   const vector<point>   way,
-                  const vector<tag>     tags );
+                  const vector<tag>     tags,
+                  const name            uid = name{""} );
 
     /**
      * ACTION `relation`
@@ -117,15 +119,17 @@ public:
      * @param {name} owner - creator of the way
      * @param {vector<member>} members - array of member
      * @param {vector<tag>} tags - array of key & value tags
+     * @param {name} [uid=""] - unique identifier
      * @returns {uint64_t} member id
      * @example
      *
-     * cleos push action xy relation '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}]]'
+     * cleos push action xy relation '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}], "myrelation"]' -p myaccount
      */
     [[eosio::action]]
-    uint64_t relation( const name              owner,
-                       const vector<member>    members,
-                       const vector<tag>       tags );
+    uint64_t relation( const name               owner,
+                       const vector<member>     members,
+                       const vector<tag>        tags,
+                       const name               uid = name{""} );
 
     /**
      * ACTION `erase`
@@ -136,7 +140,7 @@ public:
      * @param {vector<uint64_t>} ids - array of node identifiers
      * @example
      *
-     * cleos push action xy erase '["myaccount", [0]]'
+     * cleos push action xy erase '["myaccount", [0]]' -p myaccount
      */
     [[eosio::action]]
     void erase( const name              user,
@@ -152,7 +156,7 @@ public:
      * @param {point} node - point{x, y}
      * @example
      *
-     * cleos push action xy move '["myaccount", 0, [45.0, 110.5]]'
+     * cleos push action xy move '["myaccount", 0, [45.0, 110.5]]' -p myaccount
      */
     [[eosio::action]]
     void move( const name          user,
@@ -169,7 +173,7 @@ public:
      * @param {vector<tag>} tags - array of key & value tags
      * @example
      *
-     * cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
+     * cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]' -p myaccount
      */
     [[eosio::action]]
     void modify( const name          user,
@@ -200,7 +204,7 @@ private:
      *
      * {
      *   "id": 0,
-     *   "uid": "mypoint",
+     *   "uid": "mynode",
      *   "owner": "myaccount",
      *   "type": "node"
      * }
@@ -358,7 +362,7 @@ private:
 
     // way
     // ===
-    uint64_t emplace_way( name owner, vector<point> way, vector<tag> tags );
+    uint64_t emplace_way( name owner, vector<point> way, vector<tag> tags, const name uid = name{""} );
     bool erase_way( uint64_t id );
     bool erase_ways( vector<uint64_t> ids );
     bool way_exists( uint64_t id );
@@ -367,7 +371,7 @@ private:
 
     // relation
     // ========
-    uint64_t emplace_relation( name owner, vector<member> member, vector<tag> tags );
+    uint64_t emplace_relation( name owner, vector<member> member, vector<tag> tags, const name uid = name{""} );
     bool erase_relation( uint64_t id );
     bool erase_relations( vector<uint64_t> ids );
     bool relation_exists( uint64_t id );

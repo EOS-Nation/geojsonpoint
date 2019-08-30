@@ -32,6 +32,7 @@ Create node (longitude & latitude) with tags
 - `{name} owner` - creator of the node
 - `{point} node` - point{x, y}
 - `{vector<tag>} tags` - array of key & value tags
+- `{name} [uid=""]` - unique identifier
 
 ### returns
 
@@ -40,7 +41,7 @@ Create node (longitude & latitude) with tags
 ### example
 
 ```bash
-cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}]]'
+cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}], "mynode]' -p myaccount
 ```
 
 ## ACTION `way`
@@ -52,6 +53,7 @@ Create way with tags
 - `{name} owner` - creator of the way
 - `{vector<point>} way` - way
 - `{vector<tag>} tags` - array of key & value tags
+- `{name} [uid=""]` - unique identifier
 
 ### returns
 
@@ -60,7 +62,7 @@ Create way with tags
 ## example
 
 ```bash
-cleos push action xy way '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}]]'
+cleos push action xy way '["myaccount", [[45.0, 110.5], [25.0, 130.5]], [{"k": "key", "v": "value"}], "myway"]' -p myaccount
 ```
 
 ## ACTION `relation`
@@ -72,6 +74,7 @@ Create relation with tags
 - `{name} owner` - creator of the way
 - `{vector<member>} member` - array of member
 - `{vector<tag>} tags` - array of key & value tags
+- `{name} [uid=""]` - unique identifier
 
 ### returns
 
@@ -80,7 +83,7 @@ Create relation with tags
 ### example
 
 ```bash
-cleos push action xy way '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}]]'
+cleos push action xy relation '["myaccount", [{"type": "way", "ref": 1, "role": "outer"}], [{"k": "key", "v": "value"}], "myrelation"]' -p myaccount
 ```
 
 ## ACTION `erase`
@@ -95,7 +98,7 @@ Erase node and all associated tags
 ### example
 
 ```bash
-cleos push action xy erase '["myaccount", [0]]'
+cleos push action xy erase '["myaccount", [0]]' -p myaccount
 ```
 
 ## ACTION `move`
@@ -109,7 +112,7 @@ Move node to a new location
 - `{point} node` - point{x, y}
 
 ```bash
-cleos push action xy move '["myaccount", 0, [45.0, 110.5]]'
+cleos push action xy move '["myaccount", 0, [45.0, 110.5]]' -p myaccount
 ```
 
 ## ACTION `modify`
@@ -125,7 +128,7 @@ Modify tags from a node
 ### example
 
 ```bash
-cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
+cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]' -p myaccount
 ```
 
 ## STRUCT `tag`
@@ -186,7 +189,6 @@ cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
 }
 ```
 
-
 ## TABLE `way`
 
 - `{uint64_t} id` - object unique identifier
@@ -237,4 +239,17 @@ cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]'
 
 ## TABLE `global`
 
-- `{uint64_t} available_primary_key` - global id for node/way/relation
+- `{uint64_t} id` - global id for node/way/relation
+- `{name} uid` - unique id defined by owner
+- `{name} type` - object type (node/way/relation)
+
+### example
+
+```json
+{
+  "id": 0,
+  "uid": "mynode",
+  "owner": "myaccount",
+  "type": "node"
+}
+```

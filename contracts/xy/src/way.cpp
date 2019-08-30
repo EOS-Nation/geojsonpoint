@@ -3,23 +3,24 @@
  */
 uint64_t xy::way( const name              owner,
                   const vector<point>     way,
-                  const vector<tag>       tags )
+                  const vector<tag>       tags,
+                  const name              uid )
 {
     require_auth( owner );
     check_way( way );
-    uint64_t id = emplace_way( owner, way, tags );
+    uint64_t id = emplace_way( owner, way, tags, uid );
     consume_token( owner, way.size(), tags.size(), "XY.network::way" );
     return id;
 }
 
-uint64_t xy::emplace_way( name owner, vector<point> way, vector<tag> tags )
+uint64_t xy::emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid )
 {
     check_tags( tags );
 
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key( owner, name{"way"}, name{""} );
+    uint64_t id = global_available_primary_key( owner, name{"way"}, uid );
 
     // node id cointainer
     vector<uint64_t> refs;

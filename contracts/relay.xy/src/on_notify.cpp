@@ -49,8 +49,8 @@ void relay::transfer_xy( const name&    from,
     check(settings.enabled, "relay is not initialized");
 
     // convert
-    extended_symbol base = extended_symbol{symbol{"XY", 4}, "token.xy"_n};
-    extended_symbol quote = extended_symbol{settings.core_symbol, "eosio.token"_n};
+    extended_symbol base = extended_symbol{ symbol{"XY", 4}, "token.xy"_n };
+    extended_symbol quote = extended_symbol{ settings.core_symbol, "eosio.token"_n };
     convert( from, quantity, base, quote );
 }
 

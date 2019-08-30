@@ -3,22 +3,23 @@
  */
 uint64_t xy::relation( const name              owner,
                        const vector<member>    members,
-                       const vector<tag>       tags )
+                       const vector<tag>       tags,
+                       const name              uid )
 {
     require_auth( owner );
-    uint64_t id = emplace_relation( owner, members, tags );
+    uint64_t id = emplace_relation( owner, members, tags, uid );
     consume_token( owner, 1, tags.size() + members.size(), "XY.network::relation");
     return id;
 }
 
-uint64_t xy::emplace_relation( name owner, vector<member> members, vector<tag> tags )
+uint64_t xy::emplace_relation( const name owner, const vector<member> members, const vector<tag> tags, const name uid )
 {
     check_tags( tags );
 
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key( owner, name{"relation"}, name{""} );
+    uint64_t id = global_available_primary_key( owner, name{"relation"}, uid );
 
     // validate member
     for (auto const& member: members) {
