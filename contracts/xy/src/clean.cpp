@@ -17,5 +17,8 @@ void xy::clean()
         relation_itr = _relation.erase(relation_itr);
     }
 
-    if ( _global.exists() ) _global.remove();
+    auto global_itr = _global.begin();
+    while ( global_itr != _global.end() ) {
+        global_itr = _global.erase(global_itr);
+    }
 }

@@ -1,12 +1,13 @@
 /**
  * ACTION node
  */
-uint64_t xy::node( const name             owner,
-                   const point            node,
-                   const vector<tag>      tags )
+uint64_t xy::node( const name           owner,
+                   const point          node,
+                   const vector<tag>    tags,
+                   const name           uid )
 {
     require_auth( owner );
-    uint64_t id = emplace_node( owner, node, tags );
+    uint64_t id = emplace_node( owner, node, tags, uid );
     consume_token( owner, 1, tags.size(), "XY.network::node" );
     return id;
 }
@@ -24,14 +25,14 @@ void xy::move( const name          user,
     update_version( id );
 }
 
-uint64_t xy::emplace_node( name owner, point node, vector<tag> tags )
+uint64_t xy::emplace_node( const name owner, const point node, const vector<tag> tags, const name uid )
 {
     check_tags( tags );
 
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key();
+    uint64_t id = global_available_primary_key( owner, name{"node"}, uid );
 
     // Create row in `node` TABLE
     _node.emplace( get_self(), [&]( auto & row ) {

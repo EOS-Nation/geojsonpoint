@@ -79,15 +79,17 @@ public:
      * @param {name} owner - creator of the node
      * @param {point} node - point{x, y}
      * @param {vector<tag>} tags - array of key & value tags
+     * @param {name} [uid=""] - unique identifier
      * @returns {uint64_t} node id
      * @example
      *
-     * cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}]]'
+     * cleos push action xy node '["myaccount", [45.0, 110.5], [{"k": "key", "v": "value"}], ""]'
      */
     [[eosio::action]]
-    uint64_t node( const name             owner,
-                   const point            node,
-                   const vector<tag>      tags );
+    uint64_t node( const name           owner,
+                   const point          node,
+                   const vector<tag>    tags,
+                   const name           uid = name{""} );
 
     /**
      * ACTION `way`
@@ -191,17 +193,26 @@ private:
     /**
      * TABLE `global`
      *
-     * @param {uint64_t} available_primary_key - global id for node/way/relation
-     * @param {asset} rate - cost of 1 unit on XY network
+     * @param {uint64_t} id - global id for node/way/relation
+     * @param {name} uid - unique id defined by owner
+     * @param {name} type - object type (node/way/relation)
      * @example
      *
      * {
-     *   "available_primary_key": 0,
-     *   "rate": "0.1000 EOSXY"
+     *   "id": 0,
+     *   "uid": "mypoint",
+     *   "owner": "myaccount",
+     *   "type": "node"
      * }
      */
     struct [[eosio::table("global")]] global_row {
-        uint64_t available_primary_key = 0;
+        uint64_t id;
+        name uid;
+        name owner;
+        name type;
+
+        uint64_t primary_key() const { return id; }
+        uint64_t by_owner() const { return owner.value; }
     };
 
     /**
@@ -312,13 +323,13 @@ private:
         uint64_t primary_key() const { return id; }
     };
 
-    // Singleton table
-    typedef singleton<"global"_n, global_row> global_table;
-
     // Multi-Index table
     typedef eosio::multi_index< "node"_n, node_row> node_table;
     typedef eosio::multi_index< "way"_n, way_row> way_table;
     typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
+    typedef eosio::multi_index< "global"_n, global_row,
+        indexed_by<"byowner"_n, const_mem_fun<global_row, uint64_t, &global_row::by_owner>>
+    > global_table;
 
     // local instances of the multi indexes
     node_table                  _node;
@@ -326,24 +337,27 @@ private:
     relation_table              _relation;
     global_table                _global;
 
-    // tags - private helpers
-    // ======================
+    // private helpers
+    // ===============
+
+    // tags
+    // ====
     void modify_tags( name user, uint64_t id, vector<tag> tags );
     void check_tag( tag tag );
     void check_tags( vector<tag> tags );
     void consume_modify_tags( name user, int64_t before, int64_t after );
 
-    // node - private helpers
-    // ======================
-    uint64_t emplace_node( name owner, point node, vector<tag> tags );
+    // node
+    // ====
+    uint64_t emplace_node( const name owner, const point node, const vector<tag> tags, const name uid = name{""} );
     bool erase_node( uint64_t id );
     bool erase_nodes( vector<uint64_t> ids );
     void move_node( uint64_t id, point node );
     bool node_exists( uint64_t id );
     void check_node_exists( uint64_t id );
 
-    // way - private helpers
-    // =====================
+    // way
+    // ===
     uint64_t emplace_way( name owner, vector<point> way, vector<tag> tags );
     bool erase_way( uint64_t id );
     bool erase_ways( vector<uint64_t> ids );
@@ -351,25 +365,28 @@ private:
     void check_way_exists( uint64_t id );
     void check_way( vector<point> way );
 
-    // relation - private helpers
-    // ==========================
+    // relation
+    // ========
     uint64_t emplace_relation( name owner, vector<member> member, vector<tag> tags );
     bool erase_relation( uint64_t id );
     bool erase_relations( vector<uint64_t> ids );
     bool relation_exists( uint64_t id );
     void check_relation_exists( uint64_t id );
 
-    // utils - private helpers
-    // =======================
+    // utils
+    // =====
     checksum256 get_trx_id();
     name get_owner( uint64_t id );
     void check_owner( name user, uint64_t id );
     void update_version( uint64_t id );
     uint64_t now();
 
-    // global - private helpers
-    // ========================
-    uint64_t global_available_primary_key();
+    // global
+    // ======
+    uint64_t global_available_primary_key( const name owner, const name type, const name uid = name{""} );
+
+    // consume
+    // =======
     void consume_token( name from, int64_t nodes, int64_t tags, string memo );
     int64_t calculate_consume( int64_t nodes, int64_t tags );
 };

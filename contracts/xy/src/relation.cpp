@@ -18,7 +18,7 @@ uint64_t xy::emplace_relation( name owner, vector<member> members, vector<tag> t
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key();
+    uint64_t id = global_available_primary_key( owner, name{"relation"}, name{""} );
 
     // validate member
     for (auto const& member: members) {

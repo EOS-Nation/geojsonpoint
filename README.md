@@ -29,3 +29,4 @@
 - http://geojson.io
 - https://github.com/DenisCarriere/global-mercator
 - https://github.com/mapbox/vector-tile-spec
+- https://www.eosnameservice.io
