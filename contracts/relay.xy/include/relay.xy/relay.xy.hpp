@@ -65,8 +65,6 @@ private:
      *
      * {
      *   "enabled": false,
-     *   "max_fee": 30000,
-     *   "fee": 0,
      *   "core_symbol": {"symbol": "EOS", "precision": 4}
      * }
      */

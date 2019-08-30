@@ -82,12 +82,5 @@ void relay::convert( const name to,
     if ( fee.amount ) {
         token::transfer_action transfer_fee( base.get_contract(), { get_self(), "active"_n } );
         transfer_fee.send( get_self(), "fee.xy"_n, fee, "XY.network::relay.transfer");
-
-        // Deferred Transaction
-
-        // action act = transfer_fee.to_action( get_self(), "fee.xy"_n, fee, "XY.network::relay.transfer" );
-        // eosio::transaction deferred;
-        // deferred.actions.emplace_back( act );
-        // deferred.send( to.value + quantity.amount + quantity.symbol.code().raw(), get_self() );
     }
 }
