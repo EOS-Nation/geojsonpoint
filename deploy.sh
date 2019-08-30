@@ -47,6 +47,7 @@ cleos push action $TOKEN transfer '["xy", "relay.xy" "1000.0000 XY", "init"]' -p
 cleos push action $TOKEN transfer '["xy", "faucet.xy" "1000.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "bob" "100.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "bob.xy" "100.0000 XY", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "alice" "100.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "alice.xy" "100.0000 XY", "init"]' -p $NETWORK
 
 # Create & Transfer EOS

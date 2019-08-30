@@ -19,7 +19,7 @@ uint64_t xy::global_available_primary_key( const name owner, const name type, co
             check( uid.length() == 12, "uid is only availble for *.xy premium accounts (cannot be <12 length)");
 
             // cannot contain `.`
-            check( suffix == uid , "uid is only availble for *.xy premium accounts (cannot contain '.')");
+            check( uid.suffix() == uid , "uid is only availble for *.xy premium accounts (cannot contain '.')");
         }
     }
 
