@@ -3,24 +3,24 @@
 NETWORK=xy
 
 # Error Details:
-# assertion failure with message: uid is reserved for owner account
-cleos push action $NETWORK node \
-    '["bob",[45.123, 150.123], [{"k":"building","v":"yes"}], "bob.xy"]' \
-    -p bob
+# # assertion failure with message: uid is reserved for owner account
+# cleos push action $NETWORK node \
+#     '["bob",[45.123, 150.123], [{"k":"building","v":"yes"}], "bob.xy"]' \
+#     -p bob
 
-# Error Details:
-# assertion failure with message: uid is reserved for owner account
-cleos push action $NETWORK node \
-    '["alice.xy",[45.123, 150.123], [{"k":"building","v":"yes"}], "bob.xy"]' \
-    -p alice.xy
+# # Error Details:
+# # assertion failure with message: uid is reserved for owner account
+# cleos push action $NETWORK node \
+#     '["alice.xy",[45.123, 150.123], [{"k":"building","v":"yes"}], "bob.xy"]' \
+#     -p alice.xy
 
-cleos push action $NETWORK node \
-    '["bob.xy",[45.123, 150.123], [{"k":"building","v":"yes"}], "bob.xy"]' \
-    -p bob.xy
+# cleos push action $NETWORK node \
+#     '["bob.xy",[45.123, 150.123], [{"k":"building","v":"yes"}], "bob.xy"]' \
+#     -p bob.xy
 
-cleos push action $NETWORK node \
-    '["bob",[45.0, 130.0], [{"k":"building","v":"house"}], ""]' \
-    -p bob
+# cleos push action $NETWORK node \
+#     '["bob",[45.0, 130.0], [{"k":"building","v":"house"}], ""]' \
+#     -p bob
 
 # cleos push action $NETWORK way \
 #     '["bob",[[-25, -45], [65, 180]], [{"k":"key","v":"value"}], "myway2.xy"]' \
@@ -30,9 +30,14 @@ cleos push action $NETWORK node \
 #     '["bob",[{"type": "way", "ref": 1, "role": ""}, {"type": "node", "ref": 0, "role": ""}], [{"k":"foo", "v": "bar"}], "myrelation"]' \
 #     -p bob
 
-# cleos push action $NETWORK move \
-#     '["bob",0, [20, 50]]' \
-#     -p bob
+cleos push action $NETWORK move \
+    '["bob.xy",0, [22, 50]]' \
+    -p bob.xy
+
+cleos -v push action $NETWORK modify \
+    '["bob.xy", 0, [{"k":"change", "v": "key"}]]' \
+    -p bob.xy
+
 
 # echo "ERROR OK: [node] must be different than current point"
 # cleos push action $NETWORK move \
