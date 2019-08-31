@@ -3,7 +3,7 @@ void xy::modify( const name            user,
                  const vector<tag>     tags )
 {
     require_auth( user );
-    check_owner( user, id );
+    check( get_id( id ).owner == user, "user does not match id owner");
     check_tags( tags );
     modify_tags( user, id, tags );
     update_version( id );
@@ -11,8 +11,8 @@ void xy::modify( const name            user,
 
 void xy::modify_tags( name user, uint64_t id, vector<tag> tags )
 {
-    auto owner_itr = _owner.get( id, "id not found");
-    name type = owner_itr.type;
+    auto uid_row = get_id( id );
+    name type = uid_row.type;
 
     if ( type == "node"_n ) {
         auto node_itr = _node.find( id );

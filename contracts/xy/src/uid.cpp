@@ -21,40 +21,13 @@ void xy::set_uid( const name owner, const uint64_t id, const name uid, const nam
                 check( uid.suffix() == uid , "uid is only availble for *.xy premium accounts (cannot contain '.')");
             }
         }
-        // Add uid to table
-        _uid.emplace( get_self(), [&]( auto & row ) {
-            row.uid        = uid;
-            row.id         = id;
-            row.type       = type;
-        });
     }
+
+    // Add uid to table
+    _uid.emplace( get_self(), [&]( auto & row ) {
+        row.uid        = uid;
+        row.id         = id;
+        row.owner      = owner;
+        row.type       = type;
+    });
 }
-
-
-// /**
-//  * Convert unique identifier name to global object identifier
-//  *
-//  * @param {name} uid - unique identifier name
-//  * @returns {uint64_t} id - global object identifier
-//  * @example
-//  *
-//  * uid_to_id("mynode.xy"_n); // => 123
-//  */
-// uint64_t xy::uid_to_id( const name uid )
-// {
-//     return _uid.get( uid.value, "uid does not exist" ).id;
-// }
-
-// /**
-//  * Check if unique identifier exists
-//  *
-//  * @param {name} uid - unique identifier
-//  * @returns {bool} true/false
-//  * @example
-//  *
-//  * uid_exists("mynode"); // => true/false
-//  */
-// bool xy::uid_exists( const name uid )
-// {
-//     return _uid.find( uid.value ) != index.end();
-// }

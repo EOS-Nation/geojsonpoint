@@ -10,7 +10,6 @@ uint64_t xy::node( const name           owner,
     uint64_t id = emplace_node( owner, node, tags, uid );
     name type = name{"node"};
     set_uid( owner, id, uid, type );
-    set_owner( owner, id, type );
     consume_token( owner, 1, tags.size(), "XY.network::node" );
     return id;
 }
@@ -23,7 +22,7 @@ void xy::move( const name          user,
                const point         node )
 {
     require_auth( user );
-    check_owner( user, id );
+    check( get_id( id ).owner == user, "user does not match id owner");
     move_node( id, node );
     update_version( id );
 }

@@ -16,7 +16,7 @@ using namespace std;
 using namespace mapbox::geometry;
 
 /**
- * STRUCT tag
+ * STRUCT `tag`
  *
  * @param {name} k - key
  * @param {string} v - value
@@ -33,7 +33,7 @@ struct tag {
 };
 
 /**
- * STRUCT member
+ * STRUCT `member`
  *
  * @param {name} type - type of member (way or node)
  * @param {uint64_t} ref - ref id of way or node
@@ -50,6 +50,29 @@ struct member {
     name        type;
     uint64_t    ref;
     name        role;
+};
+
+/**
+ * STRUCT `uid_object`
+ *
+ * @param {uint64_t} id - global object identifier
+ * @param {name} uid - unique identifier
+ * @param {name} owner - owner name of xy object
+ * @param {name} type - object type (node/way/relation)
+ * @example
+ *
+ * {
+ *   "id": 123,
+ *   "uid": "mynode.xy",
+ *   "owner": "myaccount",
+ *   "type": "node"
+ * }
+ */
+struct uid_object {
+    uint64_t    id;
+    name        uid;
+    name        owner;
+    name        type;
 };
 
 class [[eosio::contract("xy")]] xy : public contract {
@@ -69,8 +92,7 @@ public:
             _way( get_self(), get_self().value ),
             _relation( get_self(), get_self().value ),
             _global( get_self(), get_self().value ),
-            _uid( get_self(), get_self().value ),
-            _owner( get_self(), get_self().value )
+            _uid( get_self(), get_self().value )
     {}
 
     /**
@@ -189,33 +211,82 @@ public:
     void clean();
 
     /**
-     * Convert unique identifier name to global object identifier
-     *
-     * @param {name} uid - unique identifier name
-     * @returns {uint64_t} id - global object identifier
-     * @example
-     *
-     * uid_to_id("mynode.xy"_n); // => 123
-     */
-    static uint64_t uid_to_id( const name uid )
-    {
-        uid_table _uid( "xy"_n, "xy"_n.value );
-        return _uid.get( uid.value, "uid does not exist" ).id;
-    }
-
-    /**
      * Check if unique identifier exists
      *
      * @param {name} uid - unique identifier
      * @returns {bool} true/false
      * @example
      *
-     * uid_exists("mynode"); // => true/false
+     * uid_exists( "mynode"_n ); // => true/false
      */
-    static uint64_t uid_exists( const name uid )
+    static bool uid_exists( const name uid )
     {
         uid_table _uid( "xy"_n, "xy"_n.value );
-        return _uid.find( uid.value ) != _uid.end();
+        auto index = _uid.get_index<"byuid"_n>();
+        return index.find( uid.value ) != index.end();
+    }
+
+    /**
+     * Convert unique identifier to global object indentifier
+     *
+     * @param {name} uid - unique identifier
+     * @returns {uint64_t} global object indentifier
+     * @example
+     *
+     * uid_to_id( "mynode"_n ); // => 123
+     */
+    static uint64_t uid_to_id( const name uid )
+    {
+        uid_table _uid( "xy"_n, "xy"_n.value );
+        auto index = _uid.get_index<"byuid"_n>();
+        return index.get( uid.value, "uid does not exist" ).id;
+    }
+
+    /**
+     * Get uid object from unique identifier
+     *
+     * @param {name} uid - unique identifier
+     * @returns {uid_object} uid object
+     * @example
+     *
+     * get_uid( "mynode"_n );
+     * // =>
+     * // {
+     * //   "id": 123,
+     * //   "uid": "mynode.xy",
+     * //   "owner": "myaccount",
+     * //   "type": "node"
+     * // }
+     */
+    static uid_object get_uid( const name uid )
+    {
+        uid_table _uid( "xy"_n, "xy"_n.value );
+        auto index = _uid.get_index<"byuid"_n>();
+        auto row = index.get( uid.value, "uid does not exist" );
+        return uid_object{row.id, row.uid, row.owner, row.type};
+    }
+
+    /**
+     * Get uid object from global object identifier
+     *
+     * @param {uint64_t} id - global object identifier
+     * @returns {uid_object} uid object
+     * @example
+     *
+     * get_id( 123 );
+     * // =>
+     * // {
+     * //   "id": 123,
+     * //   "uid": "mynode.xy",
+     * //   "owner": "myaccount",
+     * //   "type": "node"
+     * // }
+     */
+    static uid_object get_id( const uint64_t id )
+    {
+        uid_table _uid( "xy"_n, "xy"_n.value );
+        auto row = _uid.get( id, "id does not exist" );
+        return uid_object{row.id, row.uid, row.owner, row.type};
     }
 
     using node_action = eosio::action_wrapper<"node"_n, &xy::node>;
@@ -241,49 +312,30 @@ private:
     };
 
     /**
-     * TABLE `owner`
+     * TABLE `uid`
      *
      * @param {uint64_t} id - global object identifier
+     * @param {name} uid - unique identifier
      * @param {name} owner - owner name of xy object
      * @param {name} type - object type (node/way/relation)
      * @example
      *
      * {
      *   "id": 123,
-     *   "owner": "myaccount.xy",
-     *   "type": "node"
-     * }
-     */
-    struct [[eosio::table("owner")]] owner_row {
-        uint64_t id;
-        name owner;
-        name type;
-
-        uint64_t primary_key() const { return id; }
-        uint64_t by_owner() const { return owner.value; }
-    };
-
-    /**
-     * TABLE `uid`
-     *
-     * @param {name} uid - unique identifier
-     * @param {uint64_t} id - global object identifier
-     * @param {name} type - object type (node/way/relation)
-     * @example
-     *
-     * {
      *   "uid": "mynode.xy",
-     *   "id": 123,
+     *   "owner": "myaccount",
      *   "type": "node"
      * }
      */
-    struct [[eosio::table("uid")]] uid_row {
-        name        uid;
+    struct [[eosio::table("uid"), eosio::contract("xy")]] uid_row {
         uint64_t    id;
+        name        uid;
+        name        owner;
         name        type;
 
-        uint64_t primary_key() const { return uid.value; }
-        uint64_t by_id() const { return id; }
+        uint64_t primary_key() const { return id; }
+        uint64_t by_uid() const { return uid.value; }
+        uint64_t by_owner() const { return owner.value; }
     };
 
     /**
@@ -390,11 +442,9 @@ private:
     typedef eosio::multi_index< "way"_n, way_row> way_table;
     typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
     typedef eosio::multi_index< "uid"_n, uid_row,
-        indexed_by<"byid"_n, const_mem_fun<uid_row, uint64_t, &uid_row::by_id>>
+        indexed_by<"byuid"_n, const_mem_fun<uid_row, uint64_t, &uid_row::by_uid>>,
+        indexed_by<"byowner"_n, const_mem_fun<uid_row, uint64_t, &uid_row::by_owner>>
     > uid_table;
-    typedef eosio::multi_index< "owner"_n, owner_row,
-        indexed_by<"byowner"_n, const_mem_fun<owner_row, uint64_t, &owner_row::by_owner>>
-    > owner_table;
 
     // Singleton Tables
     typedef eosio::singleton< "global"_n, global_row> global_table;
@@ -404,7 +454,6 @@ private:
     way_table           _way;
     relation_table      _relation;
     global_table        _global;
-    owner_table         _owner;
     uid_table           _uid;
 
     // private helpers
@@ -458,10 +507,4 @@ private:
     // uid
     // ===
     void set_uid( const name owner, const uint64_t id, const name uid, const name type );
-
-    // owner
-    // =====
-    name get_owner( uint64_t id );
-    void check_owner( name user, uint64_t id );
-    void set_owner( const name owner, const uint64_t id, const name type );
 };

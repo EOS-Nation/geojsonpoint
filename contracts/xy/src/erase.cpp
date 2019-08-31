@@ -11,7 +11,7 @@ void xy::erase( const name              user,
 
     // Authentication user by id owner
     for ( auto const id : ids ) {
-        check_owner( user, id );
+        check( get_id( id ).owner == user, "user does not match id owner");
     }
 
     if ( erase_nodes( ids ) ) is_erased = true;

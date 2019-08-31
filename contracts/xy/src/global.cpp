@@ -13,11 +13,12 @@ void xy::update_version( uint64_t id )
     time_point_sec timestamp = current_time_point();
     checksum256 changeset = get_trx_id();
 
-    auto owner_itr = _owner.get( id, "id not found" );
-    name type = owner_itr.type;
+    auto uid_row = get_id( id );
+    name type = uid_row.type;
 
     if (type == "node"_n) {
         auto node_itr = _node.find( id );
+        check( node_itr != _node.end(), "node does not exist" );
         _node.modify( node_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
             row.timestamp   = timestamp;
@@ -26,6 +27,7 @@ void xy::update_version( uint64_t id )
     }
     else if (type == "way"_n) {
         auto way_itr = _way.find( id );
+        check( way_itr != _way.end(), "way does not exist" );
         _way.modify( way_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
             row.timestamp   = timestamp;
@@ -34,6 +36,7 @@ void xy::update_version( uint64_t id )
     }
     else if ( type == "relation"_n) {
         auto relation_itr = _relation.find( id );
+        check( relation_itr != _relation.end(), "relation does not exist" );
         _relation.modify( relation_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
             row.timestamp   = timestamp;

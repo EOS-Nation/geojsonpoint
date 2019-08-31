@@ -22,9 +22,5 @@ void xy::clean()
         uid_itr = _uid.erase(uid_itr);
     }
 
-    auto owner_itr = _owner.begin();
-    while ( owner_itr != _owner.end() ) {
-        owner_itr = _owner.erase(owner_itr);
-    }
     if ( _global.exists() ) _global.remove();
 }

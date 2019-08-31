@@ -11,7 +11,6 @@ uint64_t xy::way( const name              owner,
     uint64_t id = emplace_way( owner, way, tags, uid );
     name type = name{"way"};
     set_uid( owner, id, uid, type );
-    set_owner( owner, id, type );
     consume_token( owner, way.size(), tags.size(), "XY.network::way" );
     return id;
 }

@@ -10,7 +10,6 @@ uint64_t xy::relation( const name              owner,
     uint64_t id = emplace_relation( owner, members, tags, uid );
     name type = name{"relation"};
     set_uid( owner, id, uid, type );
-    set_owner( owner, id, type );
     consume_token( owner, 1, tags.size() + members.size(), "XY.network::relation");
     return id;
 }
