@@ -42,7 +42,7 @@ cleos set contract eosio.token ./dist $TOKEN.wasm $TOKEN.abi
 
 # Create & Transfer XY
 cleos push action $TOKEN create '["xy", "1000000000.0000 XY"]' -p $TOKEN
-cleos push action $TOKEN issue '["xy", "2300.0000 XY", "init"]' -p $NETWORK
+cleos push action $TOKEN issue '["xy", "10000.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "relay.xy" "1000.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "faucet.xy" "1000.0000 XY", "init"]' -p $NETWORK
 cleos push action $TOKEN transfer '["xy", "bob" "100.0000 XY", "init"]' -p $NETWORK
@@ -52,7 +52,7 @@ cleos push action $TOKEN transfer '["xy", "alice.xy" "100.0000 XY", "init"]' -p 
 
 # Create & Transfer EOS
 cleos push action eosio.token create '["eosio", "1000000000.0000 EOS"]' -p eosio.token
-cleos push action eosio.token issue '["eosio", "1200.0000 EOS", "init"]' -p eosio
+cleos push action eosio.token issue '["eosio", "10000.0000 EOS", "init"]' -p eosio
 cleos push action eosio.token transfer '["eosio", "relay.xy", "1000.0000 EOS", "init"]' -p eosio
 cleos push action eosio.token transfer '["eosio", "bob", "100.0000 EOS", "init"]' -p eosio
 cleos push action eosio.token transfer '["eosio", "alice", "100.0000 EOS", "init"]' -p eosio

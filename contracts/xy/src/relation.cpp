@@ -8,7 +8,10 @@ uint64_t xy::relation( const name              owner,
 {
     require_auth( owner );
     uint64_t id = emplace_relation( owner, members, tags, uid );
-    consume_token( owner, uid, 1, tags.size() + members.size(), "XY.network::relation");
+    name type = name{"relation"};
+    set_uid( owner, id, uid, type );
+    set_owner( owner, id, type );
+    consume_token( owner, 1, tags.size() + members.size(), "XY.network::relation");
     return id;
 }
 
@@ -19,7 +22,7 @@ uint64_t xy::emplace_relation( const name owner, const vector<member> members, c
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key( owner, name{"relation"}, uid );
+    uint64_t id = global_available_primary_key();
 
     // validate member
     for (auto const& member: members) {
@@ -31,12 +34,10 @@ uint64_t xy::emplace_relation( const name owner, const vector<member> members, c
     // Create row in `node` TABLE
     _relation.emplace( _self, [&]( auto & row ) {
         row.id         = id;
-        row.uid        = uid;
         row.members    = members;
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();

@@ -9,7 +9,10 @@ uint64_t xy::way( const name              owner,
     require_auth( owner );
     check_way( way );
     uint64_t id = emplace_way( owner, way, tags, uid );
-    consume_token( owner, uid, way.size(), tags.size(), "XY.network::way" );
+    name type = name{"way"};
+    set_uid( owner, id, uid, type );
+    set_owner( owner, id, type );
+    consume_token( owner, way.size(), tags.size(), "XY.network::way" );
     return id;
 }
 
@@ -20,7 +23,7 @@ uint64_t xy::emplace_way( const name owner, const vector<point> way, const vecto
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key( owner, name{"way"}, uid );
+    uint64_t id = global_available_primary_key();
 
     // node id cointainer
     vector<uint64_t> refs;
@@ -33,12 +36,10 @@ uint64_t xy::emplace_way( const name owner, const vector<point> way, const vecto
     // Create row in `node` TABLE
     _way.emplace( _self, [&]( auto & row ) {
         row.id         = id;
-        row.uid        = uid;
         row.refs       = refs;
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();

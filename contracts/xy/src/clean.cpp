@@ -17,8 +17,14 @@ void xy::clean()
         relation_itr = _relation.erase(relation_itr);
     }
 
-    auto global_itr = _global.begin();
-    while ( global_itr != _global.end() ) {
-        global_itr = _global.erase(global_itr);
+    auto uid_itr = _uid.begin();
+    while ( uid_itr != _uid.end() ) {
+        uid_itr = _uid.erase(uid_itr);
     }
+
+    auto owner_itr = _owner.begin();
+    while ( owner_itr != _owner.end() ) {
+        owner_itr = _owner.erase(owner_itr);
+    }
+    if ( _global.exists() ) _global.remove();
 }

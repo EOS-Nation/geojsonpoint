@@ -8,7 +8,10 @@ uint64_t xy::node( const name           owner,
 {
     require_auth( owner );
     uint64_t id = emplace_node( owner, node, tags, uid );
-    consume_token( owner, uid, 1, tags.size(), "XY.network::node" );
+    name type = name{"node"};
+    set_uid( owner, id, uid, type );
+    set_owner( owner, id, type );
+    consume_token( owner, 1, tags.size(), "XY.network::node" );
     return id;
 }
 
@@ -32,17 +35,15 @@ uint64_t xy::emplace_node( const name owner, const point node, const vector<tag>
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key( owner, name{"node"}, uid );
+    uint64_t id = global_available_primary_key();
 
     // Create row in `node` TABLE
     _node.emplace( get_self(), [&]( auto & row ) {
         row.id         = id;
-        row.uid        = uid;
         row.node       = node;
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();

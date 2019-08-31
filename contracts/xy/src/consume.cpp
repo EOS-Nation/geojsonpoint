@@ -1,8 +1,5 @@
-void xy::consume_token( const name owner, const name uid, const int64_t nodes, const int64_t tags, const string memo )
+void xy::consume_token( const name owner, const int64_t nodes, const int64_t tags, const string memo )
 {
-    // do not charge XY tokens if uid is the owner name
-    if ( owner == uid ) return;
-
     // calculate consume rate
     symbol sym = symbol{"XY", 4};
     int64_t amount = calculate_consume( nodes, tags );
@@ -23,4 +20,9 @@ int64_t xy::calculate_consume( int64_t nodes, int64_t tags )
     int64_t tags_amount = 1000 * tags; // 0.1000 XY token per tag
 
     return nodes_amount + tags_amount;
+}
+
+void xy::consume_modify_tags( const name user, const int64_t before, const int64_t after )
+{
+    if (after > before) consume_token(user, 0, after - before, "XY.network::modify");
 }
