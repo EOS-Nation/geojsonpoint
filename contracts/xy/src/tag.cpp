@@ -1,21 +1,21 @@
 void xy::modify( const name            owner,
-                 const uint64_t        id,
+                 const name            uid,
                  const vector<tag>     tags )
 {
     require_auth( owner );
-    check( get_id( id ).owner == owner, "owner does not match id");
+    check( get_uid( uid ).owner == owner, "owner does not match uid");
     check_tags( tags );
-    modify_tags( owner, id, tags );
-    update_version( id );
+    modify_tags( owner, uid, tags );
+    update_version( uid );
 }
 
-void xy::modify_tags( const name owner, const uint64_t id, const vector<tag> tags )
+void xy::modify_tags( const name owner, const name uid, const vector<tag> tags )
 {
-    auto uid_row = get_id( id );
+    auto uid_row = get_uid( uid );
     name type = uid_row.type;
 
     if ( type == "node"_n ) {
-        auto node_itr = _node.find( id );
+        auto node_itr = _node.find( uid.value );
         check( node_itr != _node.end(), "node does not exist" );
         consume_modify_tags( owner, node_itr->tags.size(), tags.size() );
         _node.modify( node_itr, get_self(), [&]( auto & row ) {
@@ -23,7 +23,7 @@ void xy::modify_tags( const name owner, const uint64_t id, const vector<tag> tag
         });
     }
     else if ( type == "way"_n ) {
-        auto way_itr = _way.find( id );
+        auto way_itr = _way.find( uid.value );
         check( way_itr != _way.end(), "way does not exist" );
         consume_modify_tags( owner, way_itr->tags.size(), tags.size() );
         _way.modify( way_itr, get_self(), [&]( auto & row ) {
@@ -31,7 +31,7 @@ void xy::modify_tags( const name owner, const uint64_t id, const vector<tag> tag
         });
     }
     else if ( type == "relation"_n ) {
-        auto relation_itr = _relation.find( id );
+        auto relation_itr = _relation.find( uid.value );
         check( relation_itr != _relation.end(), "relation does not exist" );
         consume_modify_tags( owner, relation_itr->tags.size(), tags.size() );
         _relation.modify( relation_itr, get_self(), [&]( auto & row ) {

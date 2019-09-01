@@ -1,5 +1,7 @@
-void xy::set_uid( const name owner, const uint64_t id, name uid, const name type )
+name xy::set_uid( const name owner, name uid, const name type )
 {
+    uint64_t id = global_available_primary_key();
+
     // user can provide custom UID (unique identifier)
     // user can define a UID for any node/way/relation using a custom name (ex: myuid.xy)
     // using UID's lead to easier XY object tracking compared to using auto-incrementing integer
@@ -22,14 +24,15 @@ void xy::set_uid( const name owner, const uint64_t id, name uid, const name type
             }
         }
     } else {
-        uid = name{id};
+        uid = name{ id };
     }
 
     // Add uid to table
     _uid.emplace( get_self(), [&]( auto & row ) {
         row.uid        = uid;
-        row.id         = id;
         row.owner      = owner;
         row.type       = type;
     });
+
+    return uid;
 }

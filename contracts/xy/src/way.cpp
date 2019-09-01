@@ -1,60 +1,62 @@
 /**
  * ACTION way
  */
-uint64_t xy::way( const name              owner,
-                  const vector<point>     way,
-                  const vector<tag>       tags,
-                  const name              uid )
+name xy::way( const name              owner,
+              const vector<point>     way,
+              const vector<tag>       tags,
+              const name              uid )
 {
     require_auth( owner );
     check_way( way );
-    uint64_t id = emplace_way( owner, way, tags, uid );
-    name type = name{"way"};
-    set_uid( owner, id, uid, type );
+    const name way_uid = emplace_way( owner, way, tags, uid );
     consume_token( owner, way.size(), tags.size(), "XY.network::way" );
-    return id;
+    return way_uid;
 }
 
-uint64_t xy::emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid )
+name xy::emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid )
 {
     check_tags( tags );
 
     // Point default attributes
     time_point_sec timestamp = current_time_point();
     uint32_t version = 1;
-    uint64_t id = global_available_primary_key();
+
+    // get unique id
+    const name type = name{"way"};
+    const name way_uid = set_uid( owner, uid, type );
 
     // node id cointainer
-    vector<uint64_t> refs;
+    vector<name> refs;
 
     for (auto const& node: way) {
-        uint64_t id = emplace_node( owner, node, vector<tag>(), name{""} );
-        refs.push_back(id);
+        name uid = emplace_node( owner, node, vector<tag>(), name{""} );
+        refs.push_back(uid);
     }
 
     // Create row in `node` TABLE
     _way.emplace( _self, [&]( auto & row ) {
-        row.id         = id;
+        row.uid        = way_uid;
         row.refs       = refs;
         row.tags       = tags;
 
         // Initial version vontrol attributes
+        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();
     });
-    return id;
+    return way_uid;
 }
 
-bool xy::way_exists( const uint64_t id )
+bool xy::way_exists( const name uid )
 {
-    auto way_itr = _way.find( id );
+    auto way_itr = _way.find( uid.value );
     return way_itr != _way.end();
 }
 
-void xy::check_way_exists( const uint64_t id )
+void xy::check_way_exists( const name uid )
 {
-    check( way_exists( id ), "[id] no way matching results" );
+    check( way_exists( uid ), "[uid] no way matching results" );
 }
 
 void xy::check_way( const vector<point> way )

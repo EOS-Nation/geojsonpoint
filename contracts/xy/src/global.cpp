@@ -8,16 +8,16 @@ uint64_t xy::global_available_primary_key()
     return available_primary_key;
 }
 
-void xy::update_version( const uint64_t id )
+void xy::update_version( const name uid )
 {
     time_point_sec timestamp = current_time_point();
     checksum256 changeset = get_trx_id();
 
-    auto uid_row = get_id( id );
+    auto uid_row = get_uid( uid );
     name type = uid_row.type;
 
     if (type == "node"_n) {
-        auto node_itr = _node.find( id );
+        auto node_itr = _node.find( uid.value );
         check( node_itr != _node.end(), "node does not exist" );
         _node.modify( node_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
@@ -26,7 +26,7 @@ void xy::update_version( const uint64_t id )
         });
     }
     else if (type == "way"_n) {
-        auto way_itr = _way.find( id );
+        auto way_itr = _way.find( uid.value );
         check( way_itr != _way.end(), "way does not exist" );
         _way.modify( way_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
@@ -35,7 +35,7 @@ void xy::update_version( const uint64_t id )
         });
     }
     else if ( type == "relation"_n) {
-        auto relation_itr = _relation.find( id );
+        auto relation_itr = _relation.find( uid.value );
         check( relation_itr != _relation.end(), "relation does not exist" );
         _relation.modify( relation_itr, get_self(), [&](auto & row) {
             row.version     = row.version + 1;
