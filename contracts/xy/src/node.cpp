@@ -17,12 +17,12 @@ uint64_t xy::node( const name           owner,
 /**
  * ACTION move
  */
-void xy::move( const name          user,
+void xy::move( const name          owner,
                const uint64_t      id,
                const point         node )
 {
-    require_auth( user );
-    check( get_id( id ).owner == user, "user does not match id owner");
+    require_auth( owner );
+    check( get_id( id ).owner == owner, "owner does not match id");
     move_node( id, node );
     update_version( id );
 }

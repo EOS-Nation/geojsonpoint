@@ -461,35 +461,35 @@ private:
 
     // tags
     // ====
-    void modify_tags( name user, uint64_t id, vector<tag> tags );
-    void check_tag( tag tag );
-    void check_tags( vector<tag> tags );
+    void modify_tags( const name user, const uint64_t id, const vector<tag> tags );
+    void check_tag( const tag tag );
+    void check_tags( const vector<tag> tags );
 
     // node
     // ====
     uint64_t emplace_node( const name owner, const point node, const vector<tag> tags, const name uid = name{""} );
     bool erase_node( uint64_t id );
-    bool erase_nodes( vector<uint64_t> ids );
-    void move_node( uint64_t id, point node );
-    bool node_exists( uint64_t id );
-    void check_node_exists( uint64_t id );
+    bool erase_nodes( const vector<uint64_t> ids );
+    void move_node( const uint64_t id, const point node );
+    bool node_exists( const uint64_t id );
+    void check_node_exists( const uint64_t id );
 
     // way
     // ===
-    uint64_t emplace_way( name owner, vector<point> way, vector<tag> tags, const name uid = name{""} );
+    uint64_t emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid = name{""} );
     bool erase_way( uint64_t id );
-    bool erase_ways( vector<uint64_t> ids );
-    bool way_exists( uint64_t id );
-    void check_way_exists( uint64_t id );
-    void check_way( vector<point> way );
+    bool erase_ways( const vector<uint64_t> ids );
+    bool way_exists( const uint64_t id );
+    void check_way_exists( const uint64_t id );
+    void check_way( const vector<point> way );
 
     // relation
     // ========
-    uint64_t emplace_relation( name owner, vector<member> member, vector<tag> tags, const name uid = name{""} );
+    uint64_t emplace_relation( const name owner, const vector<member> member, const vector<tag> tags, const name uid = name{""} );
     bool erase_relation( uint64_t id );
-    bool erase_relations( vector<uint64_t> ids );
-    bool relation_exists( uint64_t id );
-    void check_relation_exists( uint64_t id );
+    bool erase_relations( const vector<uint64_t> ids );
+    bool relation_exists( const uint64_t id );
+    void check_relation_exists( const uint64_t id );
 
     // global
     // ======
@@ -506,5 +506,5 @@ private:
 
     // uid
     // ===
-    void set_uid( const name owner, const uint64_t id, const name uid, const name type );
+    void set_uid( const name owner, const uint64_t id, name uid, const name type );
 };

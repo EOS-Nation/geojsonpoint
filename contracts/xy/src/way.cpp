@@ -46,18 +46,18 @@ uint64_t xy::emplace_way( const name owner, const vector<point> way, const vecto
     return id;
 }
 
-bool xy::way_exists( uint64_t id )
+bool xy::way_exists( const uint64_t id )
 {
     auto way_itr = _way.find( id );
     return way_itr != _way.end();
 }
 
-void xy::check_way_exists( uint64_t id )
+void xy::check_way_exists( const uint64_t id )
 {
     check( way_exists( id ), "[id] no way matching results" );
 }
 
-void xy::check_way( vector<point> way )
+void xy::check_way( const vector<point> way )
 {
     check( way.size() > 1, "[way] must contain at least 2 nodes");
     check( way.size() <= 255, "[way] cannot contain be greater than 255 nodes");

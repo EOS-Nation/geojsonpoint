@@ -8,7 +8,7 @@ uint64_t xy::global_available_primary_key()
     return available_primary_key;
 }
 
-void xy::update_version( uint64_t id )
+void xy::update_version( const uint64_t id )
 {
     time_point_sec timestamp = current_time_point();
     checksum256 changeset = get_trx_id();

@@ -1,4 +1,4 @@
-void xy::set_uid( const name owner, const uint64_t id, const name uid, const name type )
+void xy::set_uid( const name owner, const uint64_t id, name uid, const name type )
 {
     // user can provide custom UID (unique identifier)
     // user can define a UID for any node/way/relation using a custom name (ex: myuid.xy)
@@ -21,6 +21,8 @@ void xy::set_uid( const name owner, const uint64_t id, const name uid, const nam
                 check( uid.suffix() == uid , "uid is only availble for *.xy premium accounts (cannot contain '.')");
             }
         }
+    } else {
+        uid = name{id};
     }
 
     // Add uid to table

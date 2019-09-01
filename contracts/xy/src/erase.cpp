@@ -1,17 +1,17 @@
 /**
  * ACTION erase
  */
-void xy::erase( const name              user,
+void xy::erase( const name              owner,
                 const vector<uint64_t>  ids )
 {
-    require_auth( user );
+    require_auth( owner );
     check( ids.size() <= 255, "[ids] cannot have more than 255 elements");
 
     bool is_erased = false;
 
     // Authentication user by id owner
     for ( auto const id : ids ) {
-        check( get_id( id ).owner == user, "user does not match id owner");
+        check( get_id( id ).owner == owner, "owner does not match id");
     }
 
     if ( erase_nodes( ids ) ) is_erased = true;
@@ -19,7 +19,7 @@ void xy::erase( const name              user,
     check( is_erased, "[ids] no ids found to erase");
 }
 
-bool xy::erase_nodes( vector<uint64_t> ids )
+bool xy::erase_nodes( const vector<uint64_t> ids )
 {
     bool is_erased = false;
 
@@ -29,7 +29,7 @@ bool xy::erase_nodes( vector<uint64_t> ids )
     return is_erased;
 }
 
-bool xy::erase_ways( vector<uint64_t> ids )
+bool xy::erase_ways( const vector<uint64_t> ids )
 {
     bool is_erased = false;
 
@@ -39,7 +39,7 @@ bool xy::erase_ways( vector<uint64_t> ids )
     return is_erased;
 }
 
-bool xy::erase_node( uint64_t id )
+bool xy::erase_node( const uint64_t id )
 {
     if ( !node_exists( id ) ) return false;
 
@@ -48,7 +48,7 @@ bool xy::erase_node( uint64_t id )
     return true;
 }
 
-bool xy::erase_way( uint64_t id )
+bool xy::erase_way( const uint64_t id )
 {
     if ( !way_exists( id ) ) return false;
 
