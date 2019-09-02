@@ -19,9 +19,8 @@ void xy::move( const name       owner,
                const point      node )
 {
     require_auth( owner );
-    check_owner( owner, uid );
-    move_node( uid, node );
-    update_version( uid );
+    move_node( owner, uid, node );
+    update_version( owner, uid );
 }
 
 name xy::emplace_node( const name owner, const point node, const vector<tag> tags, const name uid )
@@ -51,9 +50,9 @@ name xy::emplace_node( const name owner, const point node, const vector<tag> tag
     return set_uid( owner, id, uid, name{"node"} );
 }
 
-void xy::move_node( const name uid, const point node )
+void xy::move_node( const name owner, const name uid, const point node )
 {
-    auto object = get_uid( uid );
+    auto object = get_uid( owner, uid );
     check( object.type == "node"_n, "move action is only valide for node objects");
 
     auto node_itr = _node.find( object.id );

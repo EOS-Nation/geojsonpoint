@@ -4,7 +4,7 @@ name xy::set_uid( const name owner, const uint64_t id, name uid, const name type
     // user can define a UID for any node/way/relation using a custom name (ex: myuid.xy)
     // using UID's lead to easier XY object tracking compared to using auto-incrementing integer
     if ( uid.length() > 0 ) {
-        check( !uid_exists( uid ), "uid already exists" );
+        check( !uid_exists( owner, uid ), "uid already exists" );
 
         // reserve uid for owner account name
         if ( is_account( uid ) ) {
@@ -24,11 +24,13 @@ name xy::set_uid( const name owner, const uint64_t id, name uid, const name type
      } else {
         uid = name{ id };
     }
+    // TO-DO add `owner` row to table
 
     // Add uid to table
+    uid_table _uid( "xy"_n, owner.value );
     _uid.emplace( get_self(), [&]( auto & row ) {
-        row.id         = id;
         row.uid        = uid;
+        row.id         = id;
         row.owner      = owner;
         row.type       = type;
     });

@@ -3,41 +3,50 @@ void xy::modify( const name            owner,
                  const vector<tag>     tags )
 {
     require_auth( owner );
-    check( get_uid( uid ).owner == owner, "owner does not match uid");
     check_tags( tags );
     modify_tags( owner, uid, tags );
-    update_version( uid );
+    update_version( owner, uid );
 }
 
 void xy::modify_tags( const name owner, const name uid, const vector<tag> tags )
 {
-    auto uid_row = get_uid( uid );
-    name type = uid_row.type;
+    auto object = get_uid( owner, uid );
+    name type = object.type;
+    uint64_t id = object.id;
 
-    if ( type == "node"_n ) {
-        auto node_itr = _node.find( uid.value );
-        check( node_itr != _node.end(), "node does not exist" );
-        consume_modify_tags( owner, node_itr->tags.size(), tags.size() );
-        _node.modify( node_itr, get_self(), [&]( auto & row ) {
-            row.tags = tags;
-        });
-    }
-    else if ( type == "way"_n ) {
-        auto way_itr = _way.find( uid.value );
-        check( way_itr != _way.end(), "way does not exist" );
-        consume_modify_tags( owner, way_itr->tags.size(), tags.size() );
-        _way.modify( way_itr, get_self(), [&]( auto & row ) {
-            row.tags = tags;
-        });
-    }
-    else if ( type == "relation"_n ) {
-        auto relation_itr = _relation.find( uid.value );
-        check( relation_itr != _relation.end(), "relation does not exist" );
-        consume_modify_tags( owner, relation_itr->tags.size(), tags.size() );
-        _relation.modify( relation_itr, get_self(), [&]( auto & row ) {
-            row.tags = tags;
-        });
-    }
+    if ( type == "node"_n ) modify_tags_node( owner, id, tags );
+    else if ( type == "way"_n ) modify_tags_way( owner, id, tags );
+    else if ( type == "relation"_n ) modify_tags_relation( owner, id, tags );
+}
+
+void xy::modify_tags_node( const name owner, const uint64_t id, const vector<tag> tags )
+{
+    auto itr = _node.find( id );
+    check( itr != _node.end(), "node does not exist" );
+    consume_modify_tags( owner, itr->tags.size(), tags.size() );
+    _node.modify( itr, get_self(), [&]( auto & row ) {
+        row.tags = tags;
+    });
+}
+
+void xy::modify_tags_way( const name owner, const uint64_t id, const vector<tag> tags )
+{
+    auto itr = _way.find( id );
+    check( itr != _way.end(), "way does not exist" );
+    consume_modify_tags( owner, itr->tags.size(), tags.size() );
+    _way.modify( itr, get_self(), [&]( auto & row ) {
+        row.tags = tags;
+    });
+}
+
+void xy::modify_tags_relation( const name owner, const uint64_t id, const vector<tag> tags )
+{
+    auto itr = _relation.find( id );
+    check( itr != _relation.end(), "relation does not exist" );
+    consume_modify_tags( owner, itr->tags.size(), tags.size() );
+    _relation.modify( itr, get_self(), [&]( auto & row ) {
+        row.tags = tags;
+    });
 }
 
 void xy::check_tags( const vector<tag> tags )

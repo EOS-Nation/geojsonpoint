@@ -25,7 +25,7 @@ name xy::emplace_relation( const name owner, const vector<member> members, const
     // validate member
     for ( auto const& member: members ) {
         check( member.type == "way"_n || member.type == "node"_n, "[member.type] is invalid (way or node)");
-        check( get_uid( member.ref ).type == member.type, member.type.to_string() + " ref does not exist" );
+        check( get_uid( member.owner, member.ref ).type == member.type, member.type.to_string() + " ref does not exist" );
     }
 
     // Create row in `node` TABLE

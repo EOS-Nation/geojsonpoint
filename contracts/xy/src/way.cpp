@@ -2,9 +2,9 @@
  * ACTION way
  */
 name xy::way( const name              owner,
-                  const vector<point>     way,
-                  const vector<tag>       tags,
-                  const name              uid )
+              const vector<point>     way,
+              const vector<tag>       tags,
+              const name              uid )
 {
     require_auth( owner );
     check_way( way );

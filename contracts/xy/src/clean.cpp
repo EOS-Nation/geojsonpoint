@@ -17,10 +17,10 @@ void xy::clean()
         relation_itr = _relation.erase(relation_itr);
     }
 
-    auto uid_itr = _uid.begin();
-    while ( uid_itr != _uid.end() ) {
-        uid_itr = _uid.erase(uid_itr);
-    }
+    // auto uid_itr = _uid.begin();
+    // while ( uid_itr != _uid.end() ) {
+    //     uid_itr = _uid.erase(uid_itr);
+    // }
 
     if ( _global.exists() ) _global.remove();
 }
