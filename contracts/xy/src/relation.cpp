@@ -29,6 +29,7 @@ name xy::emplace_relation( const name owner, const vector<member> members, const
     }
 
     // Create row in `node` TABLE
+    relation_table _relation( get_self(), owner.value );
     _relation.emplace( get_self(), [&]( auto & row ) {
         row.id         = id;
         row.members    = members;

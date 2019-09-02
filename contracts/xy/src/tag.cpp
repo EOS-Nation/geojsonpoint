@@ -21,6 +21,7 @@ void xy::modify_tags( const name owner, const name uid, const vector<tag> tags )
 
 void xy::modify_tags_node( const name owner, const uint64_t id, const vector<tag> tags )
 {
+    node_table _node( get_self(), owner.value );
     auto itr = _node.find( id );
     check( itr != _node.end(), "node does not exist" );
     consume_modify_tags( owner, itr->tags.size(), tags.size() );
@@ -31,6 +32,7 @@ void xy::modify_tags_node( const name owner, const uint64_t id, const vector<tag
 
 void xy::modify_tags_way( const name owner, const uint64_t id, const vector<tag> tags )
 {
+    way_table _way( get_self(), owner.value );
     auto itr = _way.find( id );
     check( itr != _way.end(), "way does not exist" );
     consume_modify_tags( owner, itr->tags.size(), tags.size() );
@@ -41,6 +43,7 @@ void xy::modify_tags_way( const name owner, const uint64_t id, const vector<tag>
 
 void xy::modify_tags_relation( const name owner, const uint64_t id, const vector<tag> tags )
 {
+    relation_table _relation( get_self(), owner.value );
     auto itr = _relation.find( id );
     check( itr != _relation.end(), "relation does not exist" );
     consume_modify_tags( owner, itr->tags.size(), tags.size() );

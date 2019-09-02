@@ -17,13 +17,14 @@ void xy::update_version( const name owner, const name uid )
     const name type = object.type;
     const uint64_t id = object.id;
 
-    if (type == "node"_n) update_version_node( id, timestamp, changeset );
-    else if (type == "way"_n) update_version_way( id, timestamp, changeset );
-    else if ( type == "relation"_n) update_version_relation( id, timestamp, changeset );
+    if (type == "node"_n) update_version_node( owner, id, timestamp, changeset );
+    else if (type == "way"_n) update_version_way( owner, id, timestamp, changeset );
+    else if ( type == "relation"_n) update_version_relation( owner, id, timestamp, changeset );
 }
 
-void xy::update_version_node( const uint64_t id, const time_point_sec timestamp, const checksum256 changeset )
+void xy::update_version_node( const name owner, const uint64_t id, const time_point_sec timestamp, const checksum256 changeset )
 {
+    node_table _node( get_self(), owner.value );
     auto itr = _node.find( id );
     check( itr != _node.end(), "node does not exist" );
     _node.modify( itr, get_self(), [&](auto & row) {
@@ -33,8 +34,9 @@ void xy::update_version_node( const uint64_t id, const time_point_sec timestamp,
     });
 }
 
-void xy::update_version_way( const uint64_t id, const time_point_sec timestamp, const checksum256 changeset )
+void xy::update_version_way( const name owner, const uint64_t id, const time_point_sec timestamp, const checksum256 changeset )
 {
+    way_table _way( get_self(), owner.value );
     auto itr = _way.find( id );
     check( itr != _way.end(), "way does not exist" );
     _way.modify( itr, get_self(), [&](auto & row) {
@@ -44,8 +46,9 @@ void xy::update_version_way( const uint64_t id, const time_point_sec timestamp, 
     });
 }
 
-void xy::update_version_relation( const uint64_t id, const time_point_sec timestamp, const checksum256 changeset )
+void xy::update_version_relation( const name owner, const uint64_t id, const time_point_sec timestamp, const checksum256 changeset )
 {
+    relation_table _relation( get_self(), owner.value );
     auto itr = _relation.find( id );
     check( itr != _relation.end(), "relation does not exist" );
     _relation.modify( itr, get_self(), [&](auto & row) {

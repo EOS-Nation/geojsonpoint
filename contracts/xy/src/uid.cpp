@@ -24,10 +24,15 @@ name xy::set_uid( const name owner, const uint64_t id, name uid, const name type
      } else {
         uid = name{ id };
     }
-    // TO-DO add `owner` row to table
+    // add owner to table if does not exist
+    if ( _owner.find( owner.value ) == _owner.end() ) {
+        _owner.emplace( get_self(), [&]( auto & row ) {
+            row.owner      = owner;
+        });
+    }
 
     // Add uid to table
-    uid_table _uid( "xy"_n, owner.value );
+    uid_table _uid( get_self(), owner.value );
     _uid.emplace( get_self(), [&]( auto & row ) {
         row.uid        = uid;
         row.id         = id;

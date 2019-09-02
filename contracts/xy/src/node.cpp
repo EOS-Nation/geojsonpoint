@@ -35,6 +35,7 @@ name xy::emplace_node( const name owner, const point node, const vector<tag> tag
     const uint64_t id = global_available_primary_key();
 
     // Create row in `node` TABLE
+    node_table _node( get_self(), owner.value );
     _node.emplace( get_self(), [&]( auto & row ) {
         row.id         = id;
         row.node       = node;
@@ -55,8 +56,11 @@ void xy::move_node( const name owner, const name uid, const point node )
     auto object = get_uid( owner, uid );
     check( object.type == "node"_n, "move action is only valide for node objects");
 
+    node_table _node( get_self(), owner.value );
     auto node_itr = _node.find( object.id );
     check( node_itr->node != node, "[node] must be different than current point");
+
+    // modify table
     _node.modify( node_itr, get_self(), [&](auto & row) {
         row.node = node;
     });

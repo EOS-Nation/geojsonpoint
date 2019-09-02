@@ -32,6 +32,7 @@ name xy::emplace_way( const name owner, const vector<point> way, const vector<ta
     }
 
     // Create row in `node` TABLE
+    way_table _way( get_self(), owner.value );
     _way.emplace( get_self(), [&]( auto & row ) {
         row.id         = id;
         row.refs       = refs;

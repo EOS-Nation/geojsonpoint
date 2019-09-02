@@ -91,10 +91,8 @@ public:
      */
     xy( name receiver, name code, eosio::datastream<const char*> ds )
         : contract( receiver, code, ds ),
-            _node( get_self(), get_self().value ),
-            _way( get_self(), get_self().value ),
-            _relation( get_self(), get_self().value ),
-            _global( get_self(), get_self().value )
+            _global( get_self(), get_self().value ),
+            _owner( get_self(), get_self().value )
     {}
 
     /**
@@ -225,6 +223,7 @@ public:
     static bool uid_exists( const name owner, const name uid )
     {
         uid_table _uid( "xy"_n, owner.value );
+        // auto index = _uid.get_index<"byuid"_n>();
         return _uid.find( uid.value ) != _uid.end();
     }
 
@@ -239,8 +238,8 @@ public:
      * get_uid( "myaccount"_n, "mynode"_n );
      * // =>
      * // {
-     * //   "uid": "mynode.xy",
      * //   "id": 123,
+     * //   "uid": "mynode.xy",
      * //   "owner": "myaccount",
      * //   "type": "node"
      * // }
@@ -248,6 +247,7 @@ public:
     static uid_object get_uid( const name owner, const name uid )
     {
         uid_table _uid( "xy"_n, owner.value );
+        // auto index = _uid.get_index<"byuid"_n>();
         auto row = _uid.get( uid.value, "uid does not exist" );
         return uid_object{ row.id, row.uid, row.owner, row.type };
     }
@@ -275,17 +275,33 @@ private:
     };
 
     /**
+     * TABLE `owner`
+     *
+     * @param {name} owner - owner objects
+     * @example
+     *
+     * {
+     *   "owner": "myaccount"
+     * }
+     */
+    struct [[eosio::table("owner"), eosio::contract("xy")]] owner_row {
+        name        owner;
+
+        uint64_t primary_key() const { return owner.value; }
+    };
+
+    /**
      * TABLE `uid`
      *
-     * @param {name} uid - unique identifier
      * @param {uint64_t} id - global object sequence
+     * @param {name} uid - unique identifier
      * @param {name} owner - owner object
      * @param {name} type - object type (node/way/relation)
      * @example
      *
      * {
-     *   "uid": "mynode.xy",
      *   "id": 123,
+     *   "uid": "mynode.xy",
      *   "owner": "myaccount",
      *   "type": "node"
      * }
@@ -302,7 +318,7 @@ private:
     /**
      * TABLE `node`
      *
-     * @param {name} id - global object sequence
+     * @param {uint64_t} id - global object sequence
      * @param {point} node - point{x, y} coordinate
      * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
      * @param {uint32_t} version - amount of times object has been modified
@@ -378,7 +394,7 @@ private:
      *
      * {
      *   "id": 123,
-     *   "members": [{"type": "way", "ref": 1, "role": "outer"}],
+     *   "members": [{"owner": "myaccount", "type": "way", "ref": "myway", "role": "outer"}],
      *   "tags": [ { "k": "key", "v": "value" } ],
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
@@ -403,15 +419,14 @@ private:
     typedef eosio::multi_index< "way"_n, way_row> way_table;
     typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
     typedef eosio::multi_index< "uid"_n, uid_row> uid_table;
+    typedef eosio::multi_index< "owner"_n, owner_row> owner_table;
 
     // Singleton Tables
     typedef eosio::singleton< "global"_n, global_row> global_table;
 
     // local instances of the multi indexes
-    node_table          _node;
-    way_table           _way;
-    relation_table      _relation;
     global_table        _global;
+    owner_table         _owner;
 
     // private helpers
     // ===============
@@ -428,31 +443,25 @@ private:
     // node
     // ====
     name emplace_node( const name owner, const point node, const vector<tag> tags, const name uid = name{""} );
-    bool erase_node( const name uid );
-    bool erase_nodes( const vector<name> uids );
     void move_node( const name owner, const name uid, const point node );
 
     // way
     // ===
     name emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid = name{""} );
-    bool erase_way( name uid );
-    bool erase_ways( const vector<name> uids );
     void check_way( const vector<point> way );
 
     // relation
     // ========
     name emplace_relation( const name owner, const vector<member> members, const vector<tag> tags, const name uid = name{""} );
-    bool erase_relation( name uid );
-    bool erase_relations( const vector<name> uids );
 
     // global
     // ======
     uint64_t global_available_primary_key();
     checksum256 get_trx_id();
     void update_version( const name owner, const name uid );
-    void update_version_node( const uint64_t id, const time_point_sec timestamp, const checksum256 changeset );
-    void update_version_way( const uint64_t id, const time_point_sec timestamp, const checksum256 changeset );
-    void update_version_relation( const uint64_t id, const time_point_sec timestamp, const checksum256 changeset );
+    void update_version_node( const name owner, const uint64_t id, const time_point_sec timestamp, const checksum256 changeset );
+    void update_version_way( const name owner, const uint64_t id, const time_point_sec timestamp, const checksum256 changeset );
+    void update_version_relation( const name owner, const uint64_t id, const time_point_sec timestamp, const checksum256 changeset );
     uint64_t now();
 
     // consume
@@ -464,9 +473,10 @@ private:
     // erase
     // =====
     void erase_objects( const name owner, const vector<name> uids );
-    void erase_node( const name owner, const name uid, const uint64_t id );
-    void erase_way( const name owner, const name uid, const uint64_t id );
-    void erase_relation( const name owner, const name uid, const uint64_t id );
+    void erase_node( const name owner, const uint64_t id );
+    void erase_way( const name owner, const uint64_t id );
+    void erase_relation( const name owner, const uint64_t id );
+    void erase_uid( const name owner, const name uid );
 
     // uid
     // ===
