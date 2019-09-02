@@ -284,7 +284,7 @@ private:
      *   "owner": "myaccount"
      * }
      */
-    struct [[eosio::table("owner"), eosio::contract("xy")]] owner_row {
+    struct [[eosio::table("owner")]] owner_row {
         name        owner;
 
         uint64_t primary_key() const { return owner.value; }
@@ -306,7 +306,7 @@ private:
      *   "type": "node"
      * }
      */
-    struct [[eosio::table("uid"), eosio::contract("xy")]] uid_row {
+    struct [[eosio::table("uid")]] uid_row {
         name        uid;
         uint64_t    id;
         name        owner;
