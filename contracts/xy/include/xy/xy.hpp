@@ -55,18 +55,21 @@ struct member {
 /**
  * STRUCT `uid_object`
  *
+ * @param {uint64_t} id - global object sequence
  * @param {name} uid - unique identifier
  * @param {name} owner - owner name of xy object
  * @param {name} type - object type (node/way/relation)
  * @example
  *
  * {
+ *   "id": 123,
  *   "uid": "mynode.xy",
  *   "owner": "myaccount",
  *   "type": "node"
  * }
  */
 struct uid_object {
+    uint64_t    id;
     name        uid;
     name        owner;
     name        type;
@@ -158,10 +161,10 @@ public:
      * Erase node and all associated tags
      *
      * @param {name} user - authenticated user
-     * @param {vector<name>} uids - array of node identifiers
+     * @param {vector<name>} uids - array of unique identifiers
      * @example
      *
-     * cleos push action xy erase '["myaccount", [0]]' -p myaccount
+     * cleos push action xy erase '["myaccount", [ "myway", "mynode" ]]' -p myaccount
      */
     [[eosio::action]]
     void erase( const name              user,
@@ -173,11 +176,11 @@ public:
      * Move node to a new location
      *
      * @param {name} user - authenticated user
-     * @param {name} uid - point identifier
+     * @param {name} uid - node unique identifier
      * @param {point} node - point{x, y}
      * @example
      *
-     * cleos push action xy move '["myaccount", 0, [45.0, 110.5]]' -p myaccount
+     * cleos push action xy move '["myaccount", "mynode", [45.0, 110.5]]' -p myaccount
      */
     [[eosio::action]]
     void move( const name          user,
@@ -190,11 +193,11 @@ public:
      * Modify tags from a node
      *
      * @param {name} user - authenticated user
-     * @param {name} uid - node identifier
+     * @param {name} uid - unique object identifier
      * @param {vector<tag>} tags - array of key & value tags
      * @example
      *
-     * cleos push action xy modify '["myaccount", 0, [{"k": "key", "v": "value"}]]' -p myaccount
+     * cleos push action xy modify '["myaccount", "mynode", [{"k": "key", "v": "value"}]]' -p myaccount
      */
     [[eosio::action]]
     void modify( const name          user,
@@ -219,7 +222,8 @@ public:
     static bool uid_exists( const name uid )
     {
         uid_table _uid( "xy"_n, "xy"_n.value );
-        return _uid.find( uid.value ) != _uid.end();
+        auto index = _uid.get_index<"byuid"_n>();
+        return index.find( uid.value ) != index.end();
     }
 
     /**
@@ -241,8 +245,9 @@ public:
     static uid_object get_uid( const name uid )
     {
         uid_table _uid( "xy"_n, "xy"_n.value );
-        auto row = _uid.get( uid.value, "uid does not exist" );
-        return uid_object{ row.uid, row.owner, row.type };
+        auto index = _uid.get_index<"byuid"_n>();
+        auto row = index.get( uid.value, "uid does not exist" );
+        return uid_object{ row.id, row.uid, row.owner, row.type };
     }
 
     using node_action = eosio::action_wrapper<"node"_n, &xy::node>;
@@ -256,7 +261,7 @@ private:
     /**
      * TABLE `global`
      *
-     * @param {uint64_t} available_primary_key - global object identifier
+     * @param {uint64_t} available_primary_key - global object sequence
      * @example
      *
      * {
@@ -270,149 +275,135 @@ private:
     /**
      * TABLE `uid`
      *
+     * @param {uint64_t} id - global object sequence
      * @param {name} uid - unique identifier
      * @param {name} owner - owner object
      * @param {name} type - object type (node/way/relation)
      * @example
      *
      * {
+     *   "id": 123,
      *   "uid": "mynode.xy",
      *   "owner": "myaccount",
      *   "type": "node"
      * }
      */
     struct [[eosio::table("uid"), eosio::contract("xy")]] uid_row {
+        uint64_t    id;
         name        uid;
         name        owner;
         name        type;
 
-        uint64_t primary_key() const { return uid.value; }
+        uint64_t primary_key() const { return id; }
+        uint64_t by_uid() const { return uid.value; }
         uint64_t by_owner() const { return owner.value; }
     };
 
     /**
      * TABLE `node`
      *
-     * @param {name} uid - unique identifier
+     * @param {name} id - global object sequence
      * @param {point} node - point{x, y} coordinate
      * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
-     * @param {name} owner - owner object
      * @param {uint32_t} version - amount of times object has been modified
      * @param {time_point_sec} timestamp - last time object was modified
      * @param {checksum256} changeset - transaction ID used to last modify object
      * @example
      *
      * {
-     *   "uid": "mynode",
+     *   "id": 123,
      *   "node": {"x": 45.0, "y": 110.5},
      *   "tags": [ { "k": "key", "v": "value" } ],
-     *   "owner": "myaccount",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
      *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
      * }
      */
     struct [[eosio::table("node")]] node_row {
-        name                uid;
+        uint64_t            id;
         point               node;
         vector<tag>         tags;
 
         // Version Control Attributes
-        name                owner;
         uint32_t            version;
         time_point_sec      timestamp;
         checksum256         changeset;
 
-        uint64_t primary_key() const { return uid.value; }
-        uint64_t by_owner() const { return owner.value; }
+        uint64_t primary_key() const { return id; }
     };
 
     /**
      * TABLE `way`
      *
-     * @param {name} uid - unique identifier
+     * @param {uint64_t} id - global object sequence
      * @param {vector<uint64_t} refs - array of node ids
      * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
-     * @param {name} owner - owner object
      * @param {uint32_t} version - amount of times object has been modified
      * @param {time_point_sec} timestamp - last time object was modified
      * @param {checksum256} changeset - transaction ID used to last modify object
      * @example
      *
      * {
-     *   "uid": "myway",
+     *   "id": 123,
      *   "refs": [0, 1],
      *   "tags": [ { "k": "key", "v": "value" } ],
-     *   "owner": "myaccount",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
      *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
      * }
      */
     struct [[eosio::table("way")]] way_row {
-        name                uid;
+        uint64_t            id;
         vector<name>        refs;
         vector<tag>         tags;
 
         // Version Control Attributes
-        name                owner;
         uint32_t            version;
         time_point_sec      timestamp;
         checksum256         changeset;
 
-        uint64_t primary_key() const { return uid.value; }
-        uint64_t by_owner() const { return owner.value; }
+        uint64_t primary_key() const { return id; }
     };
 
     /**
      * TABLE `relation`
      *
-     * @param {name} uid - unique identifier
+     * @param {uint64_t} id - global object sequence
      * @param {vector<member} members - array of member{type, ref, role}
      * @param {vector<tag>} tags - array of tags associated to object tag{key, value}
-     * @param {name} owner - owner object
      * @param {uint32_t} version - amount of times object has been modified
      * @param {time_point_sec} timestamp - last time object was modified
      * @param {checksum256} changeset - transaction ID used to last modify object
      * @example
      *
      * {
-     *   "uid": "myrel",
+     *   "id": 123,
      *   "members": [{"type": "way", "ref": 1, "role": "outer"}],
      *   "tags": [ { "k": "key", "v": "value" } ],
-     *   "owner": "myaccount",
      *   "version": 1,
      *   "timestamp": "2019-08-07T18:37:37",
      *   "changeset": "0e90ad6152b9ba35500703bc9db858f6e1a550b5e1a8de05572f81cdcaae3a08"
      * }
      */
     struct [[eosio::table("relation")]] relation_row {
-        name                uid;
+        uint64_t            id;
         vector<member>      members;
         vector<tag>         tags;
 
         // Version Control Attributes
-        name                owner;
         uint32_t            version;
         time_point_sec      timestamp;
         checksum256         changeset;
 
-        uint64_t primary_key() const { return uid.value; }
-        uint64_t by_owner() const { return owner.value; }
+        uint64_t primary_key() const { return id; }
     };
 
     // Multi-Index Tables
-    typedef eosio::multi_index< "node"_n, node_row,
-        indexed_by<"byowner"_n, const_mem_fun<node_row, uint64_t, &node_row::by_owner>>
-    > node_table;
-    typedef eosio::multi_index< "way"_n, way_row,
-        indexed_by<"byowner"_n, const_mem_fun<way_row, uint64_t, &way_row::by_owner>>
-    > way_table;
-    typedef eosio::multi_index< "relation"_n, relation_row,
-        indexed_by<"byowner"_n, const_mem_fun<relation_row, uint64_t, &relation_row::by_owner>>
-    > relation_table;
+    typedef eosio::multi_index< "node"_n, node_row> node_table;
+    typedef eosio::multi_index< "way"_n, way_row> way_table;
+    typedef eosio::multi_index< "relation"_n, relation_row> relation_table;
     typedef eosio::multi_index< "uid"_n, uid_row,
-        indexed_by<"byowner"_n, const_mem_fun<uid_row, uint64_t, &uid_row::by_owner>>
+        indexed_by<"byuid"_n, const_mem_fun<uid_row, uint64_t, &uid_row::by_uid>>
     > uid_table;
 
     // Singleton Tables
@@ -440,32 +431,27 @@ private:
     bool erase_node( const name uid );
     bool erase_nodes( const vector<name> uids );
     void move_node( const name uid, const point node );
-    bool node_exists( const name uid );
-    void check_node_exists( const name uid );
 
     // way
     // ===
     name emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid = name{""} );
     bool erase_way( name uid );
     bool erase_ways( const vector<name> uids );
-    bool way_exists( const name uid );
-    void check_way_exists( const name uid );
     void check_way( const vector<point> way );
 
     // relation
     // ========
-    name emplace_relation( const name owner, const vector<member> member, const vector<tag> tags, const name uid = name{""} );
+    name emplace_relation( const name owner, const vector<member> members, const vector<tag> tags, const name uid = name{""} );
     bool erase_relation( name uid );
     bool erase_relations( const vector<name> uids );
-    bool relation_exists( const name uid );
-    void check_relation_exists( const name uid );
 
     // global
     // ======
     uint64_t global_available_primary_key();
     checksum256 get_trx_id();
-    void update_version( name uid );
+    void update_version( const name uid );
     uint64_t now();
+    void check_owner( const name owner, const name uid );
 
     // consume
     // =======
@@ -473,7 +459,14 @@ private:
     int64_t calculate_consume( int64_t nodes, int64_t tags );
     void consume_modify_tags( const name user, const int64_t before, const int64_t after );
 
+    // erase
+    // =====
+    void erase_objects( const name owner, const vector<name> uids );
+    void erase_node( uint64_t id );
+    void erase_way( uint64_t id );
+    void erase_relation( uint64_t id );
+
     // uid
     // ===
-    name set_uid( const name owner, name uid, const name type );
+    name set_uid( const name owner, const uint64_t id, name uid, const name type );
 };

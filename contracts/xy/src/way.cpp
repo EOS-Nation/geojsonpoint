@@ -2,15 +2,14 @@
  * ACTION way
  */
 name xy::way( const name              owner,
-              const vector<point>     way,
-              const vector<tag>       tags,
-              const name              uid )
+                  const vector<point>     way,
+                  const vector<tag>       tags,
+                  const name              uid )
 {
     require_auth( owner );
     check_way( way );
-    const name way_uid = emplace_way( owner, way, tags, uid );
     consume_token( owner, way.size(), tags.size(), "XY.network::way" );
-    return way_uid;
+    return emplace_way( owner, way, tags, uid );
 }
 
 name xy::emplace_way( const name owner, const vector<point> way, const vector<tag> tags, const name uid )
@@ -18,12 +17,11 @@ name xy::emplace_way( const name owner, const vector<point> way, const vector<ta
     check_tags( tags );
 
     // Point default attributes
-    time_point_sec timestamp = current_time_point();
-    uint32_t version = 1;
+    const time_point_sec timestamp = current_time_point();
+    const uint32_t version = 1;
 
     // get unique id
-    const name type = name{"way"};
-    const name way_uid = set_uid( owner, uid, type );
+    const uint64_t id = global_available_primary_key();
 
     // node id cointainer
     vector<name> refs;
@@ -34,29 +32,19 @@ name xy::emplace_way( const name owner, const vector<point> way, const vector<ta
     }
 
     // Create row in `node` TABLE
-    _way.emplace( _self, [&]( auto & row ) {
-        row.uid        = way_uid;
+    _way.emplace( get_self(), [&]( auto & row ) {
+        row.id         = id;
         row.refs       = refs;
         row.tags       = tags;
 
         // Initial version vontrol attributes
-        row.owner      = owner;
         row.version    = version;
         row.timestamp  = timestamp;
         row.changeset  = get_trx_id();
     });
-    return way_uid;
-}
 
-bool xy::way_exists( const name uid )
-{
-    auto way_itr = _way.find( uid.value );
-    return way_itr != _way.end();
-}
-
-void xy::check_way_exists( const name uid )
-{
-    check( way_exists( uid ), "[uid] no way matching results" );
+    // define unique identifier
+    return set_uid( owner, id, uid, name{"way"} );
 }
 
 void xy::check_way( const vector<point> way )

@@ -5,54 +5,39 @@ void xy::erase( const name              owner,
                 const vector<name>      uids )
 {
     require_auth( owner );
-    check( uids.size() <= 255, "uids cannot have more than 255 elements");
+    check( uids.size() <= 255, "cannot erase more than 255 objects");
+    erase_objects( owner, uids );
+}
 
-    bool is_erased = false;
-
-    // Authentication user by id owner
+void xy::erase_objects( const name owner, const vector<name> uids )
+{
+    // iterate over uids
     for ( auto const uid : uids ) {
-        check( get_uid( uid ).owner == owner, "owner does not match uid");
+        auto object = get_uid( uid );
+
+        // only owner can erase objects
+        check( object.owner == owner, "owner does not match uid");
+
+        if (object.type == "node"_n) erase_node( object.id );
+        else if (object.type == "way"_n) erase_way( object.id );
+        else if (object.type == "relation"_n) erase_relation( object.id );
     }
-
-    if ( erase_nodes( uids ) ) is_erased = true;
-    if ( erase_ways( uids ) ) is_erased = true;
-    check( is_erased, "no uids found to erase");
 }
 
-bool xy::erase_nodes( const vector<name> uids )
+void xy::erase_node( const uint64_t id )
 {
-    bool is_erased = false;
-
-    for ( auto const uid : uids ) {
-        if ( erase_node( uid ) ) is_erased = true;
-    }
-    return is_erased;
+    _uid.erase( _uid.find( id ));
+    _node.erase( _node.find( id ));
 }
 
-bool xy::erase_ways( const vector<name> uids )
+void xy::erase_way( const uint64_t id )
 {
-    bool is_erased = false;
-
-    for ( auto const uid : uids ) {
-        if ( erase_way( uid ) ) is_erased = true;
-    }
-    return is_erased;
+    _uid.erase( _uid.find( id ));
+    _way.erase( _way.find( id ));
 }
 
-bool xy::erase_node( const name uid )
+void xy::erase_relation( const uint64_t id )
 {
-    if ( !node_exists( uid ) ) return false;
-
-    auto node_itr = _node.find( uid.value );
-    _node.erase( node_itr );
-    return true;
-}
-
-bool xy::erase_way( const name uid )
-{
-    if ( !way_exists( uid ) ) return false;
-
-    auto way_itr = _way.find( uid.value );
-    _way.erase( way_itr );
-    return true;
+    _uid.erase( _uid.find( id ));
+    _relation.erase( _relation.find( id ));
 }
