@@ -1,4 +1,4 @@
-void names::init( symbol core_symbol = symbol{"EOS", 4})
+void names::init( symbol core_symbol )
 {
     require_auth( get_self() );
 
@@ -11,15 +11,15 @@ void names::init( symbol core_symbol = symbol{"EOS", 4})
     // 25.0000 EOS
     set_rate( 6,  asset{250000, core_symbol} );
 
-    // 5.0000 EOS
-    set_rate( 7,  asset{50000, core_symbol} );
-    set_rate( 8,  asset{50000, core_symbol} );
-    set_rate( 9,  asset{50000, core_symbol} );
+    // 10.0000 EOS
+    set_rate( 7,  asset{100000, core_symbol} );
+    set_rate( 8,  asset{100000, core_symbol} );
+    set_rate( 9,  asset{100000, core_symbol} );
 
-    // 1.0000 EOS
-    set_rate( 10, asset{10000, core_symbol} );
-    set_rate( 11, asset{10000, core_symbol} );
-    set_rate( 12, asset{10000, core_symbol} );
+    // 5.0000 EOS
+    set_rate( 10, asset{50000, core_symbol} );
+    set_rate( 11, asset{50000, core_symbol} );
+    set_rate( 12, asset{50000, core_symbol} );
 }
 
 void names::setrate( uint8_t length, asset amount )
