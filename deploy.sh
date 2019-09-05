@@ -56,3 +56,9 @@ cleos push action eosio.token issue '["eosio", "12000.0000 EOS", "init"]' -p eos
 cleos push action eosio.token transfer '["eosio", "relay.xy", "1000.0000 EOS", "init"]' -p eosio
 cleos push action eosio.token transfer '["eosio", "bob", "1000.0000 EOS", "init"]' -p eosio
 cleos push action eosio.token transfer '["eosio", "alice", "1000.0000 EOS", "init"]' -p eosio
+
+# Create EOSXY
+cleos push action $TOKEN create '["xy", "1000000000.0000 EOSXY"]' -p $TOKEN
+cleos push action $TOKEN issue '["xy", "10000.0000 EOSXY", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "bob" "1000.0000 EOSXY", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "relay.xy" "1000.0000 EOSXY", "init"]' -p $NETWORK

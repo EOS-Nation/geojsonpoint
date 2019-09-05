@@ -24,7 +24,8 @@ public:
      */
     relay( name receiver, name code, eosio::datastream<const char*> ds )
         : contract( receiver, code, ds ),
-            _settings( get_self(), get_self().value )
+            _settings( get_self(), get_self().value ),
+            _reserves( get_self(), get_self().value )
     {}
 
     /**
@@ -35,7 +36,23 @@ public:
      * cleos push action relay.xy init '[true]'
      */
     [[eosio::action]]
-    void init( const bool enabled );
+    void init( const bool enabled = true );
+
+
+    /**
+     * ACTION `setreserve`
+     *
+     * add relay setreserve
+     *
+     * @param {extended_symbol} base - relay base
+     * @param {extended_symbol} quote - relay quote
+     *
+     * @example
+     *
+     * cleos push action relay.xy setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'
+     */
+    [[eosio::action]]
+    void setreserve( const extended_symbol base, const extended_symbol quote );
 
     /**
      * Notify contract when eosio.token deposits core token
@@ -56,6 +73,7 @@ public:
                       const string&  memo );
 
     using init_action = eosio::action_wrapper<"init"_n, &relay::init>;
+    using setreserve_action = eosio::action_wrapper<"setreserve"_n, &relay::setreserve>;
 
 private:
     /**
@@ -64,24 +82,44 @@ private:
      * @example
      *
      * {
-     *   "enabled": false,
-     *   "core_symbol": {"symbol": "EOS", "precision": 4}
+     *   "enabled": false
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
-        bool                enabled = false;
-        symbol              core_symbol = symbol{"EOS", 4};
+        bool    enabled = false;
+    };
+
+    /**
+     * TABLE `reserves`
+     *
+     * @param {extended_symbol} base
+     * @param {extended_symbol} quote
+     *
+     * @example
+     *
+     * {
+     *   "base": {"contract": "token.xy", {"symbol": "XY", "precision": 4}},
+     *   "quote": {"contract": "eosio.token", {"symbol": "EOS", "precision": 4}}
+     * }
+     */
+    struct [[eosio::table("reserves")]] reserves_row {
+        extended_symbol     base;
+        extended_symbol     quote;
+
+        uint64_t primary_key() const { return base.get_symbol().code().raw(); }
     };
 
     // Singleton table
     typedef singleton<"settings"_n, settings_row> settings_table;
+    typedef multi_index<"reserves"_n, reserves_row> reserves_table;
 
     // local instances of the multi indexes
     settings_table      _settings;
+    reserves_table      _reserves;
 
     // private helpers
     // ===============
-    double bancor_formula( double balance_from, double balance_to, double amount);
+    double bancor_formula( double balance_from, double balance_to, double amount );
     double to_fixed( double num, int precision );
     symbol get_core_symbol();
     void convert( const name to, const asset quantity, const extended_symbol base, const extended_symbol quote );

@@ -7,9 +7,6 @@ void relay::transfer( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
-    // Prevent token convert from *.xy accounts
-    if ( from == "ops.xy"_n || from == "fee.xy"_n ) return;
-
     // Prevent token convert by memo
     if ( memo == "init" ) return;
 
@@ -17,13 +14,11 @@ void relay::transfer( const name&    from,
     require_auth( from );
 
     // settings
-    auto settings = _settings.get_or_default();
-    check( settings.enabled, "relay is not initialized" );
+    check( _settings.get().enabled, "relay is not initialized" );
 
     // convert
-    extended_symbol base = extended_symbol{ settings.core_symbol, "eosio.token"_n };
-    extended_symbol quote = extended_symbol{ symbol{"XY", 4}, "token.xy"_n };
-    convert( from, quantity, base, quote );
+    auto reserve = _reserves.get( quantity.symbol.code().raw(), "symbol code does not match any reserves");
+    convert( from, quantity, reserve.base, reserve.quote );
 }
 
 [[eosio::on_notify("token.xy::transfer")]]
@@ -35,9 +30,6 @@ void relay::transfer_xy( const name&    from,
     // Only monitor incoming transfers to get_self() account
     if ( to != get_self() ) return;
 
-    // Prevent token convert from *.xy accounts
-    if ( from == "ops.xy"_n || from == "fee.xy"_n ) return;
-
     // Prevent token convert by memo
     if ( memo == "init" ) return;
 
@@ -45,13 +37,11 @@ void relay::transfer_xy( const name&    from,
     require_auth( from );
 
     // settings
-    auto settings = _settings.get_or_default();
-    check(settings.enabled, "relay is not initialized");
+    check( _settings.get().enabled, "relay is not initialized");
 
     // convert
-    extended_symbol base = extended_symbol{ symbol{"XY", 4}, "token.xy"_n };
-    extended_symbol quote = extended_symbol{ settings.core_symbol, "eosio.token"_n };
-    convert( from, quantity, base, quote );
+    auto reserve = _reserves.get( quantity.symbol.code().raw(), "symbol code does not match any reserves");
+    convert( from, quantity, reserve.base, reserve.quote );
 }
 
 void relay::convert( const name to,
@@ -76,11 +66,11 @@ void relay::convert( const name to,
     check( quantity.amount <= balance_from.amount - quantity.amount, "must transfer a lower quantity amount");
 
     // Send transfers
-    token::transfer_action transfer(quote.get_contract(), { get_self(), "active"_n });
-    transfer.send( get_self(), to, quantity_convert, "XY.network::relay.transfer");
+    token::transfer_action transfer( quote.get_contract(), { get_self(), "active"_n });
+    transfer.send( get_self(), to, quantity_convert, "XY.network::relay");
 
     if ( fee.amount ) {
         token::transfer_action transfer_fee( base.get_contract(), { get_self(), "active"_n } );
-        transfer_fee.send( get_self(), "fee.xy"_n, fee, "XY.network::relay.transfer");
+        transfer_fee.send( get_self(), "fee.xy"_n, fee, "XY.network::relay");
     }
 }
