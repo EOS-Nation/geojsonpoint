@@ -29,14 +29,14 @@ public:
     {}
 
     /**
-     * ACTION `init`
+     * ACTION `enable`
      *
      * @example
      *
-     * cleos push action relay.xy init '[true]'
+     * cleos push action relay.xy enable '[true]'
      */
     [[eosio::action]]
-    void init( const bool enabled = true );
+    void enable( const bool enabled = true );
 
 
     /**
@@ -72,6 +72,13 @@ public:
                       const asset&   quantity,
                       const string&  memo );
 
+    /**
+     * Create unique key between base & quote symbol codes
+     */
+    static uint128_t symbols_key( const symbol_code base, const symbol_code quote ) {
+        return ((uint128_t) base.raw()) << 64 | quote.raw();
+    }
+
     using init_action = eosio::action_wrapper<"init"_n, &relay::init>;
     using setreserve_action = eosio::action_wrapper<"setreserve"_n, &relay::setreserve>;
 
@@ -86,32 +93,38 @@ private:
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
-        bool    enabled = false;
+        bool enabled = false;
     };
 
     /**
      * TABLE `reserves`
      *
-     * @param {extended_symbol} base
-     * @param {extended_symbol} quote
+     * @param {uint64_t} id - unique identifer
+     * @param {extended_symbol} base - base symbol
+     * @param {extended_symbol} quote - quote symbol
      *
      * @example
      *
      * {
-     *   "base": {"contract": "token.xy", {"symbol": "XY", "precision": 4}},
-     *   "quote": {"contract": "eosio.token", {"symbol": "EOS", "precision": 4}}
+     *   "id": 0,
+     *   "base": {"contract": "token.xy", "symbol": "4,XY"},
+     *   "quote": {"contract": "eosio.token", "symbol": "4,EOS"}
      * }
      */
     struct [[eosio::table("reserves")]] reserves_row {
+        uint64_t            id;
         extended_symbol     base;
         extended_symbol     quote;
 
-        uint64_t primary_key() const { return base.get_symbol().code().raw(); }
+        uint64_t primary_key() const { return id; }
+        uint128_t by_symbols() const { return symbols_key( base.get_symbol().code(), quote.get_symbol().code() ); }
     };
 
     // Singleton table
     typedef singleton<"settings"_n, settings_row> settings_table;
-    typedef multi_index<"reserves"_n, reserves_row> reserves_table;
+    typedef multi_index<"reserves"_n, reserves_row,
+        indexed_by<"bysymbols"_n, const_mem_fun<reserves_row, uint128_t, &reserves_row::by_symbols>>
+    > reserves_table;
 
     // local instances of the multi indexes
     settings_table      _settings;
@@ -122,5 +135,6 @@ private:
     double bancor_formula( double balance_from, double balance_to, double amount );
     double to_fixed( double num, int precision );
     symbol get_core_symbol();
-    void convert( const name to, const asset quantity, const extended_symbol base, const extended_symbol quote );
+    void convert( const name to, const asset quantity, const string memo );
+    symbol_code parse_memo( const string memo );
 };

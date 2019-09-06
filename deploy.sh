@@ -57,8 +57,13 @@ cleos push action eosio.token transfer '["eosio", "relay.xy", "1000.0000 EOS", "
 cleos push action eosio.token transfer '["eosio", "bob", "1000.0000 EOS", "init"]' -p eosio
 cleos push action eosio.token transfer '["eosio", "alice", "1000.0000 EOS", "init"]' -p eosio
 
-# Create EOSXY
-cleos push action $TOKEN create '["xy", "1000000000.0000 EOSXY"]' -p $TOKEN
-cleos push action $TOKEN issue '["xy", "10000.0000 EOSXY", "init"]' -p $NETWORK
-cleos push action $TOKEN transfer '["xy", "bob" "1000.0000 EOSXY", "init"]' -p $NETWORK
-cleos push action $TOKEN transfer '["xy", "relay.xy" "1000.0000 EOSXY", "init"]' -p $NETWORK
+# Create alternate tokens
+cleos push action $TOKEN create '["xy", "1000000000.0000 XYZ"]' -p $TOKEN
+cleos push action $TOKEN issue '["xy", "10000.0000 XYZ", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "bob", "1000.0000 XYZ", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "relay.xy", "2000.0000 XYZ", "init"]' -p $NETWORK
+
+cleos push action $TOKEN create '["xy", "1000000000.0000 ABC"]' -p $TOKEN
+cleos push action $TOKEN issue '["xy", "10000.0000 ABC", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "bob", "1000.0000 ABC", "init"]' -p $NETWORK
+cleos push action $TOKEN transfer '["xy", "relay.xy", "5000.0000 ABC", "init"]' -p $NETWORK
