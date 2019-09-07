@@ -4,6 +4,7 @@
 
 - [`init`](#action-init)
 - [`setreserve`](#action-setreserve)
+- [`setfee`](#action-setfee)
 
 ## ON_NOTIFY
 
@@ -18,12 +19,25 @@
 
 ### params
 
-- `{bool} enabled` - activate relay
+- `{bool} [enabled=false]` - determine if relay is enabled or not
 
 ### example
 
 ```bash
 cleos push action relay.xy enable '[true]' -p relay.xy
+```
+
+## ACTION `setfee`
+
+### params
+
+- `{uint64_t} [fee=0]` - relay fee (ex: 500 = 0.5%)
+- `{name} [account=""]` - account to redirect relay fee
+
+### example
+
+```bash
+cleos push action relay.xy setfee '[500, "myfees]' -p relay.xy
 ```
 
 ## ACTION `setreserve`
@@ -58,12 +72,18 @@ cleos transfer myaccount relay.xy "1.0000 XY" "EOS" --contract token.xy
 ## TABLE `settings`
 
 - `{bool} [enabled=false]` - determine if relay is enabled or not
+- `{uint64_t} [fee=0]` - relay fee (ex: 500 = 0.5%)
+- `{name} [account=""]` - account to redirect relay fee
+- `{uint64_t} [max_fee=30000]` - maximum fee (3%)
 
 ### example
 
 ```json
 {
   "enabled": false,
+  "fee": 500,
+  "fee_account": "myfees",
+  "max_fee": 30000
 }
 ```
 

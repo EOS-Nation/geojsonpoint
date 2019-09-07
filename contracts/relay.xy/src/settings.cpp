@@ -1,3 +1,15 @@
+void relay::setfee( const uint64_t fee, const name account )
+{
+    auto settings = _settings.get_or_default();
+
+    check( fee <= settings.max_fee, "fee cannot exceed maximum fee");
+    if (account.length() > 0) check( is_account( account ), "fee account does not exist");
+
+    settings.fee = fee;
+    settings.fee_account = account;
+    _settings.set( settings, get_self() );
+}
+
 void relay::enable( const bool enabled )
 {
     auto settings = _settings.get_or_default();

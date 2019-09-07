@@ -1,8 +1,14 @@
-<h1 class="contract">init</h1>
+<h1 class="contract">enable</h1>
 
 ## Description
 
-init action
+enable action
+
+<h1 class="contract">setfee</h1>
+
+## Description
+
+setfee action
 
 <h1 class="contract">setreserve</h1>
 

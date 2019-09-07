@@ -31,13 +31,27 @@ public:
     /**
      * ACTION `enable`
      *
+     * @param {bool} [enabled=false] - determine if relay is enabled or not
+     *
      * @example
      *
-     * cleos push action relay.xy enable '[true]'
+     * cleos push action relay.xy enable '[true]' -p relay.xy
      */
     [[eosio::action]]
     void enable( const bool enabled = true );
 
+    /**
+     * ACTION `setfee`
+     *
+     * @param {uint64_t} [fee=0] - relay fee (ex: 500 = 0.5%)
+     * @param {name} [account=""] - account to redirect relay fee
+     *
+     * @example
+     *
+     * cleos push action relay.xy setfee '[500, "myfees"]' -p relay.xy
+     */
+    [[eosio::action]]
+    void setfee( const uint64_t fee = 0, const name account = ""_n );
 
     /**
      * ACTION `setreserve`
@@ -49,28 +63,19 @@ public:
      *
      * @example
      *
-     * cleos push action relay.xy setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'
+     * cleos push action relay.xy setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'  -p relay.xy
      */
     [[eosio::action]]
     void setreserve( const extended_symbol base, const extended_symbol quote );
 
     /**
-     * Notify contract when eosio.token deposits core token
+     * Notify contract when any token transfer notifiers relay contract
      */
-    [[eosio::on_notify("eosio.token::transfer")]]
+    [[eosio::on_notify("*::transfer")]]
     void transfer( const name&    from,
                    const name&    to,
                    const asset&   quantity,
                    const string&  memo );
-
-    /**
-     * Notify contract when token.xy deposits XY network token
-     */
-    [[eosio::on_notify("token.xy::transfer")]]
-    void transfer_xy( const name&    from,
-                      const name&    to,
-                      const asset&   quantity,
-                      const string&  memo );
 
     /**
      * Create unique key between base & quote symbol codes
@@ -79,21 +84,32 @@ public:
         return ((uint128_t) base.raw()) << 64 | quote.raw();
     }
 
-    using init_action = eosio::action_wrapper<"init"_n, &relay::init>;
+    using enable_action = eosio::action_wrapper<"enable"_n, &relay::enable>;
     using setreserve_action = eosio::action_wrapper<"setreserve"_n, &relay::setreserve>;
 
 private:
     /**
      * TABLE `settings`
      *
+     * @param {bool} [enabled=false] - determine if relay is enabled or not
+     * @param {uint64_t} [fee=0] - relay fee (ex: 500 = 0.5%)
+     * @param {name} [account=""] - account to redirect relay fee
+     * @param {uint64_t} [max_fee=30000] - maximum fee (3%)
+     *
      * @example
      *
      * {
-     *   "enabled": false
+     *   "enabled": false,
+     *   "fee": 500,
+     *   "fee_account": "myfees",
+     *   "max_fee": 30000
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
         bool enabled = false;
+        uint64_t fee = 0;
+        name fee_account = ""_n;
+        uint64_t max_fee = 30000;
     };
 
     /**
