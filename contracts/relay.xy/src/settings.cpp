@@ -25,6 +25,10 @@ void relay::setreserve( const extended_symbol base, const extended_symbol quote 
     uint128_t key = symbols_key( base.get_symbol().code(), quote.get_symbol().code() );
     auto reserves_itr = index.find( key );
 
+    // TO-DO support other precisions
+    check( base.get_symbol().precision() == 4, "only reserves with 4 precision are currently supported");
+    check( quote.get_symbol().precision() == 4, "only reserves with 4 precision are currently supported");
+
     // check if balance exists of eosio.token & token.xy
     asset base_balance = token::get_balance( base.get_contract(), get_self(), base.get_symbol().code() );
     asset quote_balance = token::get_balance( quote.get_contract(), get_self(), quote.get_symbol().code() );

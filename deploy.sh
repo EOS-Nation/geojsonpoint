@@ -62,12 +62,12 @@ cleos push action eosio.token transfer '["eosio", "bob", "1000.0000 EOS", "init"
 cleos push action eosio.token transfer '["eosio", "alice", "1000.0000 EOS", "init"]' -p eosio
 
 # Create USDT/CUSD tokens
-cleos push action token.usdt create '["xy", "1000000000.000000 USDT"]' -p token.usdt
-cleos push action token.usdt issue '["xy", "60000.000000 USDT", "init"]' -p $NETWORK
-cleos push action token.usdt transfer '["xy", "bob", "10000.000000 USDT", "init"]' -p $NETWORK
-cleos push action token.usdt transfer '["xy", "relay.xy", "25000.000000 USDT", "init"]' -p $NETWORK
+cleos push action token.usdt create '["xy", "1000000000.0000 USDT"]' -p token.usdt
+cleos push action token.usdt issue '["xy", "60000.0000 USDT", "init"]' -p $NETWORK
+cleos push action token.usdt transfer '["xy", "bob", "10000.0000 USDT", "init"]' -p $NETWORK
+cleos push action token.usdt transfer '["xy", "relay.xy", "25000.0000 USDT", "init"]' -p $NETWORK
 
-cleos push action token.cusd create '["xy", "1000000000.00 CUSD"]' -p token.cusd
-cleos push action token.cusd issue '["xy", "60000.00 CUSD", "init"]' -p $NETWORK
-cleos push action token.cusd transfer '["xy", "bob", "10000.00 CUSD", "init"]' -p $NETWORK
-cleos push action token.cusd transfer '["xy", "relay.xy", "25000.00 CUSD", "init"]' -p $NETWORK
+cleos push action token.cusd create '["xy", "1000000000.0000 CUSD"]' -p token.cusd
+cleos push action token.cusd issue '["xy", "60000.0000 CUSD", "init"]' -p $NETWORK
+cleos push action token.cusd transfer '["xy", "bob", "10000.0000 CUSD", "init"]' -p $NETWORK
+cleos push action token.cusd transfer '["xy", "relay.xy", "25000.0000 CUSD", "init"]' -p $NETWORK
