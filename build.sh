@@ -44,3 +44,10 @@ eosio-cpp -abigen -contract relay \
   -I contracts/eosio.token/include \
   -I contracts/bancor/include \
   contracts/relay/src/relay.cpp
+
+# eosio.token
+eosio-cpp -abigen -contract eosio.token \
+  -R contracts/eosio.token/resource \
+  -o ./dist/eosio.token.wasm \
+  -I contracts/eosio.token/include \
+  contracts/eosio.token/src/eosio.token.cpp

@@ -34,7 +34,7 @@ void names::purchase_account( const eosio::name name, const eosio::name bidder, 
         row.bidder     = bidder;
         row.ref        = ref;
         row.amount     = quantity;
-        row.trx_id     = get_trx_id();
+        row.trx_id     = eosiosystem::get_trx_id();
         row.timestamp  = current_time_point();
     });
 }
