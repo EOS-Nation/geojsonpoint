@@ -24,7 +24,7 @@
 ### example
 
 ```bash
-cleos push action relay.xy enable '[true]' -p relay
+cleos push action relay enable '[true]' -p relay
 ```
 
 ## ACTION `setfee`
@@ -37,7 +37,7 @@ cleos push action relay.xy enable '[true]' -p relay
 ### example
 
 ```bash
-cleos push action relay.xy setfee '[500, "myfees]' -p relay.xy
+cleos push action relay setfee '[500, "myfees]' -p relay
 ```
 
 ## ACTION `setreserve`
@@ -51,7 +51,7 @@ add relay setreserve
 ### example
 
 ```bash
-cleos push action relay.xy setreserve '[{"contract": "token.xy", "symbol": "4,XY {"contract": "eosio.token", "symbol": "4,EOS"}]'
+cleos push action relay setreserve '[{"contract": "token", "symbol": "4,SYS"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'
 ```
 
 ## ON_NOTIFY `transfer`
@@ -63,8 +63,8 @@ On token transfer notification, tokens will be exchanged
 - `memo` format - ex: `"EOS"`
 
 ```bash
-cleos transfer myaccount relay.xy "1.0000 EOS" "XY"
-cleos transfer myaccount relay.xy "1.0000 XY" "EOS" --contract token.xy
+cleos transfer myaccount relay "1.0000 EOS" "SYS"
+cleos transfer myaccount relay "1.0000 SYS" "EOS" --contract token
 ```
 
 ## TABLE `settings`
@@ -96,7 +96,7 @@ cleos transfer myaccount relay.xy "1.0000 XY" "EOS" --contract token.xy
 ```json
 {
   "id": 0,
-  "base": {"contract": "token.xy", "symbol": "4,XY"},
+  "base": {"contract": "token", "symbol": "4,SYS"},
   "quote": {"contract": "eosio.token", "symbol": "4,EOS"}
 }
 ```

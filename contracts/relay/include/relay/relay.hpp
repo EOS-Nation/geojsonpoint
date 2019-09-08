@@ -64,7 +64,7 @@ public:
      *
      * @example
      *
-     * cleos push action relay setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'  -p relay
+     * cleos push action relay setreserve '[{"contract": "token", "symbol": "4,SYS"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'  -p relay
      */
     [[eosio::action]]
     void setreserve( const extended_symbol base, const extended_symbol quote );
@@ -124,7 +124,7 @@ private:
      *
      * {
      *   "id": 0,
-     *   "base": {"contract": "token.xy", "symbol": "4,XY"},
+     *   "base": {"contract": "token", "symbol": "4,SYS"},
      *   "quote": {"contract": "eosio.token", "symbol": "4,EOS"}
      * }
      */
