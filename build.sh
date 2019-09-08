@@ -1,16 +1,46 @@
 #!/usr/bin/env bash
 
-NETWORK=xy
-TOKEN=token.xy
-RELAY=relay.xy
-NAMES=names.xy
-FAUCET=faucet.xy
-SYSTEM=eosio.system
-
 mkdir -p dist
-# eosio-cpp -abigen -R contracts/$NETWORK/resource -contract $NETWORK -o ./dist/$NETWORK.wasm contracts/$NETWORK/src/$NETWORK.cpp -I contracts/$NETWORK/include -I contracts/$TOKEN/include
-# eosio-cpp -abigen -R contracts/$TOKEN/resource -contract $TOKEN -o ./dist/$TOKEN.wasm contracts/$TOKEN/src/$TOKEN.cpp -I contracts/$TOKEN/include
-# eosio-cpp -abigen -R contracts/$FAUCET/resource -contract $FAUCET -o ./dist/$FAUCET.wasm contracts/$FAUCET/src/$FAUCET.cpp -I contracts/$FAUCET/include -I contracts/$TOKEN/include -I contracts/$SYSTEM/include
-# eosio-cpp -abigen -R contracts/$NAMES/resource -contract $NAMES -o ./dist/$NAMES.wasm contracts/$NAMES/src/$NAMES.cpp -I contracts/$NAMES/include -I contracts/$TOKEN/include -I contracts/$SYSTEM/include
 
-eosio-cpp -abigen -R contracts/$RELAY/resource -contract $RELAY -o ./dist/$RELAY.wasm contracts/$RELAY/src/$RELAY.cpp -I contracts/$RELAY/include -I contracts/$TOKEN/include -I contracts/$SYSTEM/include
+# xy
+eosio-cpp -abigen -contract xy \
+  -R contracts/xy/resource \
+  -o ./dist/xy.wasm \
+  -I contracts/xy/include \
+  -I contracts/token/include \
+  -I contracts/mapbox/include \
+  contracts/xy/src/xy.cpp
+
+# token
+eosio-cpp -abigen -contract token \
+  -R contracts/token/resource \
+  -o ./dist/token.wasm \
+  -I contracts/token/include \
+  contracts/token/src/token.cpp
+
+# names
+eosio-cpp -abigen -contract names \
+  -R contracts/names/resource \
+  -o ./dist/names.wasm \
+  -I contracts/names/include \
+  -I contracts/eosio.system/include \
+  -I contracts/eosio.token/include \
+  contracts/names/src/names.cpp
+
+# faucet
+eosio-cpp -abigen -contract faucet \
+  -R contracts/faucet/resource \
+  -o ./dist/faucet.wasm \
+  -I contracts/faucet/include \
+  -I contracts/eosio.system/include \
+  -I contracts/eosio.token/include \
+  contracts/faucet/src/faucet.cpp
+
+# relay
+eosio-cpp -abigen -contract relay \
+  -R contracts/relay/resource \
+  -o ./dist/relay.wasm \
+  -I contracts/relay/include \
+  -I contracts/eosio.token/include \
+  -I contracts/bancor/include \
+  contracts/relay/src/relay.cpp

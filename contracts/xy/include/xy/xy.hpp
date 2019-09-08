@@ -8,7 +8,7 @@
 #include <string>
 #include <optional>
 
-#include <token.xy/token.xy.hpp>
+#include <token/token.hpp>
 #include <mapbox/geometry.hpp>
 
 using namespace eosio;
