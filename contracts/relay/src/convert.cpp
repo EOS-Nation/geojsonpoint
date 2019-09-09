@@ -16,7 +16,7 @@ void relay::convert( const name to,
 
     // Calculate fee from incoming asset (round up)
     asset fee = quantity;
-    fee.amount = ceil((static_cast<double>(quantity.amount) * (settings.fee)) / 100000);
+    fee.amount = ceil((static_cast<double>(quantity.amount) * (reserve.fee)) / 10000);
 
     // Calculate convert amount
     asset balance_from = token::get_balance( base.get_contract(), get_self(), base.get_symbol().code() );
@@ -34,9 +34,10 @@ void relay::convert( const name to,
     token::transfer_action transfer( quote.get_contract(), { get_self(), "active"_n });
     transfer.send( get_self(), to, quantity_convert, "convert");
 
-    if ( fee.amount && settings.fee_account ) {
+    // send fee if exists
+    if ( fee.amount && settings.account_fee ) {
         token::transfer_action transfer_fee( base.get_contract(), { get_self(), "active"_n } );
-        transfer_fee.send( get_self(), settings.fee_account, fee, "convert.fee");
+        transfer_fee.send( get_self(), settings.account_fee, fee, "convert.fee");
     }
 }
 

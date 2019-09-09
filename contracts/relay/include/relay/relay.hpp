@@ -42,17 +42,16 @@ public:
     void enable( const bool enabled = true );
 
     /**
-     * ACTION `setfee`
+     * ACTION `accountfee`
      *
-     * @param {uint64_t} [fee=0] - relay fee (ex: 500 = 0.5%)
      * @param {name} [account=""] - account to redirect relay fee
      *
      * @example
      *
-     * cleos push action relay setfee '[500, "myfees"]' -p relay
+     * cleos push action relay accountfee '["myfees"]' -p relay
      */
     [[eosio::action]]
-    void setfee( const uint64_t fee = 0, const name account = ""_n );
+    void accountfee( const name account = ""_n );
 
     /**
      * ACTION `setreserve`
@@ -61,13 +60,14 @@ public:
      *
      * @param {extended_symbol} base - relay base
      * @param {extended_symbol} quote - relay quote
+     * @param {uint64_t} [fee=0] - relay fee (ex: 50 = 0.5%) pips 1/100 of 1%
      *
      * @example
      *
-     * cleos push action relay setreserve '[{"contract": "token", "symbol": "4,SYS"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'  -p relay
+     * cleos push action relay setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, {"contract": "eosio.token", "symbol": "4,EOS"}, 50]'  -p relay
      */
     [[eosio::action]]
-    void setreserve( const extended_symbol base, const extended_symbol quote );
+    void setreserve( const extended_symbol base, const extended_symbol quote, const uint64_t fee );
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -93,24 +93,21 @@ private:
      * TABLE `settings`
      *
      * @param {bool} [enabled=false] - determine if relay is enabled or not
-     * @param {uint64_t} [fee=0] - relay fee (ex: 500 = 0.5%)
-     * @param {name} [account=""] - account to redirect relay fee
-     * @param {uint64_t} [max_fee=30000] - maximum fee (3%)
+     * @param {name} [account_fee=""] - account to redirect relay fee
+     * @param {uint64_t} [max_fee=300] - maximum fee (3%) pips 1/100 of 1%
      *
      * @example
      *
      * {
      *   "enabled": false,
-     *   "fee": 500,
-     *   "fee_account": "myfees",
-     *   "max_fee": 30000
+     *   "account_fee": "myfees",
+     *   "max_fee": 300
      * }
      */
     struct [[eosio::table("settings")]] settings_row {
         bool enabled = false;
-        uint64_t fee = 0;
-        name fee_account = ""_n;
-        uint64_t max_fee = 30000;
+        name account_fee = ""_n;
+        uint64_t max_fee = 300;
     };
 
     /**
@@ -119,19 +116,22 @@ private:
      * @param {uint64_t} id - unique identifer
      * @param {extended_symbol} base - base symbol
      * @param {extended_symbol} quote - quote symbol
+     * @param {uint64_t} [fee=0] - relay fee (ex: 50 = 0.5%) pips 1/100 of 1%
      *
      * @example
      *
      * {
      *   "id": 0,
-     *   "base": {"contract": "token", "symbol": "4,SYS"},
-     *   "quote": {"contract": "eosio.token", "symbol": "4,EOS"}
+     *   "base": {"contract": "token.xy", "symbol": "4,XY"},
+     *   "quote": {"contract": "eosio.token", "symbol": "4,EOS"},
+     *   "fee": 50
      * }
      */
     struct [[eosio::table("reserves")]] reserves_row {
         uint64_t            id;
         extended_symbol     base;
         extended_symbol     quote;
+        uint64_t            fee = 0;
 
         uint64_t primary_key() const { return id; }
         uint128_t by_symbols() const { return symbols_key( base.get_symbol().code(), quote.get_symbol().code() ); }

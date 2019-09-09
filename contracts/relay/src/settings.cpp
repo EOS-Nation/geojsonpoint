@@ -1,25 +1,28 @@
-void relay::setfee( const uint64_t fee, const name account )
+void relay::accountfee( const name account )
 {
+    require_auth( get_self() );
+
     auto settings = _settings.get_or_default();
 
-    check( fee <= settings.max_fee, "fee cannot exceed maximum fee");
-    if (account.length() > 0) check( is_account( account ), "fee account does not exist");
+    check( is_account( account ), "account does not exist");
 
-    settings.fee = fee;
-    settings.fee_account = account;
+    settings.account_fee = account;
     _settings.set( settings, get_self() );
 }
 
 void relay::enable( const bool enabled )
 {
+    require_auth( get_self() );
+
     auto settings = _settings.get_or_default();
     settings.enabled = enabled;
     _settings.set( settings, get_self() );
 }
 
-void relay::setreserve( const extended_symbol base, const extended_symbol quote )
+void relay::setreserve( const extended_symbol base, const extended_symbol quote, const uint64_t fee )
 {
     require_auth( get_self() );
+    check( fee <= _settings.get_or_default().max_fee, "fee cannot exceed maximum fee");
 
     auto index = _reserves.get_index<"bysymbols"_n>();
     uint128_t key = symbols_key( base.get_symbol().code(), quote.get_symbol().code() );
@@ -42,12 +45,14 @@ void relay::setreserve( const extended_symbol base, const extended_symbol quote 
             row.id = _reserves.available_primary_key();
             row.base = base;
             row.quote = quote;
+            row.fee = fee;
         });
     // modify reserve
     } else {
         index.modify( reserves_itr, get_self(), [&]( auto & row ) {
             row.base = base;
             row.quote = quote;
+            row.fee = fee;
         });
     }
 }

@@ -4,11 +4,11 @@
 
 enable action
 
-<h1 class="contract">setfee</h1>
+<h1 class="contract">accountfee</h1>
 
 ## Description
 
-setfee action
+accountfee action
 
 <h1 class="contract">setreserve</h1>
 

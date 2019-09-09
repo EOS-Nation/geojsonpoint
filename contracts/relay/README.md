@@ -4,7 +4,7 @@
 
 - [`init`](#action-init)
 - [`setreserve`](#action-setreserve)
-- [`setfee`](#action-setfee)
+- [`accountfee`](#action-accountfee)
 
 ## ON_NOTIFY
 
@@ -27,31 +27,30 @@
 cleos push action relay enable '[true]' -p relay
 ```
 
-## ACTION `setfee`
+## ACTION `accountfee`
 
 ### params
 
-- `{uint64_t} [fee=0]` - relay fee (ex: 500 = 0.5%)
 - `{name} [account=""]` - account to redirect relay fee
 
 ### example
 
 ```bash
-cleos push action relay setfee '[500, "myfees]' -p relay
+cleos push action relay accountfee '["myfees]' -p relay
 ```
 
 ## ACTION `setreserve`
 
 add relay setreserve
 
-
 - `{extended_symbol}` base - base symbol
 - `{extended_symbol}` quote - quote symbol
+- `{uint64_t} [fee=0]` - relay fee (ex: 50 = 0.5%) pips 1/100 of 1%
 
 ### example
 
 ```bash
-cleos push action relay setreserve '[{"contract": "token", "symbol": "4,SYS"}, {"contract": "eosio.token", "symbol": "4,EOS"}]'
+cleos push action relay setreserve '[{"contract": "token.xy", "symbol": "4,XY"}, {"contract": "eosio.token", "symbol": "4,EOS"}, 50]' -p relay
 ```
 
 ## ON_NOTIFY `transfer`
@@ -63,25 +62,23 @@ On token transfer notification, tokens will be exchanged
 - `memo` format - ex: `"EOS"`
 
 ```bash
-cleos transfer myaccount relay "1.0000 EOS" "SYS"
-cleos transfer myaccount relay "1.0000 SYS" "EOS" --contract token
+cleos transfer myaccount relay "1.0000 EOS" "XY"
+cleos transfer myaccount relay "1.0000 XY" "EOS" --contract token.xy
 ```
 
 ## TABLE `settings`
 
 - `{bool} [enabled=false]` - determine if relay is enabled or not
-- `{uint64_t} [fee=0]` - relay fee (ex: 500 = 0.5%)
-- `{name} [account=""]` - account to redirect relay fee
-- `{uint64_t} [max_fee=30000]` - maximum fee (3%)
+- `{name} [account_fee=""]` - account to redirect relay fee
+- `{uint64_t} [max_fee=300]` - maximum fee (3%) pips 1/100 of 1%
 
 ### example
 
 ```json
 {
   "enabled": false,
-  "fee": 500,
-  "fee_account": "myfees",
-  "max_fee": 30000
+  "account_fee": "myfees",
+  "max_fee": 300
 }
 ```
 
@@ -90,14 +87,16 @@ cleos transfer myaccount relay "1.0000 SYS" "EOS" --contract token
 - `{uint64_t}` id - unique identifer
 - `{extended_symbol}` base - base symbol
 - `{extended_symbol}` quote - quote symbol
+- `{uint64_t} [fee=0]` - relay fee (ex: 50 = 0.5%) pips 1/100 of 1%
 
 ### example
 
 ```json
 {
   "id": 0,
-  "base": {"contract": "token", "symbol": "4,SYS"},
-  "quote": {"contract": "eosio.token", "symbol": "4,EOS"}
+  "base": {"contract": "token.xy", "symbol": "4,XY"},
+  "quote": {"contract": "eosio.token", "symbol": "4,EOS"},
+  "fee": 50
 }
 ```
 
